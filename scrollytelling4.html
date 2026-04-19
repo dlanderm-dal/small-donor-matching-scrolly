@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One big donor, or many small ones?</title>
+<style>
+/* ============================================================================
+   WORDPRESS / EMBED NOTES
+   ----------------------------------------------------------------------------
+   Every selector below is scoped under `.sbs-root` ("small-big-story root")
+   so the styles can't leak onto the surrounding WordPress page. To drop this
+   piece into a WP Custom HTML block, paste the entire <body> content (from
+   <div class="sbs-root"> through </div>) into the block.
+   There is one global rule for the sticky element: the browser requires
+   `position: sticky` to live inside a scroll container with NO overflow
+   clipping on any ancestor. If your WP theme wraps content in a <div> with
+   `overflow: hidden` (many themes do), sticky WILL break. Two remedies:
+     1) Use the iframe embed (see README note near end of file).
+     2) Add `.sbs-root, .sbs-root * { overflow: visible }` to a higher theme
+        override, though that can affect other content.
+   ============================================================================ */
+
+.sbs-root, .sbs-root *, .sbs-root *::before, .sbs-root *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+
+.sbs-root {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #2a2a2a;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+  /* Isolate from WP theme: reset common inherited styles. */
+  line-height: 1.5;
+  font-size: 16px;
+  text-align: left;
+}
+
+.sbs-root .intro, .sbs-root .outro {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 720px; margin: 0 auto;
+}
+
+/* Use dynamic viewport units (dvh) so iOS Safari URL-bar toggling doesn't
+   change the height of these sections mid-scroll. Fall back to vh for older
+   browsers that don't support dvh. */
+.sbs-root .intro { min-height: 88vh; min-height: 88dvh; }
+.sbs-root .outro { min-height: 65vh; min-height: 65dvh; }
+
+.sbs-root .intro h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 300; line-height: 1.15;
+  margin-bottom: 1.25rem; letter-spacing: -0.01em;
+}
+
+.sbs-root .outro h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  font-weight: 300; line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.sbs-root .intro p, .sbs-root .outro p {
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  color: #777; line-height: 1.65; max-width: 560px;
+}
+
+.sbs-root .outro p { margin-bottom: 0.5rem; }
+.sbs-root .highlight { color: #1f6fff; font-weight: 500; }
+
+.sbs-root .scroll-cue {
+  animation: sbs-bounce 2s ease-in-out infinite;
+  font-size: 1.75rem; color: #bbb; margin-top: 2.25rem;
+}
+
+/* Prefixed keyframe name so it can't collide with a host-page "bounce". */
+@keyframes sbs-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+.sbs-root #scrolly { position: relative; }
+
+.sbs-root .sticky-stage {
+  position: sticky; top: 0;
+  /* dvh = visible viewport height; stays stable when iOS URL bar hides/shows. */
+  height: 100vh; height: 100dvh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background: #fff;
+}
+
+/* ===== Width-driven combined view =========================================
+   When the zoom-out finishes and the story enters static mode, stop
+   height-letterboxing the SVG. Let the SVG fill the full window width and
+   grow taller as needed (user scrolls down to see the rest). This makes the
+   combined view feel purposeful at large screen sizes instead of shrinking
+   into a narrow column with huge horizontal dead space.
+============================================================================ */
+.sbs-root .sticky-stage.sbs-stage-static {
+  height: auto;
+  padding: 0;
+  align-items: stretch;
+}
+.sbs-root .sbs-stage-static .svg-wrapper {
+  height: auto;
+  align-items: stretch;
+}
+/* !important because the SVG has style="width:100%;height:100%" inline — we
+   need to beat that inline rule. height:auto + viewBox makes the browser
+   derive height from the SVG's intrinsic aspect ratio. */
+.sbs-root .sbs-stage-static .svg-wrapper svg {
+  height: auto !important;
+}
+
+.sbs-root .svg-wrapper {
+  /* Fill more of the sticky stage — 94% × 94% — so the SVG text is bigger
+     on desktop. Previously 90% × 90% which left a lot of dead space. */
+  width: 94%; height: 94%;
+  max-width: 100%; max-height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.sbs-root .svg-wrapper svg {
+  width: 100%; height: 100%; display: block;
+}
+
+/* CSS transition for stroke so border color cues animate smoothly */
+.sbs-root .svg-wrapper svg rect { transition: stroke 0.5s ease-out; }
+
+.sbs-root .scene-indicator {
+  position: fixed; right: 1.5rem; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 0.5rem;
+  z-index: 100; pointer-events: none;
+  opacity: 0; transition: opacity 0.4s;
+}
+.sbs-root .scene-indicator.visible { opacity: 1; }
+.sbs-root .scene-indicator-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #d5d5d5;
+  transition: background 0.3s, transform 0.3s;
+}
+.sbs-root .scene-indicator-dot.active {
+  background: #1f6fff; transform: scale(1.6);
+}
+.sbs-root .scene-indicator-panel-gap { height: 10px; }
+
+.sbs-root .progress-bar {
+  position: absolute; top: 0; left: 0;
+  height: 3px; background: #1f6fff;
+  width: 0%; transition: width 0.1s linear; z-index: 5;
+}
+
+/* Chapter heading swap: single → combined with selector.
+   Opacity transitions over the zoom-out animation. */
+.sbs-root #chapterHeadingSingle, .sbs-root #chapterHeadingCombined {
+  transition: opacity 0.5s ease-out;
+}
+/* Selector hit zones only clickable while the combined heading is showing. */
+.sbs-root #chapterHeadingCombined { pointer-events: none; }
+.sbs-root #chapterHeadingCombined.active { pointer-events: auto; }
+.sbs-root .officeHit:hover ~ #officeHighlight { /* no-op, just establishes cursor */ }
+
+/* ===== Popup overlays =====
+   position:fixed (not absolute) so they cover the viewport even after
+   enterStaticMode() unsticks the stage and collapses #scrolly height.
+   z-index: 2147483646 to beat common WP theme header/nav z-indexes. */
+.sbs-root .popup-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45); z-index: 2147483646;
+  justify-content: center; align-items: center;
+  padding: 1rem; overflow-y: auto;
+}
+.sbs-root .popup-overlay.visible { display: flex; }
+.sbs-root .popup-content {
+  background: #fff; border-radius: 14px; padding: 18px 22px 20px;
+  max-width: 640px; width: 92%;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #2a2a2a;
+}
+.sbs-root .popup-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.sbs-root .popup-header h3 { margin: 0; font-size: 18px; color: #222; font-weight: 700; }
+.sbs-root .popup-x {
+  color: #d00; font-size: 30px; cursor: pointer; font-weight: 700;
+  line-height: 1; padding: 0 4px; user-select: none;
+}
+.sbs-root .popup-x:hover { color: #a00; }
+.sbs-root .popup-content table { width: 100%; border-collapse: collapse; }
+.sbs-root .popup-content th {
+  background: #f0f0f0; font-weight: 700; font-size: 12px;
+  padding: 7px 8px; text-align: center; border-bottom: 2px solid #ccc; color: #333;
+}
+.sbs-root .popup-content td {
+  padding: 6px 8px; text-align: center; font-size: 13px;
+  border-bottom: 1px solid #eee; color: #444;
+}
+.sbs-root .popup-content td.office-name { font-weight: 600; text-align: left; }
+.sbs-root .popup-content td.max-val { font-weight: 700; color: #0a8f3c; }
+.sbs-root .popup-content tr:last-child td { border-bottom: none; }
+.sbs-root .popup-content .row-top td { border-top: 2px solid #ddd; }
+
+/* Body styles for non-table popups. */
+.sbs-root .popup-body p { font-size: 14px; line-height: 1.55; color: #333; margin-bottom: 12px; }
+.sbs-root .popup-body ul { font-size: 14px; line-height: 1.6; color: #333; margin: 0 0 12px; padding-left: 22px; }
+.sbs-root .popup-body ul li { margin-bottom: 4px; }
+
+/* ===== Prohibited Contributions popup — custom visual dressing =====
+   - Red accent on the header (matches the red info-box)
+   - Custom "×" markers for each prohibited entity, no default bullets
+   - The final note lives in a yellow callout box so it reads as
+     importantly-separate from the list instead of de-emphasized.
+================================================================= */
+.sbs-root .prohibited-header {
+  border-bottom: 3px solid #d92b2b;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.sbs-root .prohibited-header h3 { color: #d92b2b; }
+.sbs-root .prohibited-intro {
+  font-size: 14px; color: #333; margin-bottom: 10px;
+}
+.sbs-root .prohibited-intro strong { color: #d92b2b; }
+.sbs-root .prohibited-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 0 16px !important;
+}
+.sbs-root .prohibited-list li {
+  position: relative;
+  padding: 8px 0 8px 32px;
+  font-size: 14px;
+  color: #222;
+  border-bottom: 1px solid #f3f3f3;
+  line-height: 1.4;
+  margin-bottom: 0;
+}
+.sbs-root .prohibited-list li:last-child { border-bottom: none; }
+.sbs-root .prohibited-list li::before {
+  content: "\00d7";  /* × */
+  position: absolute;
+  left: 6px; top: 50%;
+  transform: translateY(-50%);
+  color: #d92b2b;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.sbs-root .prohibited-callout {
+  background: #fffdf4;
+  border: 2px solid #c9a227;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+.sbs-root .prohibited-callout-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a6c16;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.sbs-root .prohibited-callout-text {
+  font-size: 14px;
+  color: #222;
+  line-height: 1.5;
+  margin: 0;
+}
+.sbs-root .prohibited-callout-text strong {
+  color: #0a8f3c;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ===== Mobile controls (HTML versions of selector + info cards) ===== */
+.sbs-root #mobileControls { display: none; }
+
+/* Hide the scene-indicator rail on narrow screens — it overlaps content and
+   adds no value when the diagram already fills the viewport. Matched to
+   the mobile-layout threshold (768px) so the rail never lingers during
+   the narrow-desktop/tablet gap. */
+@media (max-width: 768px) {
+  .sbs-root .scene-indicator { display: none; }
+}
+
+/* On mobile, hide the four SVG info boxes (qualify / max-contrib /
+   formula / prohibited). The mobile HTML cards below the graphic carry
+   the same information and are actually readable. The SVG office
+   selector stays visible on mobile — it sits under the "Montgomery
+   County Local Public Financing" heading at the top of the graphic.
+   !important because JS sets opacity inline when zoom-out completes. */
+@media (max-width: 768px) {
+  .sbs-root #yellowInfoBoxes {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+/* ===== Mobile overrides =====
+   Fires at window width <= 768px. Works when you resize the desktop window
+   down to phone size too — there's no separate user-agent check, it's pure
+   viewport width.
+   NOTE for WP embedding: if the piece is placed inside a narrow WP content
+   column on a desktop browser, the @media rule will NOT fire (it's keyed to
+   window width, not container width). For container-query-based responsive,
+   see the commented block at the end of this <style>. */
+@media (max-width: 768px) {
+  /* 100% (not 100vw) to avoid horizontal overflow from scrollbar width. */
+  .sbs-root .svg-wrapper { width: 100%; height: 96%; height: 96dvh; }
+  .sbs-root .sticky-stage { align-items: flex-start; }
+  .sbs-root .intro h1 { font-size: 1.6rem; }
+  /* Let the intro/outro p inherit the clamp() from the base rule — at
+     mobile width it's already 1rem, which is more legible than the old
+     0.95rem override we had here. */
+  .sbs-root .outro h2 { font-size: 1.5rem; }
+
+  /* Mobile controls — shown after combined view is reached */
+  .sbs-root #mobileControls.visible {
+    display: block; padding: 2px 16px 14px; background: #fff;
+  }
+  /* Subtle "Choose Office" hint above the selector — tells the reader the
+     pill is tappable/interactive without shouting. */
+  .sbs-root .mobile-selector-caption {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: #999; text-align: center; margin-bottom: 6px;
+    font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  }
+  .sbs-root .mobile-selector {
+    /* Neutral gray pill (matches the SVG selector's charcoal outline). */
+    display: flex; border: 3px solid #434343; border-radius: 28px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .sbs-root .mobile-selector button {
+    flex: 1; padding: 13px 6px; border: none; background: #fff;
+    font-size: 13px; font-family: 'Helvetica Neue', Helvetica, sans-serif;
+    color: #434343; cursor: pointer; line-height: 1.2; text-align: center;
+  }
+  .sbs-root .mobile-selector button + button { border-left: 3px solid #434343; }
+  .sbs-root .mobile-selector button.sel-active { background: #d7d7d7; font-weight: 600; }
+  .sbs-root .mobile-info-cards { display: flex; flex-direction: column; gap: 10px; }
+  .sbs-root .mobile-card {
+    background: #fff; border-radius: 14px;
+    padding: 14px 18px; font-size: 15px; line-height: 1.4; text-align: center;
+    font-family: 'Helvetica Neue', Helvetica, sans-serif; color: #434343;
+  }
+  /* Differentiated weights:
+     - BLUE / GREEN (link cards): lighter 2px border — they're tappable links,
+       they shouldn't feel as heavy as the data-display card.
+     - YELLOW (data card): keeps the full 3px border + slight tinted bg so it
+       reads as a prominent fact rather than an action. */
+  .sbs-root .mobile-card-blue   { border: 2px solid #1f6fff; }
+  .sbs-root .mobile-card-green  { border: 2px solid #0a8f3c; }
+  .sbs-root .mobile-card-red    { border: 2px solid #d92b2b; }
+  .sbs-root .mobile-card-yellow {
+    border: 3px solid #c9a227;
+    background: #fffdf4;
+    padding: 16px 18px;
+  }
+  /* Dollar amount inside the yellow card: green + bold, matching the SVG
+     box's "received: $870,170" treatment. */
+  .sbs-root .mobile-card-yellow .mc-amount {
+    color: #0a8f3c; white-space: nowrap;
+  }
+  .sbs-root .mobile-card[data-action] { cursor: pointer; }
+  .sbs-root .mobile-card[data-action]:active { background: #f3f3f3; }
+
+  /* Full-screen popups on mobile */
+  .sbs-root .popup-content {
+    max-width: 100%; width: 100%; border-radius: 0;
+    max-height: 100vh; padding: 16px 14px 20px;
+  }
+  .sbs-root .popup-content th { font-size: 11px; padding: 6px 5px; }
+  .sbs-root .popup-content td { font-size: 12px; padding: 5px 5px; }
+}
+
+/* ============================================================================
+   OPTIONAL: container-query responsive (for WordPress narrow-column embeds)
+   ----------------------------------------------------------------------------
+   If you want the mobile layout to kick in based on the container width
+   (instead of the window width), uncomment the block below AND add
+   `container-type: inline-size` to the `.sbs-root` rule at the top. This
+   makes the piece adapt to a narrow WP content column even on a wide
+   desktop browser. Sticky positioning still works inside a container-query
+   element in all modern browsers.
+
+   @container (max-width: 768px) {
+     .sbs-root .svg-wrapper { width: 100%; height: 96dvh; }
+     .sbs-root .sticky-stage { align-items: flex-start; }
+     ... duplicate the @media rules ...
+   }
+   ============================================================================ */
+</style>
+</head>
+<body>
+
+<!-- ============================================================================
+  WORDPRESS DROP-IN:
+  -----------------------------------------------------------------------------
+  Copy everything from this opening <div class="sbs-root"> to its closing </div>
+  (just before </body>) and paste into a WP "Custom HTML" block. Also copy the
+  entire <style>...</style> block from <head> and paste it into the same block
+  above the markup (or into a site-wide CSS file). The <script>...</script>
+  block at the bottom goes into the same Custom HTML block.
+  All CSS is scoped under `.sbs-root` so it cannot affect your WP theme.
+  All JS scopes its DOM queries with `#svgWrap` / `#scrolly` IDs — these only
+  need to be unique on the page, which they are.
+============================================================================ -->
+<div class="sbs-root">
+
+<section class="intro">
+  <h1>One big donor, or many small ones?</h1>
+  <p>Publicly funded elections match small donations at a multiple &mdash; and that changes the math in a way most people don't expect. Scroll to see it unfold.</p>
+  <div class="scroll-cue">&darr;</div>
+</section>
+
+<div id="scrolly">
+  <div class="sticky-stage">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="svg-wrapper" id="svgWrap">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 2606" style="width:100%;height:100%" role="img" aria-labelledby="sbsSvgTitle sbsSvgDesc">
+  <!-- Accessibility: screen readers get a synopsis of the whole graphic.
+       The scroll-driven reveal is a visual enhancement only; the title
+       and description below describe the final state so an assistive-tech
+       user understands the takeaway without needing to experience the
+       animation. -->
+  <title id="sbsSvgTitle">How small-donor matching works in Montgomery County, Maryland</title>
+  <desc id="sbsSvgDesc">Diagram illustrating Montgomery County's small-donor matching-fund program. On the first $50 a donor contributes, the county adds $7 for every $1 (a 7-to-1 match) to a publicly-funded County Executive candidate; on the next $50 the match drops to 4-to-1. One $100 donor therefore delivers $650 to a candidate. Ten $10 donors each trigger only the top-tier 7-to-1 match, so each $10 becomes $80 to the candidate — $800 total across ten donors, more than the single $100 donor's $650.</desc>
+  <defs>
+    <clipPath id="clip-Web_1920_1">
+      <!-- Extended from the original (0,0,1920,2606) so the new chapter heading
+           and office selector, which sit above y=0, aren't clipped away. -->
+      <rect x="-400" y="-400" width="2720" height="3406"/>
+    </clipPath>
+  </defs>
+  <g id="Web_1920_1" data-name="Web 1920 – 1" clip-path="url(#clip-Web_1920_1)">
+    <rect width="1920" height="2606" fill="#fff"/>
+    <!-- Scene_1J's original Figma export used transform="translate(171.5 -1121)".
+         The 171.5 horizontal offset left Scene 1's columns sitting 171.5 units
+         right of Scene 2's columns in the combined view — the blue/yellow/green
+         stacks didn't line up across the two scenes. Dropping the x-shift
+         aligns the Scene 1 boxes (now at x=301.5, 673.5, 1166) with the
+         matching Scene 2 boxes at the same x values. The y shift (-1121)
+         stays as-is; it's just stacking panel 1 above panel 2 vertically. -->
+    <g id="Scene_1J" data-name="Scene 1J" transform="translate(0 -1121)">
+      <!-- ===== Chapter heading + office selector =====================
+           These live inside Scene_1J so they sit inside panel-1's viewBox,
+           but data-no-reveal takes them out of the scroll-driven fade system;
+           they're managed explicitly by JS (see chapter_ui state below).
+           Local coords: Scene_1J has transform translate(171.5, -1121), so
+           local y 1020 = root y -101 (above the diagram content at y=105).
+      -->
+      <g id="chapterUI" data-no-reveal>
+        <!-- Pre-combined heading: visible ONLY in panel-1 view. Fades out
+             when the zoom-out to combined view fires, so the super-title
+             disappears along with the "Montgomery County Executive:"
+             chapter heading. -->
+        <g id="chapterHeadingSingle">
+          <!-- Super-title — intentionally LARGE to fill the otherwise empty
+               margin above the chapter heading during scene-1 reveal. Tucked
+               inside chapterHeadingSingle so it fades out with it at zoom-out;
+               the combined view doesn't carry this framing text. -->
+          <text id="superTitle" transform="translate(100 970)" fill="#555" font-size="56" font-family="HelveticaNeue, Helvetica Neue" font-weight="300"><tspan x="0" y="0">How small donor matching works</tspan><tspan x="0" y="62">in Montgomery County, MD</tspan></text>
+          <text id="chapterTitleSingle" transform="translate(100 1160)" fill="#434343" font-size="55" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Montgomery County Executive:</tspan></text>
+        </g>
+        <!-- Combined-view heading + 3-option slot selector; fades in at zoom-out.
+             Font size dropped to 48px here because the full title is long
+             ("Montgomery County Local Public Financing"). At 55px it would
+             crowd or overflow; 48px keeps it within the panel at both sizes. -->
+        <g id="chapterHeadingCombined" opacity="0">
+          <text transform="translate(100 1070)" fill="#434343" font-size="48" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Montgomery County Local Public Financing</tspan></text>
+          <!-- Slot-shaped selector: straight top/bottom, semicircle ends, 3 sections.
+               Width 1200 = 3 × 400 section. Height 115 with rx 57 for proper semicircle ends. -->
+          <g id="officeSelector" transform="translate(100 1090)">
+            <!-- Selected-section highlight. Shape updated by JS to match the pill edges. -->
+            <path id="officeHighlight" d="M 57 0 H 400 V 115 H 57 A 57 57.5 0 0 1 57 0 Z" fill="#d7d7d7"/>
+            <!-- Pill outline -->
+            <rect x="0" y="0" width="1200" height="115" rx="57" ry="57" fill="none" stroke="#434343" stroke-width="3"/>
+            <!-- Dividers between sections -->
+            <line x1="400" y1="0" x2="400" y2="115" stroke="#434343" stroke-width="3"/>
+            <line x1="800" y1="0" x2="800" y2="115" stroke="#434343" stroke-width="3"/>
+            <!-- Section labels -->
+            <text x="200" y="70" text-anchor="middle" font-size="33" font-family="HelveticaNeue, Helvetica Neue" fill="#434343">County Executive</text>
+            <text x="600" y="70" text-anchor="middle" font-size="33" font-family="HelveticaNeue, Helvetica Neue" fill="#434343">Council – At Large</text>
+            <text x="1000" y="70" text-anchor="middle" font-size="33" font-family="HelveticaNeue, Helvetica Neue" fill="#434343">Council – District</text>
+            <!-- Click zones (transparent; cursor:pointer). LAST so they're topmost. -->
+            <rect class="officeHit" data-office="executive" x="0"   y="0" width="400" height="115" fill="transparent" style="cursor:pointer"/>
+            <rect class="officeHit" data-office="at-large"  x="400" y="0" width="400" height="115" fill="transparent" style="cursor:pointer"/>
+            <rect class="officeHit" data-office="district"  x="800" y="0" width="400" height="115" fill="transparent" style="cursor:pointer"/>
+          </g>
+        </g>
+      </g>
+      <!-- ===== end chapter UI =========================================== -->
+      <rect id="Rectangle_17" data-name="Rectangle 17" width="171" height="136" rx="27" transform="translate(300 2015)" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+      <text id="_100" data-name="$100" transform="translate(385.5 2101.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+      <!-- Scene-1 "Becomes" arrow: chunky block-arrow path scaled 1.2× for
+           extra visual weight. Geometric center at (819, 2083), the midpoint
+           between the $100 box right edge (x=471) and the $650 box left edge
+           (x=1167), vertically centered between the two boxes. -->
+      <g id="_-_" data-name="becomes arrow" transform="translate(819 2083) scale(1.2)">
+        <path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/>
+      </g>
+      <!-- "Becomes" label above the arrow, centered on the arrow's x-axis. -->
+      <text id="Becomes" transform="translate(819 2020)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
+      <text id="Donation" transform="translate(385 1988)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-60.57" y="0">Donation</tspan></text>
+      <g id="Scene_1I" data-name="Scene 1I">
+        <line id="Line_4" data-name="Line 4" y2="634.112" transform="translate(229.5 1226.112)" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="5"/>
+        <line id="Line_5" data-name="Line 5" y2="634" transform="translate(541 1226.112)" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="5"/>
+        <line id="Line_6" data-name="Line 6" x2="451" y2="2" transform="translate(126 1919.5)" fill="none" stroke="#000" stroke-width="10"/>
+        <text id="_" data-name="+" transform="translate(137.5 1870.5)" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">+</tspan></text>
+        <g id="Scene_1H" data-name="Scene 1H">
+          <!-- Grand total for the candidate. Stays green from the start (money = green
+               = blue donation + yellow match). Old 'border turns green at 1I' cue
+               disabled by changing id away from 'at_scene_...' so the stroke-cue
+               parser ignores it. -->
+          <rect id="grandTotalBox_scene1" data-name="$650 grand total scene 1" width="171" height="136" rx="27" transform="translate(1167 2041)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+          <text id="_650" data-name="$650" transform="translate(1252.5 2127.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+          <text id="In_total_for_the_candidate" data-name="In total for 
+the candidate" transform="translate(1253 1988)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
+          <g id="Scene_1G" data-name="Scene 1G">
+            <line id="Line_3" data-name="Line 3" x2="451" y2="2" transform="translate(1000 1919.5)" fill="none" stroke="#000" stroke-width="10"/>
+            <text id="_2" data-name="+" transform="translate(1011.5 1870.5)" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">+</tspan></text>
+            <line id="Line_1" data-name="Line 1" y2="634.112" transform="translate(1127.134 1230.888)" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="5"/>
+            <line id="Line_2" data-name="Line 2" y2="634" transform="translate(1375 1231)" fill="none" stroke="rgba(0,0,0,0.4)" stroke-width="5"/>
+            <g id="Scene_1F" data-name="Scene 1F">
+              <g id="Scene_1E" data-name="Scene 1E">
+                <g id="Scene_1D" data-name="Scene 1D">
+                  <g id="Scene_1C" data-name="Scene 1C">
+                    <g id="Scene_1B" data-name="Scene 1B">
+                      <g id="Scene_1A" data-name="Scene 1A">
+                        <rect id="Rectangle_10" data-name="Rectangle 10" width="171" height="136" rx="27" transform="translate(301.5 1395.5)" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+                        <text id="_50" data-name="$50" transform="translate(387 1482)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
+                        <text id="Donation_to_publicly_funded_candidate" data-name="Donation to publicly
+funded candidate" transform="translate(395 1325)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-138.09" y="0">Donation to publicly </tspan><tspan x="-117.54" y="36">funded candidate</tspan></text>
+                      </g>
+                      <rect id="Rectangle_11" data-name="Rectangle 11" width="171" height="136" rx="27" transform="translate(673.5 1395.5)" fill="#fff" stroke="#c9a227" stroke-linejoin="round" stroke-width="15"/>
+                      <text id="_350" data-name="$350" transform="translate(759 1482)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
+                      <text id="County_Matching_7_x_50" data-name="County Matching
+7 x $50" transform="translate(759 1325)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-115.035" y="0">County Matching</tspan><tspan x="-49.47" y="36">7 x </tspan><tspan y="36" fill="#000">$50</tspan></text>
+                    </g>
+                    <text id="until_scene_1H_this_element_is_100_opacity" data-name="until scene 1H this element is 100% opacity" transform="translate(544 1490.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
+                    <text id="until_scene_1H_this_element_is_100_opacity-2" data-name="until scene 1H this element is 100% opacity" transform="translate(918 1490.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+                    <!-- "Candidate gets" tier-1 header. Smaller/lighter than
+                         originally spec'd so the math stays the hero; these
+                         labels now read as quiet column captions. -->
+                    <text id="candidateGetsHdr_scene1_tier1" data-name="Candidate gets" transform="translate(1251.5 1362)" fill="#888" font-size="24" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">Candidate gets</tspan></text>
+                    <rect id="Rectangle_12" data-name="Rectangle 12" width="171" height="136" rx="27" transform="translate(1166 1387)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+                    <text id="_400" data-name="$400" transform="translate(1251.5 1473.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
+                  </g>
+                  <rect id="Rectangle_13" data-name="Rectangle 13" width="171" height="136" rx="27" transform="translate(301.5 1705.5)" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+                  <text id="_50-2" data-name="$50" transform="translate(387 1792)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
+                  <text id="Second_donation_by_same_donor" data-name="Second donation 
+by same donor" transform="translate(395 1635)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-118.92" y="0">Second donation </tspan><tspan x="-100.59" y="36">by same donor</tspan></text>
+                </g>
+                <rect id="Rectangle_14" data-name="Rectangle 14" width="171" height="136" rx="27" transform="translate(673.5 1705.5)" fill="#fff" stroke="#c9a227" stroke-linejoin="round" stroke-width="15"/>
+                <text id="_200" data-name="$200" transform="translate(759 1792)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$200</tspan></text>
+                <text id="County_Matching_4_x_50" data-name="County Matching
+4 x $50" transform="translate(759 1635)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-115.035" y="0">County Matching</tspan><tspan x="-49.47" y="36">4 x </tspan><tspan y="36" fill="#000">$50</tspan></text>
+              </g>
+              <text id="until_scene_1H_this_element_is_100_opacity-3" data-name="until scene 1H this element is 100% opacity" transform="translate(544 1800.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
+              <text id="until_scene_1H_this_element_is_100_opacity-4" data-name="until scene 1H this element is 100% opacity" transform="translate(918 1800.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+              <!-- "Candidate gets" tier-2 header. Same quiet-caption treatment
+                   as the tier-1 version above. -->
+              <text id="candidateGetsHdr_scene1_tier2" data-name="Candidate gets" transform="translate(1251.5 1672)" fill="#888" font-size="24" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">Candidate gets</tspan></text>
+              <rect id="Rectangle_15" data-name="Rectangle 15" width="171" height="136" rx="27" transform="translate(1166 1697)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+              <text id="_250" data-name="$250" transform="translate(1251.5 1783.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$250</tspan></text>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Scene_2K" data-name="Scene 2K">
+      <!-- "One $100 donor" box: GREEN. $650 here is what the candidate
+           actually receives from one $100 donor after tiered matching — the
+           same "total to candidate" semantic that green has carried since
+           Scene 1. The label above ("One $100 donor") uses a blue emphasis
+           on "$100" to identify the donor; the BOX is the candidate total. -->
+      <rect id="Rectangle_36" data-name="Rectangle 36" width="171" height="136" rx="27" transform="translate(301.5 2337.5)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+      <text id="_650-2" data-name="$650" transform="translate(387 2424)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+      <text id="One_100_donor" data-name="One $100 donor" transform="translate(387 2308)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-108.945" y="0">One </tspan><tspan y="0" fill="#1f6fff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+      <text id="Ten_10_donors" data-name="Ten $10 donors" transform="translate(1251.5 2308)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-103.65" y="0">Ten </tspan><tspan y="0" fill="#1f6fff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10 </tspan><tspan y="0">donors</tspan></text>
+      <!-- Stroke dropped: at 85pt bold-condensed the weight alone carries
+           the glyph; the extra 1.5px outline was both redundant and fuzzy
+           at small render sizes (mobile). -->
+      <text id="vs" transform="translate(773 2436.5)" fill="#a0a0a0" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+      <g id="Scene_2I" data-name="Scene 2I">
+        <!-- "Ten $10 donors → $800" grand total: green (money, the winning side). -->
+        <rect id="Rectangle_35" data-name="Rectangle 35" width="171" height="136" rx="27" transform="translate(1166 2334.5)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+        <text id="_800" data-name="$800" transform="translate(1251.5 2421)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+        <g id="Scene_2H" data-name="Scene 2H">
+          <!-- Underline aligned to the "× 10 People" text width (from x≈1008
+               at the × operator to x≈1442 at the end of "People") instead of
+               trailing off 160 units past the right edge of the $80 box into
+               empty space, as in the original. The "×" operator also drops
+               its 1.5px stroke — the 85pt glyph weight stands on its own. -->
+          <line id="Line_8" data-name="Line 8" x2="440" y2="2" transform="translate(1003 2244.5)" fill="none" stroke="#000" stroke-width="10"/>
+          <text id="x" transform="translate(1008.5 2188.5)" font-size="85" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
+          <text id="_10_People" data-name="10 People" transform="translate(1273 2182.5)" fill="#434343" font-size="75" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-168.787" y="0">10 People</tspan></text>
+          <g id="Scene_2G" data-name="Scene 2G">
+            <text id="until_scene_2H_this_element_is_100_opacity" data-name="until scene 2H this element is 100% opacity" transform="translate(544 2001.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+            <text id="until_scene_2H_this_element_is_100_opacity-2" data-name="until scene 2H this element is 100% opacity" transform="translate(918 2001.5)" fill="#a0a0a0" stroke="#000" stroke-width="1.5" font-size="85" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+            <!-- "Candidate gets" scene-2 per-donor header. Quiet-caption
+                 treatment to match scene-1. -->
+            <text id="candidateGetsHdr_scene2" data-name="Candidate gets" transform="translate(1251.5 1876)" fill="#888" font-size="24" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">Candidate gets</tspan></text>
+            <rect id="Rectangle_32" data-name="Rectangle 32" width="171" height="136" rx="27" transform="translate(1166 1906.5)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+            <text id="_80" data-name="$80" transform="translate(1251.5 1993)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
+            <g id="Scene_2F" data-name="Scene 2F">
+              <rect id="Rectangle_31" data-name="Rectangle 31" width="171" height="136" rx="27" transform="translate(673.5 1906.5)" fill="#fff" stroke="#c9a227" stroke-linejoin="round" stroke-width="15"/>
+              <text id="_70" data-name="$70" transform="translate(759 1993)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$70</tspan></text>
+              <text id="County_Matching_7_x_10" data-name="County Matching
+7 x $10" transform="translate(759 1836)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-115.035" y="0">County Matching</tspan><tspan x="-49.47" y="36">7 x </tspan><tspan y="36" fill="#000">$10</tspan></text>
+              <g id="Scene_2E" data-name="Scene 2E">
+                <rect id="Rectangle_30" data-name="Rectangle 30" width="171" height="136" rx="27" transform="translate(301.5 1906.5)" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+                <text id="_10" data-name="$10" transform="translate(387 1993)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$10</tspan></text>
+                <text id="Donation_to_publicly_funded_candidate-2" data-name="Donation to publicly
+funded candidate" transform="translate(387 1836)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-138.09" y="0">Donation to publicly </tspan><tspan x="-117.54" y="36">funded candidate</tspan></text>
+                <g id="Scene_2D" data-name="Scene 2D">
+                  <!-- "In total for the candidate" $650: green from the start (money).
+                       Old "at_scene_2I turns orange" cue disabled by renaming the id
+                       so the stroke-cue parser no longer matches it. -->
+                  <rect id="inTotalBox_scene2" data-name="In total for the candidate $650" width="171" height="136" rx="27" transform="translate(1166 1545)" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+                  <text id="_650-3" data-name="$650" transform="translate(1251.5 1631.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                  <!-- Scene-2 recap arrow: chunky block-arrow path scaled
+                       1.2× for visual parity with Scene 1's Becomes arrow.
+                       The ID matches the opacity-cue pattern: until Scene_2H
+                       fires the cue lifts opacity to 1.0, after × 10 People
+                       it settles at the baked-in 0.3 so the new math takes
+                       focus. swapToCombinedHeading lifts it back to 1.0 for
+                       the combined view. -->
+                  <g id="until_scene_2H_this_element_is_100_opacity-5" data-name="recap arrow" transform="translate(819 1613) scale(1.2)" opacity="0.3">
+                    <path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/>
+                  </g>
+                  <text id="Becomes-2" data-name="Becomes" transform="translate(819 1550)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
+                  <!-- "Candidate gets" label above Scene 2's recap $650 box
+                       (replaces "In total for / the candidate" per user
+                       preference). Styled like the column label "One person
+                       giving" on the recap row's left side, so the two labels
+                       read as parallel column captions. -->
+                  <text id="In_total_for_the_candidate-2" data-name="Candidate gets" transform="translate(1251.5 1509)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">Candidate gets</tspan></text>
+                  <g id="Scene_2C" data-name="Scene 2C">
+                    <!-- "One person giving $100" box: blue (donation from person). -->
+                    <rect id="Rectangle_34" data-name="Rectangle 34" width="171" height="136" rx="27" transform="translate(301.5 1545)" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+                    <text id="_100-2" data-name="$100" transform="translate(387 1631.5)" text-anchor="middle" fill="#000" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+                    <text id="One_person_giving" data-name="One person giving" transform="translate(387 1509)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
+                    <g id="Scene_2B" data-name="Scene 2B">
+                      <g id="Scene_2A" data-name="Scene 2A">
+                        <!-- Split onto two lines so the headline doesn't
+                             overflow at mobile scale (at 375px viewport,
+                             the 1920-unit SVG width maps to ~0.2 px per unit,
+                             so a single-line 70-char headline at 50pt runs
+                             right off the screen). Bumped size slightly to
+                             60pt so it reads as a clear section heading.
+                             Moved up 30 units (y=1393 → 1363) to open up a
+                             real gap between the headline and the recap
+                             row's "One person giving" label below it. -->
+                        <text id="What_s_better:_One_person_giving_100_or_10_people_giving_10_dollars_each_" data-name="What’s better: One person giving $100 or 10 people giving $10 dollars each?" transform="translate(105 1363)" fill="#434343" font-size="60" font-family="HelveticaNeue, Helvetica Neue" font-weight="500"><tspan x="0" y="0">What’s better: One person giving $100,</tspan><tspan x="0" y="70">or 10 people giving $10 each?</tspan></text>
+                      </g>
+                      <!-- "ALREADY SEEN" — left-margin meta label indicating
+                           the recap row echoes Scene 1. Small-caps at 18pt
+                           with letter-spacing so it reads as a quiet section
+                           tag rather than a headline. 18pt (vs. the earlier
+                           22pt) leaves ~40 units of clear gap before the $100
+                           recap box starts at x=302, so the label no longer
+                           crowds the column. -->
+                      <g id="Scene_2A-2" data-name="Scene 2A">
+                        <text id="Already_Seen:" data-name="Already Seen:" transform="translate(100 1618)" fill="#888" font-size="18" font-family="HelveticaNeue, Helvetica Neue" font-weight="700" letter-spacing="0.1em"><tspan x="0" y="0">ALREADY SEEN</tspan></text>
+                      </g>
+
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <!-- ===== Info boxes (below scene 2) =======================================
+         Positioned as a single row of four boxes BELOW the scene-2 content.
+         They sit outside both Scene_1J and Scene_2K so they're invisible in
+         either standalone panel view (out of viewBox) but visible in the
+         combined view, which extends down to include them. Opacity 0
+         initially; shown by JS at zoom-out start.
+    -->
+    <!-- Back-to-top button. Positioned above and to the left of the blue
+         "How candidates qualify" box (x=100 y=2560). Lives outside
+         #yellowInfoBoxes so it stays visible on mobile (where the yellow
+         boxes are CSS-hidden). Fades in at swapToCombinedHeading along
+         with the info boxes. Click scrolls smoothly to the top of the
+         static diagram — it does NOT reverse any reveal. -->
+    <g id="backToTopGroup" opacity="0">
+      <g id="backToTopBtn" style="cursor:pointer">
+        <rect x="30" y="2485" width="210" height="55" rx="27" fill="#fff" stroke="#434343" stroke-width="3"/>
+        <text transform="translate(135 2522)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle" font-weight="500"><tspan x="0" y="0">&#x2191; Back to top</tspan></text>
+      </g>
+    </g>
+    <g id="yellowInfoBoxes" opacity="0">
+      <!-- Box 1 — BLUE: How candidates qualify (opens popup) -->
+      <g id="qualifyBoxSvg" style="cursor:pointer">
+        <rect x="100" y="2560" width="340" height="165" rx="27" fill="#fff" stroke="#1f6fff" stroke-linejoin="round" stroke-width="15"/>
+        <text transform="translate(270 2620)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">How candidates</tspan><tspan x="0" y="40">qualify &#x2192;</tspan></text>
+      </g>
+      <!-- Box 2 — YELLOW: max contribution — running sentence with office
+           name bolded and the dollar amount bolded in green. -->
+      <g id="maxContribBoxSvg">
+        <rect x="470" y="2560" width="400" height="165" rx="27" fill="#fff" stroke="#c9a227" stroke-linejoin="round" stroke-width="15"/>
+        <text transform="translate(670 2617)" fill="#434343" font-size="16" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">A <tspan font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700" id="maxContribOffice">County Executive</tspan> candidate</tspan><tspan x="0" y="22">stops getting matching dollars</tspan><tspan x="0" y="44">from the county after they&#x2019;ve</tspan><tspan x="0" y="66">received: <tspan font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700" fill="#0a8f3c" id="maxContribVal">$870,170</tspan></tspan></text>
+      </g>
+      <!-- Box 3 — GREEN: full match formula (opens popup) -->
+      <g id="matchFormulaBoxSvg" style="cursor:pointer">
+        <rect x="900" y="2560" width="340" height="165" rx="27" fill="#fff" stroke="#0a8f3c" stroke-linejoin="round" stroke-width="15"/>
+        <text transform="translate(1070 2620)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">See full match</tspan><tspan x="0" y="40">formula &#x2192;</tspan></text>
+      </g>
+      <!-- Box 4 — RED: prohibited contributions (opens popup) -->
+      <g id="prohibitedBoxSvg" style="cursor:pointer">
+        <rect x="1270" y="2560" width="340" height="165" rx="27" fill="#fff" stroke="#d92b2b" stroke-linejoin="round" stroke-width="15"/>
+        <text transform="translate(1440 2620)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle"><tspan x="0" y="0">Prohibited</tspan><tspan x="0" y="40">contributions &#x2192;</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
+
+    </div>
+
+    <!-- ===== Popup: full matching formula table ===== -->
+    <div class="popup-overlay" id="matchFormulaPopup">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3>County Matching Fund Formula</h3>
+          <span class="popup-x" onclick="this.closest('.popup-overlay').classList.remove('visible')">&times;</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>A candidate for:</th>
+              <th>Receives</th>
+              <th>For these donation levels</th>
+              <th>Until the county has given them</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-top"><td class="office-name" rowspan="4">County Executive</td><td>$7 dollars from the county to every $1 donated</td><td>First $50</td><td class="max-val" rowspan="4">$870,170<br>Per Election</td></tr>
+            <tr><td>$4 to $1</td><td>$51 – $100</td></tr>
+            <tr><td>$2 to $1</td><td>$101 – $150</td></tr>
+            <tr><td>No Match</td><td>$151 – $500</td></tr>
+            <tr class="row-top"><td class="office-name" rowspan="4">At-Large Councilmember</td><td>$5 to $1</td><td>First $50</td><td class="max-val" rowspan="4">$290,060<br>Per Election</td></tr>
+            <tr><td>$3 to $1</td><td>$51 – $100</td></tr>
+            <tr><td>$2 to $1</td><td>$101 – $150</td></tr>
+            <tr><td>No Match</td><td>$151 – $500</td></tr>
+            <tr class="row-top"><td class="office-name" rowspan="4">District Councilmember</td><td>$5 to $1</td><td>First $50</td><td class="max-val" rowspan="4">$145,030<br>Per Election</td></tr>
+            <tr><td>$3 to $1</td><td>$51 – $100</td></tr>
+            <tr><td>$2 to $1</td><td>$101 – $150</td></tr>
+            <tr><td>No Match</td><td>$151 – $500</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Popup: prohibited contributions ===== -->
+    <div class="popup-overlay" id="prohibitedPopup">
+      <div class="popup-content prohibited-content">
+        <div class="popup-header prohibited-header">
+          <h3>Prohibited Contributions</h3>
+          <span class="popup-x" onclick="this.closest('.popup-overlay').classList.remove('visible')">&times;</span>
+        </div>
+        <div class="popup-body">
+          <p class="prohibited-intro">Candidates voluntarily using the program <strong>cannot accept money from</strong>:</p>
+          <ul class="prohibited-list">
+            <li>Political Action Committees (PACs)</li>
+            <li>Corporations</li>
+            <li>Labor Unions</li>
+            <li>LLCs</li>
+            <li>State or local central committees of a political party</li>
+          </ul>
+          <div class="prohibited-callout">
+            <div class="prohibited-callout-label">Individual donor cap</div>
+            <div class="prohibited-callout-text">No single person may contribute more than <strong>$500</strong> to a candidate over the course of a campaign.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Popup: qualifying contributions table ===== -->
+    <div class="popup-overlay" id="qualifyPopup">
+      <div class="popup-content">
+        <div class="popup-header">
+          <h3>How Candidates Qualify for Matching Funds</h3>
+          <span class="popup-x" onclick="this.closest('.popup-overlay').classList.remove('visible')">&times;</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>A candidate for:</th>
+              <th>Receives a combined</th>
+              <th>From this many donors in their jurisdiction<br><span style="font-weight: 400; color: #666;">($5 min – $500 max per donor)</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-top"><td class="office-name">County Executive</td><td class="max-val">$40,000</td><td>500</td></tr>
+            <tr><td class="office-name">At-Large Councilmember</td><td class="max-val">$20,000</td><td>250</td></tr>
+            <tr><td class="office-name">District Councilmember</td><td class="max-val">$10,000</td><td>125</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="scene-indicator" id="indicator"></div>
+
+<!-- Mobile-friendly controls: full-width selector + info cards, shown after combined view on narrow screens -->
+<div id="mobileControls">
+  <div class="mobile-selector-caption">Choose Office</div>
+  <div class="mobile-selector">
+    <button class="mob-office sel-active" data-office="executive">County<br>Executive</button>
+    <button class="mob-office" data-office="at-large">Council –<br>At Large</button>
+    <button class="mob-office" data-office="district">Council –<br>District</button>
+  </div>
+  <div class="mobile-info-cards">
+    <!-- Blue card matches the blue SVG box (qualify). -->
+    <div class="mobile-card mobile-card-blue" data-action="qualify">How candidates qualify &rarr;</div>
+    <!-- Yellow card: running sentence with office name + $ amount emphasized.
+         Phrasing matches the SVG yellow box. The $ amount is bold green so
+         it visually links back to the "green = total money" motif. -->
+    <div class="mobile-card mobile-card-yellow" id="mobileMaxContrib">
+      A <strong id="mobileMaxContribOffice">County Executive</strong> candidate stops getting matching dollars from the county after they&rsquo;ve received: <strong class="mc-amount" id="mobileMaxContribVal">$870,170</strong>
+    </div>
+    <!-- Green card matches the green SVG box (full formula). -->
+    <div class="mobile-card mobile-card-green" data-action="formula">See full match formula &rarr;</div>
+    <!-- Red card matches the red SVG box (prohibited contributions). -->
+    <div class="mobile-card mobile-card-red" data-action="prohibited">Prohibited contributions &rarr;</div>
+  </div>
+</div>
+
+<section class="outro">
+  <h2>Small money, multiplied, wins.</h2>
+  <p>Under a 7&times; match, ten <span class="highlight">$10</span> donors send <span class="highlight">$800</span> to a candidate &mdash; more than a single <span class="highlight">$100</span> donor's <span class="highlight">$650</span>.</p>
+</section>
+
+</div><!-- /.sbs-root -->
+
+<script>
+(function () {
+  // --------------------------------------------------------------------------
+  // Boot gate — runs init AFTER layout & fonts are ready.
+  // Why: the script measures each panel's bounding box via SVG getBBox(). That
+  // call needs the SVG to have been laid out by the browser. When the page is
+  // opened via the file:// protocol (or on slow mobile), the inline <script>
+  // can run before layout is stable or before Helvetica Neue has loaded, which
+  // makes text glyphs measure as fallback-font widths and collapses the panel
+  // bbox to a tiny region. The camera then zooms ~4× too close — you see a
+  // single box filling the viewport.
+  // Fix: wait for window `load` (all resources) + document.fonts.ready (web-
+  // font metrics settled), then one rAF to guarantee the next layout pass has
+  // happened. Only THEN do we measure.
+  // --------------------------------------------------------------------------
+  function bootWhenReady() {
+    const fontsReady = (document.fonts && document.fonts.ready)
+                         ? document.fonts.ready
+                         : Promise.resolve();
+    Promise.resolve(fontsReady).then(() => {
+      requestAnimationFrame(() => requestAnimationFrame(boot));
+    });
+  }
+  if (document.readyState === 'complete') bootWhenReady();
+  else window.addEventListener('load', bootWhenReady);
+
+  function boot() {
+  const svg = document.querySelector('#svgWrap svg');
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  // ============================================================================
+  // OFFICE DATA BANK
+  // ----------------------------------------------------------------------------
+  // All mutable per-office numbers live here in one spot. If any of the derived
+  // dollar totals below are wrong, you can either:
+  //   (a) edit t1 / t2 below — the diagram numbers are computed from these, or
+  //   (b) override the computed values directly inside applyOffice() with a
+  //       hard-coded number if the arithmetic doesn't match the rules.
+  //
+  // Matching-ratio tiers, from the Montgomery County matching-funds schedule:
+  //   Tier 1 (first $50)     — ratio t1
+  //   Tier 2 ($51-$100)      — ratio t2
+  //   Tier 3 ($101-$150)     — ratio t3   (not shown in the diagram)
+  //   Tier 4 ($151-$500)     — 0          (no match above $150)
+  //
+  // maxPerElection is shown in the source image but isn't currently rendered
+  // anywhere in the diagram; it's kept here so it's easy to surface later.
+  // ============================================================================
+  const OFFICE_DATA = {
+    'executive': {
+      label:          'County Executive',
+      t1:             7,           // match on first $50
+      t2:             4,           // match on $51-$100
+      t3:             2,           // match on $101-$150 (not displayed)
+      maxPerElection: '$870,170',  // not displayed
+    },
+    'at-large': {
+      label:          'County Council – At Large',
+      t1:             5,
+      t2:             3,
+      t3:             2,
+      maxPerElection: '$290,060',
+    },
+    'district': {
+      label:          'County Council – District',
+      t1:             5,
+      t2:             3,
+      t3:             2,
+      maxPerElection: '$145,030',
+    },
+  };
+
+  // Helper: replace the text of an SVG <text> element (by id), preserving any
+  // existing <tspan> styling on the first tspan.
+  function setText(id, newText) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const tspan = el.querySelector('tspan');
+    if (tspan) tspan.textContent = newText;
+    else el.textContent = newText;
+  }
+  // Helper: replace a specific tspan (by index) inside a multi-line <text>.
+  function setTspan(id, tspanIdx, newText) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const tspans = el.querySelectorAll('tspan');
+    if (tspans[tspanIdx]) tspans[tspanIdx].textContent = newText;
+  }
+
+  // Apply an office selection: rewrite all diagram numbers + the selector
+  // highlight. Does NOT touch scroll position.
+  //
+  // Each line below maps one SVG element id → its value for the selected office.
+  // The comment shows what the element represents. Hand-edit the right-hand
+  // side if you need to force a specific number.
+  function applyOffice(key) {
+    const d = OFFICE_DATA[key];
+    if (!d) return;
+
+    // ---- Scene 1 (one $100 donor) ---------------------------------------
+    const m1 = 50 * d.t1;   // tier-1 match amount:      e.g. 7×$50 = $350
+    const m2 = 50 * d.t2;   // tier-2 match amount:      e.g. 4×$50 = $200
+    const s1 = 50 + m1;     // tier-1 subtotal:          $50 + match1
+    const s2 = 50 + m2;     // tier-2 subtotal:          $50 + match2
+    const total1 = s1 + s2; // donor grand total:        sum of subtotals
+
+    setText('_350',   '$' + m1);        // tier-1 match box
+    setText('_200',   '$' + m2);        // tier-2 match box
+    setText('_400',   '$' + s1);        // tier-1 subtotal box
+    setText('_250',   '$' + s2);        // tier-2 subtotal box
+    setText('_650',   '$' + total1);    // donor grand total (end of scene 1)
+    setText('_650-2', '$' + total1);    // donor grand total (scene 2 recap box)
+    setText('_650-3', '$' + total1);    // donor grand total (scene 2 top-left)
+
+    // "County Matching / 7 x $50" labels — rewrite the "N x " second tspan
+    setTspan('County_Matching_7_x_50', 1, d.t1 + ' x ');
+    setTspan('County_Matching_4_x_50', 1, d.t2 + ' x ');
+
+    // ---- Scene 2 (ten $10 donors) ---------------------------------------
+    const m10 = 10 * d.t1;       // per-donor match at tier-1 rate: e.g. 7×$10 = $70
+    const per = 10 + m10;        // per-donor after match:          $10 + match
+    const total10 = per * 10;    // ten donors combined:            perDonor × 10
+
+    setText('_70',  '$' + m10);          // per-donor match box
+    setText('_80',  '$' + per);          // per-donor total box
+    setText('_800', '$' + total10);      // ten-donor grand total
+
+    // "County Matching / 7 x $10"
+    setTspan('County_Matching_7_x_10', 1, d.t1 + ' x ');
+
+    // ---- Chapter heading (panel-1 view) updates so it matches the office
+    // the user picked even if they scroll back up to panel 1.
+    setText('chapterTitleSingle', 'Montgomery ' + d.label + ':');
+
+    // ---- Max public contribution yellow box ---
+    // Two interpolated values: the dollar amount AND the office name label.
+    const mcEl = document.getElementById('maxContribVal');
+    if (mcEl) mcEl.textContent = d.maxPerElection;
+    const mcOfficeEl = document.getElementById('maxContribOffice');
+    // Use the FULL label ("County Executive", "County Council – At Large",
+    // "County Council – District") — reads as "A County Executive campaign…"
+    // which is grammatically natural in context.
+    if (mcOfficeEl) mcOfficeEl.textContent = d.label;
+    // Mobile version too
+    const mcMob = document.getElementById('mobileMaxContribVal');
+    if (mcMob) mcMob.textContent = d.maxPerElection;
+    const mcMobOffice = document.getElementById('mobileMaxContribOffice');
+    if (mcMobOffice) mcMobOffice.textContent = d.label;
+
+    // ---- Mobile selector active state ---
+    document.querySelectorAll('.mob-office').forEach(btn => {
+      btn.classList.toggle('sel-active', btn.getAttribute('data-office') === key);
+    });
+
+    // ---- Outro text (below the story) — update $-references to match.
+    const outroEl = document.querySelector('.outro p');
+    if (outroEl) {
+      outroEl.innerHTML =
+        'Under a <span class="highlight">' + d.t1 + '&times;</span> match, ten ' +
+        '<span class="highlight">$10</span> donors send <span class="highlight">$' +
+        total10 + '</span> to a candidate &mdash; more than a single ' +
+        '<span class="highlight">$100</span> donor\u2019s <span class="highlight">$' +
+        total1 + '</span>.';
+    }
+
+    // ---- Selector highlight shape (path-based, no clipPath needed) --------
+    const highlight = document.getElementById('officeHighlight');
+    if (highlight) {
+      const h = 115, r = 57;
+      let d;
+      if (key === 'executive') {
+        // Left section: rounded left, straight right
+        d = 'M ' + r + ' 0 H 400 V ' + h + ' H ' + r + ' A ' + r + ' ' + (h/2) + ' 0 0 1 ' + r + ' 0 Z';
+      } else if (key === 'at-large') {
+        // Middle section: straight both sides
+        d = 'M 400 0 H 800 V ' + h + ' H 400 Z';
+      } else {
+        // Right section: straight left, rounded right
+        d = 'M 800 0 H ' + (1200 - r) + ' A ' + r + ' ' + (h/2) + ' 0 0 1 ' + (1200 - r) + ' ' + h + ' H 800 Z';
+      }
+      highlight.setAttribute('d', d);
+    }
+
+    // ---- Half-second fade-in of the entire image on selector switch -----
+    // Because At-Large and District share identical numbers, this ensures
+    // the viewer always gets visual feedback that the selection changed.
+    // Fades the SVG from opacity 0 (stage background, pure white) back
+    // up to 1 over 500ms.
+    //
+    // Fires whenever applyOffice is called with a DIFFERENT office than
+    // the previous one — doesn't rely on chapterSwapped, which can be
+    // false if the user clicks the selector before reaching the combined
+    // view. The initial applyOffice('executive') at boot sets _prevOffice
+    // so it doesn't trigger a fade on page load.
+    //
+    // Uses a forced reflow (offsetWidth read) to commit the "transition:none
+    // + opacity:0" state BEFORE applying the transition. rAF alone wasn't
+    // reliable — some browsers would batch both style changes and skip the
+    // animation entirely. Reading offsetWidth forces a synchronous layout,
+    // which guarantees the browser has recorded the starting opacity.
+    if (typeof _prevOffice !== 'undefined' && _prevOffice !== null && _prevOffice !== key) {
+      svg.style.transition = 'none';
+      svg.style.opacity = '0';
+      void svg.offsetWidth;
+      svg.style.transition = 'opacity 0.5s ease-out';
+      svg.style.opacity = '1';
+    }
+    _prevOffice = key;
+  }
+  let _prevOffice = null;
+
+  // Swap the scene-1 heading from "Montgomery County Executive:" to
+  // "Montgomery County" + the 3-option selector. Called once, when the user
+  // has scrolled far enough that the zoom-out to combined view is starting.
+  let chapterSwapped = false;
+  function swapToCombinedHeading() {
+    if (chapterSwapped) return;
+    chapterSwapped = true;
+    const single = document.getElementById('chapterHeadingSingle');
+    const combined = document.getElementById('chapterHeadingCombined');
+    if (single)   single.style.opacity = '0';
+    if (combined) {
+      combined.style.opacity = '1';
+      combined.classList.add('active'); // enables pointer-events for the hit rects
+    }
+    // Show the four info boxes (SVG group, positioned below scene 2)
+    const yBoxes = document.getElementById('yellowInfoBoxes');
+    if (yBoxes) {
+      yBoxes.style.transition = 'opacity 0.6s ease-out';
+      yBoxes.setAttribute('opacity', '1');
+      yBoxes.style.opacity = '1';
+    }
+    // Show the back-to-top button (sibling of yellowInfoBoxes, so it stays
+    // visible on mobile too).
+    const backTop = document.getElementById('backToTopGroup');
+    if (backTop) {
+      backTop.style.transition = 'opacity 0.6s ease-out';
+      backTop.setAttribute('opacity', '1');
+      backTop.style.opacity = '1';
+    }
+    // Fade the four vertical container lines in scene 1 (Line_1/Line_2 bracket
+    // the subtotal column, Line_4/Line_5 bracket the donation column). They
+    // do real work in panel-1 view — signalling "sum down the column" as a
+    // distinct operation — but in the combined view they re-assert a
+    // two-column container the layout has moved past. Dropping to 0.25
+    // keeps them as a ghost of the structure without competing with the
+    // horizontal flow.
+    ['Line_1', 'Line_2', 'Line_4', 'Line_5'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.transition = 'opacity 0.6s ease-out';
+        el.style.opacity = '0.25';
+      }
+    });
+    // Restore the scene-2 recap "Becomes" arrow to full opacity in the
+    // combined view. During the animation it was dimmed to 0.3 once the
+    // × 10 People moment fires (to de-emphasize the recap). But once the
+    // full image is visible, the recap carries its own weight again, so
+    // undo that dim. We also update the reveal/cue system so the next
+    // tick doesn't clobber it back to 0.3.
+    const recapArrowEl = document.getElementById('until_scene_2H_this_element_is_100_opacity-5');
+    if (recapArrowEl) {
+      recapArrowEl.style.transition = 'opacity 0.6s ease-out';
+      recapArrowEl.setAttribute('opacity', '1');
+      const cue = opacityCueByEl.get(recapArrowEl);
+      if (cue) cue.afterOpacity = 1;
+      const unit = revealUnits.find(u => u.el === recapArrowEl);
+      if (unit) unit.origOpacity = 1;
+    }
+  }
+
+  // Wire up click handlers on the 3 selector sections. Clicking swaps numbers
+  // in place — scroll position is untouched.
+  document.querySelectorAll('.officeHit').forEach(hit => {
+    hit.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const office = hit.getAttribute('data-office');
+      applyOffice(office);
+    });
+  });
+
+  // Wire up yellow info-box click handlers to open popup overlays.
+  document.getElementById('matchFormulaBoxSvg').addEventListener('click', () => {
+    document.getElementById('matchFormulaPopup').classList.add('visible');
+  });
+  document.getElementById('qualifyBoxSvg').addEventListener('click', () => {
+    document.getElementById('qualifyPopup').classList.add('visible');
+  });
+  document.getElementById('prohibitedBoxSvg').addEventListener('click', () => {
+    document.getElementById('prohibitedPopup').classList.add('visible');
+  });
+  // Back-to-top: smooth-scroll to the TOP OF THE PAGE. Does NOT reverse
+  // any reveal — reveals are monotonic and stay at their final state.
+  document.getElementById('backToTopBtn').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  // Clicking the dark backdrop also closes the popup.
+  document.querySelectorAll('.popup-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('visible');
+    });
+  });
+
+  // --- Mobile controls ---
+  // Wire up mobile selector buttons (same applyOffice call as SVG selector).
+  document.querySelectorAll('.mob-office').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyOffice(btn.getAttribute('data-office'));
+    });
+  });
+  // Wire up mobile info-card taps.
+  document.querySelectorAll('.mobile-card[data-action]').forEach(card => {
+    card.addEventListener('click', () => {
+      const action = card.getAttribute('data-action');
+      if (action === 'qualify')    document.getElementById('qualifyPopup').classList.add('visible');
+      if (action === 'formula')    document.getElementById('matchFormulaPopup').classList.add('visible');
+      if (action === 'prohibited') document.getElementById('prohibitedPopup').classList.add('visible');
+    });
+  });
+  // Show mobile controls when entering static mode (only on narrow screens).
+  function showMobileControls() {
+    if (window.innerWidth <= 768) {
+      const mc = document.getElementById('mobileControls');
+      if (mc) mc.classList.add('visible');
+    }
+  }
+
+  // Initialize with the default office.
+  applyOffice('executive');
+
+  const SCENE_RE = /^Scene_/;
+  const colorMap = {
+    green:  '#058000',
+    orange: '#ff4e00',
+    red:    'red',
+    blue:   '#2700ff'
+  };
+
+  // --- discover all scene groups, compute nesting depth, panel, direct elements ---
+  const allScenes = Array.from(svg.querySelectorAll('g[id^="Scene_"]'));
+
+  function sceneDepth(el) {
+    let d = 0, p = el.parentElement;
+    while (p) {
+      if (p.tagName && p.tagName.toLowerCase() === 'g' && SCENE_RE.test(p.id || '')) d++;
+      p = p.parentElement;
+    }
+    return d;
+  }
+
+  const sceneMeta = allScenes.map((g, docIdx) => {
+    const m = g.id.match(/^Scene_(\d+)/);
+    const panel = m ? m[1] : null;
+    const depth = sceneDepth(g);
+    const directEls = Array.from(g.children).filter(c => {
+      // Skip child scene groups — they'll be handled via their own slot.
+      if (c.tagName && c.tagName.toLowerCase() === 'g' && SCENE_RE.test(c.id || '')) return false;
+      // Skip anything explicitly opted out of the reveal system (chapter heading,
+      // office selector, etc.). These are controlled manually by JS.
+      if (c.hasAttribute && c.hasAttribute('data-no-reveal')) return false;
+      return true;
+    });
+    return { el: g, id: g.id, depth, panel, docIdx, directElements: directEls };
+  });
+
+  // Scene id -> metadata (for cue trigger lookup)
+  const sceneById = new Map(sceneMeta.map(s => [s.id, s]));
+
+  // Only scenes with at least one direct element get a reveal slot
+  const revealable = sceneMeta.filter(s => s.directElements.length > 0);
+
+  // Within each panel, sort: deepest first (innermost reveals first), ties by document order
+  function revealSort(a, b) {
+    if (a.depth !== b.depth) return b.depth - a.depth;
+    return a.docIdx - b.docIdx;
+  }
+  const panel1 = revealable.filter(s => s.panel === '1').sort(revealSort);
+  const panel2 = revealable.filter(s => s.panel === '2').sort(revealSort);
+
+  // Assign slot indices. Leave one slot gap between panels for camera pan.
+  panel1.forEach((s, i) => s.slotIdx = i);
+  const GAP = 1;
+  panel2.forEach((s, i) => s.slotIdx = panel1.length + GAP + i);
+  // Extra slots AFTER the last panel-2 reveal ("$650 vs $800" compare row)
+  // and BEFORE the zoom-out fires, so the reader has time to absorb the
+  // final conclusion. Each slot ≈ REVEAL_VH (45vh) of scroll, so 3 slots
+  // gives ~135vh of linger on the compare row before the camera pulls back.
+  const FINAL_HOLD_SLOTS = 3;
+  // One extra slot after the hold for the zoom-out animation range itself.
+  const ZOOM_OUT_SLOTS = 1;
+  const totalSlots = panel1.length + GAP + panel2.length + FINAL_HOLD_SLOTS + ZOOM_OUT_SLOTS;
+
+  // --- find panel outer groups and compute their viewBoxes in SVG-root coords ---
+  function rootSpaceBBox(el) {
+    // getBBox is in the element's parent user-space.
+    // element.getCTM() gives local → viewport-pixels (it includes the viewBox transform).
+    // svg.getCTM() gives root-user-space → viewport-pixels.
+    // So (svg.getCTM()^-1) * element.getCTM() = local → root-user-space.
+    let bb;
+    try { bb = el.getBBox(); } catch (_) {
+      // Firefox can throw if elements aren't laid out yet; return a fallback.
+      return { x: 0, y: 0, width: 0, height: 0 };
+    }
+    let elCTM, svgCTM;
+    try { elCTM = el.getCTM(); svgCTM = svg.getCTM(); } catch (_) { return bb; }
+    if (!elCTM) return bb;
+    const m = svgCTM ? svgCTM.inverse().multiply(elCTM) : elCTM;
+    const corners = [
+      {x: bb.x,              y: bb.y},
+      {x: bb.x + bb.width,   y: bb.y},
+      {x: bb.x,              y: bb.y + bb.height},
+      {x: bb.x + bb.width,   y: bb.y + bb.height}
+    ].map(p => ({
+      x: m.a * p.x + m.c * p.y + m.e,
+      y: m.b * p.x + m.d * p.y + m.f
+    }));
+    const xs = corners.map(p => p.x), ys = corners.map(p => p.y);
+    return {
+      x: Math.min.apply(null, xs),
+      y: Math.min.apply(null, ys),
+      width:  Math.max.apply(null, xs) - Math.min.apply(null, xs),
+      height: Math.max.apply(null, ys) - Math.min.apply(null, ys)
+    };
+  }
+
+  function paddedVB(bbox, padFrac) {
+    const pad = Math.max(bbox.width, bbox.height) * padFrac;
+    return { x: bbox.x - pad, y: bbox.y - pad, w: bbox.width + 2 * pad, h: bbox.height + 2 * pad };
+  }
+
+  function unionBBox(a, b) {
+    const x1 = Math.min(a.x, b.x);
+    const y1 = Math.min(a.y, b.y);
+    const x2 = Math.max(a.x + a.width, b.x + b.width);
+    const y2 = Math.max(a.y + a.height, b.y + b.height);
+    return { x: x1, y: y1, width: x2 - x1, height: y2 - y1 };
+  }
+
+  const panel1Outer = sceneMeta.find(s => s.panel === '1' && s.depth === 0);
+  const panel2Outer = sceneMeta.find(s => s.panel === '2' && s.depth === 0);
+
+  // --------------------------------------------------------------------------
+  // HARDCODED PANEL BOUNDING BOXES [build: v3, hardcoded-only]
+  // --------------------------------------------------------------------------
+  // These are the correct bboxes for Scene_1J and Scene_2K in root SVG
+  // user-space, derived directly from the authored geometry (rectangle
+  // transforms + stroke extents + chapter heading position) with a bit of
+  // slack on each edge so padding is forgiving.
+  //
+  // We do NOT measure with getBBox() anymore. That call has proven
+  // unreliable across browsers — it can return dimensions off by 10× even
+  // after window.load, document.fonts.ready, and multiple layout passes.
+  // Because the SVG content is authored and fixed, we don't need to measure
+  // it at runtime.
+  //
+  // If you edit the SVG to extend content past these ranges, update the
+  // numbers below.
+  // --------------------------------------------------------------------------
+  // Panel 1 and Panel 2 share the same horizontal bbox (x, width) so the
+  // camera pan between them is purely vertical — no lateral drift. A
+  // shared x=-45 sits at the midpoint of Scene 1's content center (718.5)
+  // and Scene 2's content center (~771, pushed right by the "× 10 People"
+  // text that extends to x=1442). Each panel ends up with ~150 units of
+  // horizontal padding on its leading edge; Scene 2's trailing edge is
+  // tighter (88 units past "× 10 People") but still clears.
+  //
+  // Panel 2's y moves up from 1340 → 1310 to accommodate the title
+  // ("What's better:") being shifted up 30 units for better bottom margin.
+  const panel1BB = { x: -45, y: -150, width: 1580, height: 1250 };
+  const panel2BB = { x: -45, y: 1310, width: 1580, height: 1200 };
+
+  // The 4 info boxes (qualify / max / formula / prohibited) live in a row
+  // below scene 2 at y=2560..2725 in root SVG user-space. They're only
+  // visible in the combined view, so we only include them in that bbox —
+  // panel 2 standalone should not be zoomed out to show them.
+  const infoBoxesBB = { x: 80, y: 2540, width: 1580, height: 200 };
+
+  // Tighter padding (was 0.06 / 0.04) so text fills more of the viewport,
+  // especially on desktop where content was looking small.
+  const panels = [
+    { num: 1, viewBox: paddedVB(panel1BB, 0.03) },
+    { num: 2, viewBox: paddedVB(panel2BB, 0.03) },
+    { num: 'combined', viewBox: paddedVB(unionBBox(unionBBox(panel1BB, panel2BB), infoBoxesBB), 0.02) }
+  ];
+
+  // --- parse ID-based cues on every element (including non-scene descendants) ---
+  // "at_scene_XX_..._turns_COLOR"   → stroke cue
+  // "until_scene_XX_this_element_is_NNN_?opacity" → opacity cue
+  const cueTargets = Array.from(svg.querySelectorAll('[id]'));
+  const strokeCues = [];
+  const opacityCues = [];
+
+  const strokeRe  = /at_scene_([A-Za-z0-9_-]+?)_(?:the_|this_)?border(?:_of_this_element)?_turns_([A-Za-z]+)/;
+  const opacityRe = /until_scene_([A-Za-z0-9_-]+?)_this_element_is_(\d+)_?opacity/;
+
+  cueTargets.forEach(el => {
+    const id = el.id || '';
+
+    const sm = id.match(strokeRe);
+    if (sm) {
+      const triggerScene = sceneById.get('Scene_' + sm[1]);
+      if (triggerScene) {
+        strokeCues.push({
+          el,
+          triggerSlot: triggerScene.slotIdx,
+          before: el.getAttribute('stroke'),
+          after:  colorMap[sm[2]] || sm[2]
+        });
+        el.setAttribute('data-orig-stroke', el.getAttribute('stroke') || '');
+      }
+    }
+
+    const om = id.match(opacityRe);
+    if (om) {
+      const triggerScene = sceneById.get('Scene_' + om[1]);
+      if (triggerScene) {
+        opacityCues.push({
+          el,
+          triggerSlot: triggerScene.slotIdx,
+          beforeOpacity: parseInt(om[2], 10) / 100,  // e.g. 100 → 1.0
+          // afterOpacity will be the element's baked-in opacity (e.g., 0.35)
+          afterOpacity: parseFloat(el.getAttribute('opacity') || '1')
+        });
+      }
+    }
+  });
+
+  // Quick lookup by element
+  const opacityCueByEl = new Map(opacityCues.map(c => [c.el, c]));
+
+  // --- for every direct element of every reveal-able scene, stash original opacity & hide ---
+  const revealUnits = [];
+  revealable.forEach(scene => {
+    scene.directElements.forEach(el => {
+      const origOp = parseFloat(el.getAttribute('opacity') || '1');
+      el.setAttribute('data-orig-opacity', String(origOp));
+      // Hide initially
+      el.setAttribute('opacity', '0');
+      revealUnits.push({ el, scene, origOpacity: origOp });
+    });
+  });
+  // Also hide direct elements that belong to non-revealable scenes (e.g. Scene_2B has no direct
+  // elements, but Scene_1J has direct elements we've already covered). Handled above.
+
+  // For direct elements that also have an opacity cue, their "after" value equals their baked-in
+  // opacity (origOpacity). The cue effectively means: between appearance and triggerSlot,
+  // overridden to beforeOpacity (usually 1.0); after triggerSlot, use origOpacity.
+
+  // --- scroll setup ---
+  const REVEAL_VH = 45;       // scroll distance per reveal slot
+  const TRANSITION_VH = 80;   // extra padding around panel boundary for camera pan
+  const HOLD_VH = 100;        // hold final frame for a beat before stage unsticks
+  const scrollyEl = document.getElementById('scrolly');
+
+  // Compute scrolly height in PIXELS rather than vh units. On mobile Safari,
+  // `vh` is based on the largest viewport (URL bar hidden), so using `Xvh` for
+  // a multi-thousand-vh scrolly makes the total scroll distance shift every
+  // time the URL bar toggles — which breaks the slot math and causes the
+  // sticky stage to "skip" as the user scrolls. Pixels computed from
+  // window.innerHeight are stable for the duration of the story.
+  function computeScrollyHeightPx() {
+    const vh = window.innerHeight;
+    // Active range = slots * REVEAL_VH + TRANSITION_VH.
+    // After that, hold the final frame for HOLD_VH.
+    // Add one stage-height more so sticky doesn't release during the hold.
+    const totalVh = totalSlots * REVEAL_VH + TRANSITION_VH + HOLD_VH + 100;
+    return Math.round((totalVh / 100) * vh);
+  }
+  scrollyEl.style.height = computeScrollyHeightPx() + 'px';
+
+  // --- scene indicator dots ---
+  const indicator = document.getElementById('indicator');
+  function makeDots(list) {
+    list.forEach(() => {
+      const dot = document.createElement('div');
+      dot.className = 'scene-indicator-dot';
+      indicator.appendChild(dot);
+    });
+  }
+  makeDots(panel1);
+  const gapEl = document.createElement('div');
+  gapEl.className = 'scene-indicator-panel-gap';
+  indicator.appendChild(gapEl);
+  makeDots(panel2);
+  const dots = Array.from(indicator.querySelectorAll('.scene-indicator-dot'));
+  const progressBar = document.getElementById('progressBar');
+
+  // --- helpers ---
+  function clamp01(x) { return x < 0 ? 0 : (x > 1 ? 1 : x); }
+  function smoothstep(t) { return t * t * (3 - 2 * t); }
+  function lerpVB(a, b, t) {
+    const e = smoothstep(t);
+    return {
+      x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e,
+      w: a.w + (b.w - a.w) * e, h: a.h + (b.h - a.h) * e
+    };
+  }
+  function applyVB(vb) {
+    svg.setAttribute('viewBox', vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+  }
+
+  // Initial state: camera on panel 1, nothing revealed
+  applyVB(panels[0].viewBox);
+
+  let lastActiveIdx = -1;
+  let maxSlot = 0;  // monotonic state — never regresses, so scrolling up doesn't un-reveal
+  let storyCompleted = false;
+
+  // --- Time-based zoom-out animation ---
+  // Why: the zoom-out from panel-2 to combined view spans only 1 slot (~45vh of scroll).
+  // A fast wheel/trackpad flick easily jumps scrollY by 1000+px in a single event, which
+  // means update() would run ONCE at the far end of the zoom range and applyVB() would
+  // snap the camera directly from panel-2 to combined in a single frame. That's the
+  // visible "the image jumps right before the end" effect.
+  // Fix: when the user first crosses into the zoom-out range, take over camera control
+  // with a time-based animation that plays the zoom-out smoothly regardless of how fast
+  // the user scrolled. When the animation completes, enterStaticMode collapses the
+  // layout.
+  let zoomAnimStart = 0;     // 0 means not animating; otherwise a performance.now() timestamp
+  let zoomAnimFromVB = null; // viewBox we started animating from
+  const ZOOM_ANIM_MS = 550;  // duration of the forced zoom-out animation
+
+  function enterStaticMode() {
+    if (storyCompleted) return;
+    storyCompleted = true;
+
+    // The story is done. Turn the scrolly from a multi-thousand-vh scroll-driven
+    // animation into a plain fixed-height block, so it behaves like a normal
+    // interactive graphic: scrolling down moves the image off screen and reveals
+    // whatever section comes next.
+    //
+    // ORDER MATTERS — every step below is invisible to the user individually:
+
+    // Step 1: Unstick the stage and switch to width-driven static mode.
+    // The stage grows to its natural width-driven height (much taller than
+    // one viewport on desktop). We DON'T snap scroll to the top here —
+    // the user was looking at the bottom of the combined view (vs-row,
+    // info boxes) during the zoom-out, and snapping to the top of the
+    // static diagram would be jarring. Instead (step 3) we scroll to the
+    // bottom of the stage so they keep seeing roughly the same content.
+    const stage = document.querySelector('.sticky-stage');
+    stage.style.position = 'static';
+    stage.classList.add('sbs-stage-static');
+
+    // Step 2: Collapse the scrolly to exactly the stage's natural height. No
+    // more thousands of vh of empty scroll space. Body = intro + stage + outro.
+    scrollyEl.style.height = 'auto';
+
+    // Step 3: After the stage has laid out at its new (taller) natural
+    // height, scroll to the TOP of the stage — that's where the Scene 1
+    // header ("Montgomery County Local Public Financing") lives, giving
+    // the reader the full-image overview from the top rather than dropping
+    // them at the bottom of the diagram. stage.offsetTop is relative to
+    // #scrolly (which is position:relative), so the real page position of
+    // the stage top is scrolly.offsetTop + stage.offsetTop.
+    requestAnimationFrame(() => {
+      const stageAbsTop = scrollyEl.offsetTop + stage.offsetTop;
+      window.scrollTo(0, stageAbsTop);
+    });
+
+    // UI chrome hides — no more progress/dots.
+    indicator.classList.remove('visible');
+    progressBar.style.opacity = '0';
+
+    // On mobile, show the full-width HTML controls below the graphic.
+    showMobileControls();
+  }
+
+  function update() {
+    // In static mode, everything is already baked to its final state; no scroll-driven
+    // updates are needed and we don't want to re-engage any reveal logic.
+    if (storyCompleted) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
+    const vh = window.innerHeight;
+    const scrollyTop = scrollyEl.offsetTop;
+
+    // Convert scrolly-relative pixel scroll into a slot position (0 .. totalSlots)
+    const revealRangePx = totalSlots * REVEAL_VH * (vh / 100);
+    const transitionPx = TRANSITION_VH * (vh / 100);
+
+    const relScroll = scrollY - scrollyTop;
+
+    // currentSlot is in [0, totalSlots]
+    let currentSlot;
+    if (relScroll <= 0) {
+      currentSlot = 0;
+    } else if (relScroll >= revealRangePx + transitionPx) {
+      currentSlot = totalSlots;
+    } else {
+      currentSlot = (relScroll / (revealRangePx + transitionPx)) * totalSlots;
+    }
+
+    // REVERSIBLE reveal: effectiveSlot tracks current scroll position directly,
+    // so scrolling back un-reveals elements in reverse (like scrubbing a video
+    // timeline). maxSlot is still tracked so the zoom-out → static-mode
+    // transition only fires once the user has actually reached the end,
+    // not on a partial scroll.
+    if (currentSlot > maxSlot) maxSlot = currentSlot;
+    const effectiveSlot = currentSlot;
+
+    // Show/hide the indicator rail based on current scroll (so it hides when user scrolls out of range)
+    const showRail = relScroll > -vh * 0.3 && relScroll < revealRangePx + transitionPx + vh * 0.2;
+    indicator.classList.toggle('visible', showRail);
+    progressBar.style.width = (clamp01(effectiveSlot / totalSlots) * 100) + '%';
+
+    // --- apply reveals ---
+    const FADE_SLOTS = 0.7;
+    const CUE_WINDOW = 0.6;
+
+    revealUnits.forEach(u => {
+      const revealSlot = u.scene.slotIdx;
+      const cue = opacityCueByEl.get(u.el);
+
+      // 1. Determine the "target" opacity (if the element were fully revealed now)
+      let target;
+      if (cue) {
+        const tStart = cue.triggerSlot - CUE_WINDOW / 2;
+        const tEnd   = cue.triggerSlot + CUE_WINDOW / 2;
+        if (effectiveSlot < tStart)      target = cue.beforeOpacity;
+        else if (effectiveSlot > tEnd)   target = cue.afterOpacity;
+        else {
+          const tt = (effectiveSlot - tStart) / CUE_WINDOW;
+          target = cue.beforeOpacity + (cue.afterOpacity - cue.beforeOpacity) * tt;
+        }
+      } else {
+        target = u.origOpacity;
+      }
+
+      // 2. Apply reveal fade
+      let op;
+      if (effectiveSlot < revealSlot) op = 0;
+      else if (effectiveSlot < revealSlot + FADE_SLOTS) {
+        op = (effectiveSlot - revealSlot) / FADE_SLOTS * target;
+      } else {
+        op = target;
+      }
+
+      u.el.setAttribute('opacity', op.toFixed(3));
+    });
+
+    // --- apply stroke cues (snap-at-trigger; CSS handles smooth color transition) ---
+    strokeCues.forEach(c => {
+      const wantsAfter = effectiveSlot >= c.triggerSlot - 0.1;
+      c.el.setAttribute('stroke', wantsAfter ? c.after : c.before);
+    });
+
+    // --- camera ---
+    // Timeline:
+    //   0 .. p1End           : panel 1 frame
+    //   p1End .. p2Start     : transition p1 → p2
+    //   p2Start .. p2End     : panel 2 frame
+    //   p2End .. zoomEnd     : transition p2 → combined (both scenes stacked)
+    //   zoomEnd ..           : combined frame held
+    // Note: the p2→combined zoom-out is driven by TIME, not scroll, once the user
+    // crosses into it. See zoomAnimStart/ZOOM_ANIM_MS above for why.
+    const p1End    = panel1.length - 0.3;
+    const p2Start  = panel1.length + GAP - 0.3;
+    // p2End is the slot at which the zoom-out fires. FINAL_HOLD_SLOTS adds
+    // extra scroll distance on the panel-2 frame after the last reveal
+    // ("$650 vs $800" compare row) so the final conclusion has room to
+    // breathe before the camera pulls back to the combined view.
+    const p2End    = panel1.length + GAP + panel2.length + FINAL_HOLD_SLOTS;
+    const zoomEnd  = totalSlots;
+    let vb;
+    if (zoomAnimStart > 0) {
+      // Fade-to-static is in flight. Keep the camera on panel-2 frame
+      // until the SVG is fully faded out; after that enterStaticMode
+      // takes over and this branch stops being hit (storyCompleted=true).
+      vb = panels[1].viewBox;
+    } else if (effectiveSlot <= p1End) {
+      vb = panels[0].viewBox;
+    } else if (effectiveSlot <= p2Start) {
+      const t = (effectiveSlot - p1End) / (p2Start - p1End);
+      vb = lerpVB(panels[0].viewBox, panels[1].viewBox, t);
+    } else if (effectiveSlot < p2End) {
+      vb = panels[1].viewBox;
+    } else {
+      // User has just crossed into the end range. Replace the old camera
+      // zoom-out pan (which felt like "zoom out then zoom back in" as the
+      // width-driven static layout kicked in) with a clean fade: SVG fades
+      // to 0, we swap viewBox to combined + unstick the stage while
+      // invisible, then fade back up at the final width-driven size.
+      zoomAnimStart = performance.now();
+      vb = panels[1].viewBox;
+      swapToCombinedHeading();
+      svg.style.transition = 'opacity 0.3s ease-out';
+      svg.style.opacity = '0';
+      setTimeout(() => {
+        applyVB(panels[2].viewBox);
+        enterStaticMode();
+        svg.style.transition = 'opacity 0.35s ease-in';
+        svg.style.opacity = '1';
+      }, 310);
+    }
+    applyVB(vb);
+
+    // --- indicator dots ---
+    let activeIdx = -1;
+    if (effectiveSlot < panel1.length) {
+      activeIdx = Math.min(Math.floor(effectiveSlot), panel1.length - 1);
+    } else if (effectiveSlot < panel1.length + GAP) {
+      activeIdx = panel1.length - 1;  // hold last panel-1 dot during transition
+    } else if (effectiveSlot < panel1.length + GAP + panel2.length) {
+      const off = Math.floor(effectiveSlot - panel1.length - GAP);
+      activeIdx = Math.min(panel1.length + off, dots.length - 1);
+    } else {
+      // In zoom-out range → keep the last panel-2 dot active
+      activeIdx = dots.length - 1;
+    }
+    if (activeIdx !== lastActiveIdx) {
+      dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+      lastActiveIdx = activeIdx;
+    }
+
+    // enterStaticMode is now called inside the fade-out setTimeout in the
+    // "else" camera branch above, so no separate trigger is needed here.
+  }
+
+  let ticking = false;
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => { update(); ticking = false; });
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Debounce resize handling so iOS URL-bar scroll jitter (which fires resize
+  // events) doesn't thrash scroll height. We only care about real size changes
+  // (orientation flip, window drag, keyboard show/hide) — a >80px height delta
+  // or any width change. Under that, ignore.
+  let lastVw = window.innerWidth;
+  let lastVh = window.innerHeight;
+  let resizeTimer = 0;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const widthChanged  = vw !== lastVw;
+      const heightChanged = Math.abs(vh - lastVh) > 80;
+      if (!widthChanged && !heightChanged) return;
+      lastVw = vw; lastVh = vh;
+      if (!storyCompleted) {
+        scrollyEl.style.height = computeScrollyHeightPx() + 'px';
+      } else {
+        // In static mode, mobileControls visibility depends on width — retoggle.
+        showMobileControls();
+      }
+      onScroll();
+    }, 120);
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  update();
+  setTimeout(update, 100);
+  setTimeout(update, 500);
+  } // end boot()
+})();
+</script>
+</body>
+</html>
