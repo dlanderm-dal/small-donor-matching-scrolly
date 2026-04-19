@@ -37,52 +37,33 @@
   text-align: left;
 }
 
-.sbs-root .intro, .sbs-root .outro {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center;
-  padding: 3rem 1.5rem;
-  max-width: 720px; margin: 0 auto;
-}
-
-/* Use dynamic viewport units (dvh) so iOS Safari URL-bar toggling doesn't
-   change the height of these sections mid-scroll. Fall back to vh for older
-   browsers that don't support dvh. */
-.sbs-root .intro { min-height: 88vh; min-height: 88dvh; }
-.sbs-root .outro { min-height: 65vh; min-height: 65dvh; }
-
-.sbs-root .intro h1 {
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  font-weight: 300; line-height: 1.15;
-  margin-bottom: 1.25rem; letter-spacing: -0.01em;
-}
-
-.sbs-root .outro h2 {
-  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
-  font-weight: 300; line-height: 1.2;
-  margin-bottom: 1rem;
-}
-
-.sbs-root .intro p, .sbs-root .outro p {
-  font-size: clamp(1rem, 1.7vw, 1.15rem);
-  color: #777; line-height: 1.65; max-width: 560px;
-}
-
-.sbs-root .outro p { margin-bottom: 0.5rem; }
-.sbs-root .highlight { color: #1f6fff; font-weight: 500; }
-
-.sbs-root .scroll-cue {
-  animation: sbs-bounce 2s ease-in-out infinite;
-  font-size: 1.75rem; color: #bbb; margin-top: 2.25rem;
-}
-
-/* Prefixed keyframe name so it can't collide with a host-page "bounce". */
-@keyframes sbs-bounce {
-  0%, 100% { transform: translateY(0); opacity: 0.55; }
-  50% { transform: translateY(8px); opacity: 1; }
-}
-
 .sbs-root #scrolly { position: relative; }
+
+/* ============================================================================
+   PREVIEW-ONLY styling (outside the `.sbs-root` scope).
+   These rules style the standalone HTML preview — lorem-ipsum paragraphs
+   above and below the graphic, plus a neutral page background so the
+   preview doesn't inherit the browser's dark-mode default. They are NOT
+   needed in WordPress — your theme already styles article paragraphs and
+   the page chrome — and should be EXCLUDED when you copy the style block
+   into a WP Custom HTML block. See README.md for exact copy boundaries.
+============================================================================ */
+html, body {
+  background: #fafafa;
+  color: #3a3a3a;
+  color-scheme: light;
+}
+.article-body-preview {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  line-height: 1.75;
+  color: #3a3a3a;
+}
+.article-body-preview p { margin-bottom: 1.25rem; }
+.article-body-preview p:last-child { margin-bottom: 0; }
 
 .sbs-root .sticky-stage {
   position: sticky; top: 0;
@@ -315,11 +296,6 @@
   /* 100% (not 100vw) to avoid horizontal overflow from scrollbar width. */
   .sbs-root .svg-wrapper { width: 100%; height: 96%; height: 96dvh; }
   .sbs-root .sticky-stage { align-items: flex-start; }
-  .sbs-root .intro h1 { font-size: 1.6rem; }
-  /* Let the intro/outro p inherit the clamp() from the base rule — at
-     mobile width it's already 1rem, which is more legible than the old
-     0.95rem override we had here. */
-  .sbs-root .outro h2 { font-size: 1.5rem; }
 
   /* Mobile controls — shown after combined view is reached */
   .sbs-root #mobileControls.visible {
@@ -401,24 +377,31 @@
 <body>
 
 <!-- ============================================================================
-  WORDPRESS DROP-IN:
-  -----------------------------------------------------------------------------
-  Copy everything from this opening <div class="sbs-root"> to its closing </div>
-  (just before </body>) and paste into a WP "Custom HTML" block. Also copy the
-  entire <style>...</style> block from <head> and paste it into the same block
-  above the markup (or into a site-wide CSS file). The <script>...</script>
-  block at the bottom goes into the same Custom HTML block.
+  PREVIEW-ONLY ARTICLE BODY (above the graphic).
+  This lorem-ipsum section stands in for the WordPress article paragraphs
+  that would sit above the scrollytelling graphic when embedded. It is NOT
+  part of what gets pasted into WordPress — see README.md for exact copy
+  boundaries. It lives OUTSIDE `.sbs-root` so the sbs-root block you copy
+  into WP stays clean.
+============================================================================ -->
+<section class="article-body-preview">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+</section>
+
+<!-- ============================================================================
+  WORDPRESS DROP-IN BEGIN ↓
+  Copy from the `<div class="sbs-root">` line below through the matching
+  closing `</div>` that carries the `/.sbs-root` marker near the end of
+  the body. See README.md for full paste instructions.
+  Also copy the entire `<style>` block from the `<head>` (but skip the
+  `.article-body-preview` rules at the top — those are preview-only) and
+  the `<script>` block at the bottom of the page.
   All CSS is scoped under `.sbs-root` so it cannot affect your WP theme.
-  All JS scopes its DOM queries with `#svgWrap` / `#scrolly` IDs — these only
-  need to be unique on the page, which they are.
+  All JS scopes its DOM queries with `#svgWrap` / `#scrolly` IDs.
 ============================================================================ -->
 <div class="sbs-root">
-
-<section class="intro">
-  <h1>One big donor, or many small ones?</h1>
-  <p>Publicly funded elections match small donations at a multiple &mdash; and that changes the math in a way most people don't expect. Scroll to see it unfold.</p>
-  <div class="scroll-cue">&darr;</div>
-</section>
 
 <div id="scrolly">
   <div class="sticky-stage">
@@ -839,12 +822,23 @@ funded candidate" transform="translate(387 1836)" fill="#434343" font-size="30" 
   </div>
 </div>
 
-<section class="outro">
-  <h2>Small money, multiplied, wins.</h2>
-  <p>Under a 7&times; match, ten <span class="highlight">$10</span> donors send <span class="highlight">$800</span> to a candidate &mdash; more than a single <span class="highlight">$100</span> donor's <span class="highlight">$650</span>.</p>
-</section>
-
 </div><!-- /.sbs-root -->
+<!-- ============================================================================
+  WORDPRESS DROP-IN END ↑ (copy ended just before this line.)
+============================================================================ -->
+
+<!-- ============================================================================
+  PREVIEW-ONLY ARTICLE BODY (below the graphic).
+  Same as the lorem-ipsum block above — placeholder for the WordPress
+  article paragraphs that would sit AFTER the graphic. Not part of the
+  embed. Sits OUTSIDE `.sbs-root` so it doesn't get scooped up when you
+  copy the sbs-root block.
+============================================================================ -->
+<section class="article-body-preview">
+  <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.</p>
+  <p>Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>
+  <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi.</p>
+</section>
 
 <script>
 (function () {
@@ -999,17 +993,6 @@ funded candidate" transform="translate(387 1836)" fill="#434343" font-size="30" 
     document.querySelectorAll('.mob-office').forEach(btn => {
       btn.classList.toggle('sel-active', btn.getAttribute('data-office') === key);
     });
-
-    // ---- Outro text (below the story) — update $-references to match.
-    const outroEl = document.querySelector('.outro p');
-    if (outroEl) {
-      outroEl.innerHTML =
-        'Under a <span class="highlight">' + d.t1 + '&times;</span> match, ten ' +
-        '<span class="highlight">$10</span> donors send <span class="highlight">$' +
-        total10 + '</span> to a candidate &mdash; more than a single ' +
-        '<span class="highlight">$100</span> donor\u2019s <span class="highlight">$' +
-        total1 + '</span>.';
-    }
 
     // ---- Selector highlight shape (path-based, no clipPath needed) --------
     const highlight = document.getElementById('officeHighlight');
