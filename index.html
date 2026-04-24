@@ -314,6 +314,35 @@ html, body {
   .sbs-root .svg-wrapper { width: 100%; height: 96dvh; }
   .sbs-root .sticky-stage { align-items: flex-start; }
 }
+
+/* Scene heading text inside SVG foreignObject — the HTML inside an SVG
+   foreignObject inherits the SVG's coordinate scaling, so font-size in PX
+   here corresponds to SVG user units. */
+.sbs-root .svg-heading {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #434343;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+}
+
+/* Mobile responsive — pulled from V1's pattern. The SVG fits to width and
+   the after-scrolly section reflows to a single column. */
+@media (max-width: 768px) {
+  .sbs-root .svg-wrapper { width: 100%; height: 96%; height: 96dvh; }
+  .sbs-root .sticky-stage { align-items: flex-start; }
+  .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
+  .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
+  .sbs-root .as-heading { font-size: 1rem; line-height: 1.45; }
+  .sbs-root .office-selector button { font-size: 13px; padding: 12px 4px; }
+  .sbs-root .slider-wrap input[type="range"] { height: 12px; }
+  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 28px; height: 28px; }
+  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; }
+  .sbs-root .slider-ticks { font-size: 0.7rem; }
+  .sbs-root .eq-table { font-size: 0.95rem; }
+  .sbs-root .restart-btn { padding: 0.95rem 1rem; font-size: 1rem; }
+}
+
 </style>
 </head>
 <body>
@@ -385,10 +414,10 @@ receives" transform="translate(230 827.5)" fill="#434343" font-size="20" font-fa
           </g>
           <text id="_50-60" data-name="$50" transform="translate(332 971.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
           <g id="Scene_1A" data-name="Scene 1A">
-            <text id="Once_a_publicly_financed_candidate_for_County_Executive_receives_a_combined_40_000_from_at_least_500_residents_of_their_jurisdiction_the_matching_kicks_in:-3" data-name="Once a publicly financed candidate for {County Executive} receives a 
-combined {$40,000} from at least {500} residents 
-of their jurisdiction the matching kicks in:" transform="translate(173.094 215.5)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Once a publicly financed candidate for {County Executive} receives a </tspan><tspan x="0" y="60">combined {$40,000} from at least {500} residents </tspan><tspan x="0" y="120">of their jurisdiction the matching kicks in:</tspan></text>
-            <text id="Montgomery_County_Public_Campaign_Financing_Example" data-name="Montgomery County Public Campaign Financing Example" transform="translate(49 92)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Montgomery County Public Campaign Financing Example</tspan></text>
+            <foreignObject x="100" y="180" width="1700" height="210">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">Once a publicly financed candidate for County Executive receives a combined $40,000 from at least 500 residents of their jurisdiction the matching kicks in:</div></foreignObject>
+            <foreignObject x="100" y="70" width="1720" height="80">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 700; color: #434343; line-height: 1.18;">Montgomery County Public Campaign Financing Example</div></foreignObject>
           </g>
         </g>
       </g>
@@ -396,7 +425,7 @@ of their jurisdiction the matching kicks in:" transform="translate(173.094 215.5
       <text id="_400-35" data-name="$400" transform="translate(202.219 595.75)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
     </g>
     </g>
-    <g class="scene" id="scene-2" data-scene="2" transform="translate(0,-1063)" opacity="0">
+    <g class="scene" id="scene-2" data-scene="2" transform="translate(0,-776)" opacity="0">
     <g id="Scene_2C" data-name="Scene 2C">
       <g id="Scene_2B_this_appears_at_the_same_time_as_Scene_2A_ensure_that_the_heading_occupies_the_same_space_same_justification_as_the_heading_of_Scene_1_" data-name="Scene 2B (this appears at the same time as Scene 2A, ensure that the heading occupies the same space/same justification as the heading of Scene 1)">
         <g id="Scene_2A_the_graph_in_Scene_1_needs_to_fade_into_this_" data-name="Scene 2A (the graph in Scene 1 needs to fade into this)">
@@ -425,8 +454,8 @@ receives" transform="translate(230 1508.75)" fill="#434343" font-size="20" font-
             <text id="Tier_1-8" data-name="Tier 1" transform="translate(553.281 5895.5)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
           </g>
         </g>
-        <text id="The_county_only_matches_money_given_by_donors_who_reside_in_a_candidates_jurisdiction" data-name="The county only matches money given by donors who reside in
-a candidates jurisdiction" transform="translate(173.094 1163.5)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">The county only matches money given by donors who reside in</tspan><tspan x="0" y="60">a candidates jurisdiction</tspan></text>
+        <foreignObject x="100" y="953" width="1720" height="200">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The county only matches money given by donors who reside in a candidate’s jurisdiction</div></foreignObject>
         <text id="Candidates_can_t_accept_donations_of_any_amount_from:" data-name="Candidates can’t accept donations
 of any amount from:" transform="translate(965 1303)" fill="#434343" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Candidates can’t accept donations</tspan><tspan x="0" y="48">of any amount from:</tspan></text>
       </g>
@@ -437,7 +466,7 @@ X LLCs
 X State or local central committees of a political party" transform="translate(984 1405)" fill="#434343" font-size="35" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">X Political Action Committees</tspan><tspan x="0" y="41">X Corporations</tspan><tspan x="0" y="82">X Labor Unions</tspan><tspan x="0" y="123">X LLCs</tspan><tspan x="0" y="164">X State or local central committees of a political party</tspan></text>
     </g>
     </g>
-    <g class="scene" id="scene-3" data-scene="3" transform="translate(0,-1768)" opacity="0">
+    <g class="scene" id="scene-3" data-scene="3" transform="translate(0,-1521)" opacity="0">
     <g id="Scene_3C" data-name="Scene 3C">
       <g id="Path_29" data-name="Path 29" transform="translate(409 2408.5)" fill="rgba(34,149,0,0.15)">
         <path d="M 111.5 47.5 L 2.5 47.5 L 2.5 2.5 L 111.5 2.5 L 111.5 47.5 Z" stroke="none"/>
@@ -452,9 +481,8 @@ X State or local central committees of a political party" transform="translate(9
       <text id="_50-50" data-name="$50" transform="translate(445 2443)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
       <text id="_100-21" data-name="$100" transform="translate(485.594 2490)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
       <g id="Scene_3B" data-name="Scene 3B">
-        <text id="The_state_board_keeps_a_running_total_of_each_donors_contributions_and_as_a_donor_gives_more_to_a_candidate_of_the_course_of_an_election_the_amount_the_county_matches_drops.-3" data-name="The state board keeps a running total of each donors’ contributions
-and as a donor gives more to a candidate of the course of an election,
-the amount the county matches drops." transform="translate(182.094 1868.5)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">The state board keeps a running total of each donors’ contributions</tspan><tspan x="0" y="60">and as a donor gives more to a candidate of the course of an election,</tspan><tspan x="0" y="120">the amount the county matches drops.</tspan></text>
+        <foreignObject x="100" y="1663" width="1720" height="240">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The state board keeps a running total of each donor’s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.</div></foreignObject>
         <g id="Scene_3A_the_graph_from_scene_2_needs_to_fade_directly_into_this_notice_x7_disappears_and_Tier_1_replaces_it_" data-name="Scene 3A (the graph from scene 2 needs to fade directly into this, notice x7 disappears and Tier 1 replaces it)">
           <g id="Rectangle_103" data-name="Rectangle 103" transform="translate(296 2057.5)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
             <rect width="114" height="400" stroke="none"/>
@@ -494,7 +522,7 @@ receives" transform="translate(230 2243.5)" fill="#434343" font-size="20" font-f
       </g>
     </g>
     </g>
-    <g class="scene" id="scene-4" data-scene="4" transform="translate(0,-2635)" opacity="0">
+    <g class="scene" id="scene-4" data-scene="4" transform="translate(0,-2485.5)" opacity="0">
     <g id="Scene_4A_this_occupies_the_same_space_as_scene_3C_have_it_disolve_change_" data-name="Scene 4A (this occupies the same space as scene 3C, have it disolve change)">
       <g id="Rectangle_104" data-name="Rectangle 104" transform="translate(304.172 3022)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
         <rect width="114" height="400" stroke="none"/>
@@ -530,9 +558,8 @@ receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" fo
       <text id="Tier_1-11" data-name="Tier 1" transform="translate(361.172 3010.5)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
       <text id="Tier_2-7" data-name="Tier 2" transform="translate(474.172 3154)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 2</tspan></text>
       <line id="Line_118" data-name="Line 118" x2="105" transform="translate(420.422 3369.5)" fill="none" stroke="#707070" stroke-width="3" stroke-dasharray="5"/>
-      <text id="The_state_board_keeps_a_running_total_of_each_donors_contributions_and_as_a_donor_gives_more_to_a_candidate_of_the_course_of_an_election_the_amount_the_county_matches_drops.-4" data-name="The state board keeps a running total of each donors’ contributions
-and as a donor gives more to a candidate of the course of an election,
-the amount the county matches drops." transform="translate(172.5 2735.5)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">The state board keeps a running total of each donors’ contributions</tspan><tspan x="0" y="60">and as a donor gives more to a candidate of the course of an election,</tspan><tspan x="0" y="120">the amount the county matches drops.</tspan></text>
+      <foreignObject x="100" y="2662" width="1720" height="240">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The state board keeps a running total of each donor’s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.</div></foreignObject>
       <text id="_50-56" data-name="$50" transform="translate(1076 3119)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
       <text id="_100-25" data-name="$100" transform="translate(1174 3119)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
       <text id="until_scene_1H_this_element_is_100_opacity-63" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3116.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
@@ -560,11 +587,10 @@ the amount the county matches drops." transform="translate(172.5 2735.5)" fill="
       <text id="becomes-4" data-name="becomes" transform="translate(1209 3168)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-51.638" y="0">becomes</tspan></text>
     </g>
     </g>
-    <g class="scene" id="scene-5" data-scene="5" transform="translate(0,-3495)" opacity="0">
+    <g class="scene" id="scene-5" data-scene="5" transform="translate(0,-3290.5)" opacity="0">
     <g id="Scene_5A_this_occupies_the_same_space_as_scene_4A_have_it_disolve_change" data-name="Scene 5A this occupies the same space as scene 4A, have it disolve change">
-      <text id="The_county_stops_matching_when_a_donor_has_given_more_than_150_to_a_candidate_over_the_course_of_an_election_and_candidates_are_prohibited_from_accepting_more_than_500_from_any_single_donor" data-name="The county stops matching when a donor has given more than $150
-to a candidate over the course of an election and candidates are
-prohibited from accepting more than $500 from any single donor" transform="translate(194.5 3595.5)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">The county stops matching when a donor has given more than $150</tspan><tspan x="0" y="60">to a candidate over the course of an election and candidates are</tspan><tspan x="0" y="120">prohibited from accepting more than $500 from any single donor</tspan></text>
+      <foreignObject x="100" y="3467" width="1720" height="240">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The county stops matching when a donor has given more than $150 to a candidate over the course of an election, and candidates are prohibited from accepting more than $500 from any single donor.</div></foreignObject>
       <g id="Rectangle_107" data-name="Rectangle 107" transform="translate(305.266 3827)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
         <rect width="114" height="400" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="395" fill="none"/>
@@ -646,7 +672,7 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
     </g>
     </g>
     <!-- ===== SCENE 6: lives BELOW the viewBox initially, slides up into view when scene 5 leaves ===== -->
-    <g class="scene scene-slidey" id="scene-6" data-scene="6" transform="translate(0,-3184)" opacity="0">
+    <g class="scene scene-slidey" id="scene-6" data-scene="6" transform="translate(0,-3069)" opacity="0">
     <g id="Scene_6H" data-name="Scene 6H">
       <rect id="Rectangle_110" data-name="Rectangle 110" width="171" height="136" rx="27" transform="translate(751.5 5428.5)" fill="#fff" stroke="rgba(118,0,255,0.53)" stroke-linejoin="round" stroke-width="15"/>
       <text id="_650-10" data-name="$650" transform="translate(782 5515)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
@@ -682,7 +708,8 @@ funded candidate" transform="translate(624 4927)" fill="#434343" font-size="30" 
 the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
                   <text id="One_person_giving-2" data-name="One person giving" transform="translate(624 4600)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
                   <g id="Scene_6A_this_exists_BELOW_Scene_5A_in_the_y_direction_move_scene_5A_out_of_view_upwards_and_down_onto_this_" data-name="Scene 6A (this exists BELOW Scene 5A in the y direction, move scene 5A out of view upwards and down onto this)">
-                    <text id="What_s_better:_One_person_giving_100_or_10_people_giving_10_dollars_each_2" data-name="What’s better: One person giving $100 or 10 people giving $10 dollars each?" transform="translate(100 4484)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">What’s better: One person giving $100 or 10 people giving $10 dollars each?</tspan></text>
+                    <foreignObject x="100" y="4446" width="1720" height="140">
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">What’s better: one person giving $100 or 10 people giving $10 each?</div></foreignObject>
                   </g>
                   <text id="Already_Seen:-2" data-name="Already Seen:" transform="translate(164 4715)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
                   <rect id="Rectangle_116" data-name="Rectangle 116" width="171" height="136" rx="27" transform="translate(551.5 4640)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
@@ -870,11 +897,11 @@ the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" fo
     // ========================================================================
     const SCENE_DEFS = [
       { num: 1, id: 'scene-1', subScenePrefixes: ['Scene_1A', 'Scene_1B', 'Scene_1C', 'Scene_1D'], baseTransform: 'translate(0,0)' },
-      { num: 2, id: 'scene-2', subScenePrefixes: ['Scene_2A', 'Scene_2B', 'Scene_2C'], baseTransform: 'translate(0,-1063)' },
-      { num: 3, id: 'scene-3', subScenePrefixes: ['Scene_3A', 'Scene_3B', 'Scene_3C'], baseTransform: 'translate(0,-1768)' },
-      { num: 4, id: 'scene-4', subScenePrefixes: ['Scene_4A'], baseTransform: 'translate(0,-2635)' },
-      { num: 5, id: 'scene-5', subScenePrefixes: ['Scene_5A'], baseTransform: 'translate(0,-3495)' },
-      { num: 6, id: 'scene-6', subScenePrefixes: ['Scene_6A', 'Scene_6B', 'Scene_6C', 'Scene_6D', 'Scene_6E', 'Scene_6F', 'Scene_6G', 'Scene_6H'], baseTransform: 'translate(0,-4384)', slideOffset: 1200 },
+      { num: 2, id: 'scene-2', subScenePrefixes: ['Scene_2A', 'Scene_2B', 'Scene_2C'], baseTransform: 'translate(0,-776)' },
+      { num: 3, id: 'scene-3', subScenePrefixes: ['Scene_3A', 'Scene_3B', 'Scene_3C'], baseTransform: 'translate(0,-1521)' },
+      { num: 4, id: 'scene-4', subScenePrefixes: ['Scene_4A'], baseTransform: 'translate(0,-2485.5)' },
+      { num: 5, id: 'scene-5', subScenePrefixes: ['Scene_5A'], baseTransform: 'translate(0,-3290.5)' },
+      { num: 6, id: 'scene-6', subScenePrefixes: ['Scene_6A', 'Scene_6B', 'Scene_6C', 'Scene_6D', 'Scene_6E', 'Scene_6F', 'Scene_6G', 'Scene_6H'], baseTransform: 'translate(0,-4269)', slideOffset: 1200 },
     ];
 
     function parseTranslateY(s) {
