@@ -1,8 +1,18 @@
 # Dropping the scrollytelling into a WordPress page
 
-The piece is in `scrollytelling4.html`. That file opens in a browser as a
-self-contained preview: lorem-ipsum article paragraphs sit above and below
-the graphic so you can see roughly how it will feel once embedded.
+Two versions of the piece live in this repo:
+
+- **V2 — `index.html` (recommended).** The current design: 6 scenes
+  with dissolve transitions, a slide-up to the comparison scene, and an
+  interactive after-scrolly section with an office selector, a draggable
+  donation slider, and a tiered match calculator. Same file is also at
+  `scrollytelling-v2.html` so the V2 link is stable.
+- **V1 — `scrollytelling4.html` (legacy).** The original two-panel
+  scrolly. Kept for reference. Use V2 for new embeds.
+
+Each file opens in a browser as a self-contained preview: lorem-ipsum
+article paragraphs sit above and below the graphic so you can see
+roughly how it will feel once embedded.
 
 **The lorem-ipsum paragraphs are PREVIEW-ONLY. Do not paste them into
 WordPress.** Your WP post already has its own article body around the
@@ -14,19 +24,20 @@ You have two ways to embed — inline paste (recommended) or iframe.
 
 ## Option A — Inline paste (recommended for most cases)
 
-You will copy three things from `scrollytelling4.html` into one WP
+You will copy three things from `index.html` (the V2 file) into one WP
 **Custom HTML** block, in this order: **styles → markup → script**.
 
 ### 1 · The CSS (styles)
 
-Open `scrollytelling4.html`. Inside `<head>` you'll see a `<style>…</style>`
+Open `index.html`. Inside `<head>` you'll see a `<style>…</style>`
 block. Near the top of that block there is a short rule set labeled
-`PREVIEW-ONLY article-body styling` — **skip those rules** (they only
-style the lorem ipsum preview; your WP theme already styles paragraphs).
+`PREVIEW-ONLY styling` — **skip those rules** (they only style the
+lorem-ipsum preview and the page background; your WP theme already
+styles paragraphs and the page).
 
-Copy **everything else** inside `<style>…</style>`: that's all the rules
-scoped under `.sbs-root` plus the `@media` responsive rules and the
-commented container-query block at the bottom.
+Copy **everything else** inside `<style>…</style>`: that's all the
+rules scoped under `.sbs-root`, including the `@media` responsive rules
+at the bottom.
 
 Paste into the Custom HTML block, wrapped in your own `<style>…</style>`
 tags.
@@ -44,12 +55,12 @@ Inside the `<body>` you'll find two matching boundary comments:
 ```
 
 Copy **everything from `<div class="sbs-root">` through the matching
-`</div><!-- /.sbs-root -->`** (the comments above/below the block mark
-the boundary — don't include the lorem-ipsum
-`<section class="article-body-preview">` blocks that sit outside those
-markers).
+closing `</div>`**. Don't include the `<section class="article-body-preview">`
+blocks that sit outside those markers — those are the lorem-ipsum
+preview paragraphs.
 
-Paste into the Custom HTML block below the `<style>` you pasted in step 1.
+Paste into the Custom HTML block below the `<style>` you pasted in
+step 1.
 
 ### 3 · The JavaScript
 
@@ -81,13 +92,13 @@ If the sticky stage doesn't pin as expected:
 
 ## Option B — Iframe embed (strongest isolation)
 
-Host `scrollytelling4.html` as a standalone file on your site — e.g.
-upload it by SFTP to `/wp-content/uploads/`, or place it inside your
-theme directory. Then embed:
+Host `index.html` (or `scrollytelling-v2.html`) as a standalone file on
+your site — e.g. upload it by SFTP to `/wp-content/uploads/`, or place
+it inside your theme directory. Then embed:
 
 ```html
 <iframe
-  src="/wp-content/uploads/scrollytelling4.html"
+  src="/wp-content/uploads/scrollytelling-v2.html"
   style="width:100%; height:100vh; min-height:700px; border:0; display:block;"
   loading="lazy"
   title="Montgomery County matching funds explainer">
@@ -100,47 +111,61 @@ Notes:
   always works because overflow-clipping on the WP outer page can't
   reach inside.
 - The reader scrolls **inside** the iframe to advance the story. Once
-  the combined view locks in, there's no more dead scroll space inside.
+  they reach the after-scrolly interactive panel, no more story scroll
+  remains — they can use the slider and the **Restart Scrollytelling**
+  button to revisit the story.
 - If you want the iframe to NOT show the preview lorem ipsum, make a
-  copy of `scrollytelling4.html` and delete the two
+  copy of the file and delete the two
   `<section class="article-body-preview">…</section>` blocks before
   uploading.
 
 ---
 
+## What's new in V2
+
+- **Six scenes**, not two panels. Scenes 1–5 cross-fade in the same
+  physical region (the chart morphs from a $50 donation example
+  through tiered matching, prohibited contributions, and the $150 cap).
+  Scene 6 slides up from below as the comparison scene
+  ("$650 from one $100 donor vs $800 from ten $10 donors").
+- **New color grammar**: green = donor money, blue = county match,
+  purple = total to candidate, red = NOT MATCHED / prohibited.
+- **Interactive after-scrolly panel**:
+  - 3-segment **office selector** (County Executive / Council – At Large
+    / Council – District). Updates the heading bracketed values, the
+    bar-chart heights, the equation totals, and the max-per-election
+    figure.
+  - **Donation slider** ($0–$500). Equation rows populate as the donor
+    crosses each tier. Bar chart heights and totals recompute live.
+  - **Restart Scrollytelling button**: scrolls the reader back into the
+    scrollytelling at the conclusion scene; they can scroll up to
+    retraverse the story (no page reload).
+
+V1 is still here at `scrollytelling4.html` for reference.
+
+---
+
 ## Local preview
 
-Double-click `open-scrollytelling.command` in Finder. It starts a tiny
-Python web server on port 8765 and opens the page in your default
-browser. Close the Terminal window to stop the server.
+Double-click `open-scrollytelling.command` in Finder (in the source
+folder, not in this repo). It starts a tiny Python web server on port
+8765 and opens the page in your default browser. Close the Terminal
+window to stop the server.
 
 Opening the raw file via `file://` sometimes triggers a browser timing
-quirk where the SVG's panel bounding boxes are measured before fonts
-load — which can zoom the camera into the wrong region. The launcher
-avoids that entirely by serving over `http://localhost`.
+quirk where the SVG measurements happen before fonts load — which can
+zoom the camera into the wrong region. The launcher avoids that by
+serving over `http://localhost`.
 
 ---
 
-## Responsive behavior
+## Color key (V2)
 
-- At window widths **> 768px** you get the desktop layout: the 3-option
-  slot selector + yellow info boxes live inside the SVG.
-- At window widths **≤ 768px** the SVG still shows but full-width HTML
-  controls appear below it (a segmented selector + three colored info
-  cards).
-- Resize your desktop browser window down to phone width to see the
-  mobile layout without leaving your computer.
-
-If the piece is embedded in a **narrow WP content column** on a desktop
-browser, the `@media` rule keys off *window* width, not container width,
-so you'll still see the desktop layout. See the commented block at the
-end of `<style>` for turning on container-query responsive.
-
----
-
-## Color key
-
-- **Blue** (`#1f6fff`) — donations from the public
-- **Dark yellow / goldenrod** (`#c9a227`) — county matching funds
-- **Green** (`#0a8f3c`) — totals, "what the candidate gets" (money = blue + yellow = green)
-- **Red** (`#d92b2b`) — prohibited contributions
+- **Green** (`#229500`) — the donor's contribution
+- **Blue** (`#0027ff`) — county matching funds
+- **Purple** (`#7600ff`) — total / what the candidate ends up with
+- **Orange / yellow** (`#ffb202` / `#ffb100`) — info / callouts /
+  recap-row strokes
+- **Red** — prohibited contributions, NOT MATCHED segments
+- **Cyan (`#00f5ff`)** — design-time alignment markers; not rendered in
+  the final piece
