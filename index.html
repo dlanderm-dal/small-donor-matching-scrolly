@@ -237,17 +237,26 @@ html, body {
 .sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 80px; }
 .sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; padding: 0 4px; text-align: center; }
 .sbs-root .eq-table .total-row td { padding-top: 14px; }
-/* Per-column underlines on the donor (green) and total (purple) cells
-   only — match (blue) cell stays unlined. */
+/* Three separate per-column underlines on the Total row — donor (green),
+   match (blue), and total (purple). Each column gets its own short bar so
+   the row reads as a math-style sum across all three columns. */
 .sbs-root .eq-table .total-row td.donor,
+.sbs-root .eq-table .total-row td.match,
 .sbs-root .eq-table .total-row td.total {
   border-top: 2px solid #444;
 }
 .sbs-root .eq-table .total-row .tier-label { font-weight: 700; }
 .sbs-root .eq-table .not-matched { color: red; font-weight: 700; }
-.sbs-root .eq-table tr.hidden td { color: transparent; border-color: transparent; }
 .sbs-root .eq-table tr { transition: opacity 0.25s ease-out; }
-.sbs-root .eq-table tr.hidden { opacity: 0; pointer-events: none; }
+/* Hidden rows COLLAPSE — `visibility: collapse` zeroes the row's height in
+   the table layout (preserving column widths) so the Total row sits flush
+   against the last visible tier row instead of leaving empty rows of dead
+   space above it. */
+.sbs-root .eq-table tr.hidden {
+  visibility: collapse;
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Bar chart container */
 .sbs-root .bar-chart-wrap {
@@ -382,11 +391,8 @@ html, body {
 .sbs-root .restart-btn:hover { background: #5a00cc; }
 .sbs-root .restart-btn:active { transform: translateY(1px); }
 
-/* Mobile: stage shrinks but still pins; SVG fills width */
-@media (max-width: 768px) {
-  .sbs-root .svg-wrapper { width: 100%; height: 96dvh; }
-  /* (V2.2) sticky stage centers on mobile too — V1 flex-start hack removed */
-}
+/* (Mobile responsive consolidated into the @media block at the bottom of
+   the stylesheet — sticky-stage height + SVG-wrapper sizing live there.) */
 
 /* Scene heading text inside SVG foreignObject — the HTML inside an SVG
    foreignObject inherits the SVG's coordinate scaling, so font-size in PX
@@ -635,11 +641,45 @@ html, body {
   background: #444;
 }
 
-/* Mobile responsive — pulled from V1's pattern. The SVG fits to width and
-   the after-scrolly section reflows to a single column. */
+/* Mobile responsive
+   The 1920×1280 viewBox is landscape; on a 375×812 portrait phone fitting it
+   to width gave only ~33% of the vertical space to the SVG (the rest was
+   empty letterbox above and below). Two fixes for that:
+
+   1. Drop the sticky-stage to ~70vh so the SVG occupies a larger PROPORTION
+      of the visible pinned area — less wasted space above and below. The
+      reduction also tightens overall scrolly height so you don't burn an
+      eternity scrolling through dead air.
+   2. Bump font-sizes inside SVG foreignObjects (heading paragraph, prohibited
+      list, equation overlay) since the SVG renders at a small device-pixel
+      scale on phones (50px in viewBox ≈ 9.8px on 375-wide screen). Bigger
+      base sizes make text legible without restructuring layout.
+
+   The after-scrolly section reflows to a single column. */
 @media (max-width: 768px) {
-  .sbs-root .svg-wrapper { width: 100%; height: 96%; height: 96dvh; }
-  /* (V2.2) sticky stage centers on mobile too — V1 flex-start hack removed */
+  .sbs-root .sticky-stage { height: 72vh; height: 72dvh; }
+  .sbs-root .svg-wrapper { width: 100%; height: 100%; }
+
+  /* Bump in-SVG text sizes so they're legible at the small mobile render.
+     foreignObject px units track the viewBox, so doubling the px ≈ doubling
+     the device-pixel rendering. */
+  .sbs-root .heading-overlay .heading-paragraph { font-size: 70px; }
+  .sbs-root .heading-overlay .heading-title { font-size: 70px; }
+  .sbs-root .prohibited-list-svg li { font-size: 42px; }
+  .sbs-root .prohibited-list-compact li { font-size: 38px; }
+  .sbs-root .prohibited-list-compact li::before { font-size: 44px; }
+  .sbs-root .prohibited-label { font-size: 42px; }
+  .sbs-root .eq-overlay { font-size: 42px; }
+  .sbs-root .eq-row {
+    /* Wider label column proportionally so "NOT MATCHED" still fits. */
+    grid-template-columns: 380px 130px 36px 130px 36px 170px;
+  }
+  .sbs-root .eq-row.visible { max-height: 80px; }
+  .sbs-root .eq-row.eq-total-row {
+    grid-template-columns: 380px 130px 200px 170px 0 0;
+  }
+  .sbs-root .eq-row.eq-total-row.visible { max-height: 110px; }
+
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
@@ -693,8 +733,8 @@ html, body {
     <!-- ===== SCENES 1-5: cross-fade carousel, all positioned at viewBox top via translate ===== -->
     <g class="scene scene-active" id="scene-1" data-scene="1" transform="translate(0,0)" opacity="1">
     <g id="Scene_1D" data-name="Scene 1D">
-      <text id="_3" data-name="+" transform="translate(796.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
-      <text id="_4" data-name="=" transform="translate(1180.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
+      <text id="_3" data-name="+" transform="translate(832 592.25)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+      <text id="_4" data-name="=" transform="translate(1223 592.25)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <rect id="Rectangle_56" data-name="Rectangle 56" width="171" height="136" rx="27" transform="translate(1324.969 488.75)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
       <text id="_400-34" data-name="$400" transform="translate(1354.469 575.25)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
       <text id="Candidate_receives-22" data-name="Candidate receives" transform="translate(1424.469 435.75)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-128.625" y="0">Candidate receives</tspan></text>
@@ -1006,11 +1046,11 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
                 <text id="Donation_to_publicly_funded_candidate-2" data-name="Donation to publicly 
 funded candidate" transform="translate(624 4927)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-138.09" y="0">Donation to publicly </tspan><tspan x="-117.54" y="36">funded candidate</tspan></text>
                 <g id="Scene_6B" data-name="Scene 6B">
-                  <g transform="translate(962.5 4726.0) scale(1.2)"><path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/></g>
+                  <g transform="translate(995 4726.0) scale(1.2)"><path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/></g>
                   <text id="Becomes-5" data-name="Becomes" transform="translate(995 4653)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
                   <text id="In_total_for_the_candidate-2" data-name="In total for
-the candidate" transform="translate(1360 4602)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
-                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(611 4628)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
+the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
+                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(611 4577)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
                   <g id="Scene_6A_this_exists_BELOW_Scene_5A_in_the_y_direction_move_scene_5A_out_of_view_upwards_and_down_onto_this_" data-name="Scene 6A (this exists BELOW Scene 5A in the y direction, move scene 5A out of view upwards and down onto this)">
                     <foreignObject x="100" y="4526" width="1720" height="140">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">What’s better: one person giving $100 or 10 people giving $10 each?</div></foreignObject>
@@ -1155,12 +1195,8 @@ the candidate" transform="translate(1360 4602)" fill="#434343" font-size="30" fo
          ($350 for County Executive), so the label and what it labels share a
          visual centerline. -->
     <div class="bar-chart-wrap">
-      <svg viewBox="0 0 740 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- ===== TOP big sibling: "Donation amount" + value =====
-             Sits in the white space above the bar zone. Big green to mirror
-             the bottom "Candidate gets" purple sibling. -->
-        <text x="32" y="34" font-size="20" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
-        <text id="bigDonationValue" x="32" y="76" font-size="38" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
+      <svg viewBox="0 0 740 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- (Bottom siblings live below the tick labels — see below.) -->
 
         <!-- ===== Y-axis label: "County / matching / funds" stacked vertically =====
              Centroid lands at y=240 — the y-position of the tier-1 match
@@ -1194,21 +1230,28 @@ the candidate" transform="translate(1360 4602)" fill="#434343" font-size="30" fo
           <line x1="267.2" y1="412" x2="267.2" y2="422" stroke="#707070" stroke-width="2"/>
           <line x1="700" y1="412" x2="700" y2="422" stroke="#707070" stroke-width="2"/>
         </g>
-        <!-- Tick labels at $0 / $50 / $100 / $150 / $500. All center-anchored
-             so each label sits directly under its tick mark. -->
         <g id="chartTicks">
-          <text x="80" y="438" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
-          <text x="142.4" y="438" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
-          <text x="204.8" y="438" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
-          <text x="267.2" y="438" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
-          <text x="700" y="438" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
+          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
+          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
+          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
+          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
+          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
         </g>
 
-        <!-- ===== BOTTOM big sibling: "Candidate gets" + value =====
-             Mirrors the top "Donation amount" label visually — purple instead
-             of green, signaling the destination of the matched dollars. -->
-        <text x="32" y="478" font-size="20" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
-        <text id="bigCandidateValue" x="32" y="520" font-size="38" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$400</text>
+        <!-- ===== BOTTOM siblings, SIDE-BY-SIDE =====
+             "Donation amount $X" on the LEFT, big block-arrow connector in
+             the MIDDLE, "Candidate gets $Y" on the RIGHT. Sits below the
+             tick labels so it doesn't conflict with the chart bar zone or
+             the tier-1 "x7" multiplier label that sits at the top of the
+             column. Visually equates the two amounts as input/output of
+             the matching system. -->
+        <text x="32" y="492" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
+        <text id="bigDonationValue" x="32" y="540" font-size="42" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
+        <g transform="translate(385 518) scale(0.55)">
+          <path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#888"/>
+        </g>
+        <text x="440" y="492" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="440" y="540" font-size="42" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
       </svg>
     </div>
 
@@ -1605,13 +1648,18 @@ the candidate" transform="translate(1360 4602)" fill="#434343" font-size="30" fo
     // sits 120 SVG units to the right of the actual equation. Using the
     // author's positions keeps the overlay clear of scene 5's "Max county
     // money / $870,170" callout on the right of the chart.
+    // `rowSubScene` maps each row to the sub-scene index at which it should
+    // first become visible. This lets the equation grow row-by-row WITH the
+    // chart instead of all rows appearing at scene start. For scene 3, tier 2
+    // appears at sub-scene 2 (Scene_3C, where the chart's tier-2 bar appears),
+    // matching the visual rhythm of scenes 1 & 2.
     const SCENE_EQUATIONS = [
-      { rows: [],                                  posX: 700,  posY: 460, scale: 1.6, op: 0 },  // scene 1 (overlay hidden but pre-positioned at scene-1 box center for the morph)
-      { rows: ['t1'],                              posX: 735,  posY: 615, scale: 1.0, op: 1 },  // scene 2: D position
-      { rows: ['t1','t2','tt'],                    posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 3: at author's eq position (clear of Max-money callout)
-      { rows: ['t1','t2','t3','tt'],               posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 4
-      { rows: ['t1','t2','t3','t4','tt'],          posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 5
-      { rows: [],                                  posX: 1066, posY: 600, scale: 1.0, op: 0 },  // scene 6
+      { rows: [],                                  rowSubScene: {},                                              posX: 700,  posY: 460, scale: 1.6, op: 0 },  // scene 1
+      { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1 },  // scene 2 (3 sub-scenes; t1 from start)
+      { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 3 (tier-2 row appears with Scene_3C chart)
+      { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 4 (1 sub-scene)
+      { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 5 (1 sub-scene)
+      { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 600, scale: 1.0, op: 0 },  // scene 6
     ];
 
     // Scene-2..5 totals for the running-equation Total row (donor → candidate).
@@ -1732,9 +1780,19 @@ the candidate" transform="translate(1360 4602)" fill="#434343" font-size="30" fo
         // scene 5's chart (instead of flashing back at the snap moment).
         const eqOp = slidingOut56 ? 0 : eq.op;
         eqOverlayG.style.opacity = String(eqOp);
+        // Per-row visibility gated by sub-scene index. A row only becomes
+        // visible once localSlot has crossed its `rowSubScene` threshold —
+        // this lets scene 3's tier-2 row appear WITH the Scene_3C chart
+        // tier-2 bar (sub-scene 2), instead of flashing in at scene start.
         Object.keys(eqRowEls).forEach(key => {
           const row = eqRowEls[key];
-          if (row) row.classList.toggle('visible', eq.rows.includes(key));
+          if (!row) return;
+          const isInScene = eq.rows.includes(key);
+          const minSub = (eq.rowSubScene && eq.rowSubScene[key] != null) ? eq.rowSubScene[key] : 0;
+          // 0.5 fudge so the row appears CONCURRENT with the matching
+          // sub-scene's reveal (which itself ramps over FADE_DURATION=0.7).
+          const showNow = isInScene && (localSlot >= minSub - 0.1);
+          row.classList.toggle('visible', showNow);
         });
         // Total row content — TWEEN the dollar amounts so they count up
         // smoothly between scenes instead of flashing to new values.
