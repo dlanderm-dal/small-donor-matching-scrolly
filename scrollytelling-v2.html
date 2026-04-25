@@ -907,6 +907,15 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
 (function () {
   'use strict';
 
+  // Prototype/debug flags driven by URL query string.
+  //   ?eqslide=1   — enable the in-progress scene-2→3 equation slide animation
+  //                 (currently crashes visually through the prohibited-donor
+  //                 list; left in the codebase as a runnable prototype).
+  try {
+    const qs = new URLSearchParams(window.location.search);
+    window.__eqSlide = qs.get('eqslide') === '1';
+  } catch (e) { window.__eqSlide = false; }
+
   // --------------------------------------------------------------------------
   // Boot gate — wait for layout + fonts so getBBox / getCTM measurements are
   // stable. Same pattern as V1.
@@ -1091,10 +1100,37 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
         }
       });
 
-      // (Equation slide animation removed in V2.3 — it crashed visually with
-      // the prohibited-donor list during the scene-2→3 transition. Equation
-      // morph needs a deeper rework where the equation lives outside the
-      // scene SVG and gets its own overlay layer; deferred to next pass.)
+      // ----- Scene 2 → 3 equation slide (PROTOTYPE) -----
+      // Gated behind ?eqslide=1 because the slide path crashes visually
+      // with the prohibited-donor list. Open the page with that query
+      // string to see the prototype's behavior; the production default
+      // skips this block.
+      //
+      // Native positions (in viewBox coords):
+      //   Scene 2 Group_2 effective: (633.7, 625.3)
+      //   Scene 3 running-equation effective: (1091, 613.3)
+      //   dx = +457.3, dy = -12 — slide path goes RIGHT through the
+      //   prohibited-list area (y≈668-842 for the foreignObject), which
+      //   is what makes the prototype look like the equation bulldozes
+      //   through other scene content.
+      if (window.__eqSlide) {
+        const sd2 = SCENE_DEFS[1];
+        const eq2 = sd2.sceneEl.querySelector('g[id="Group_2"]');
+        if (eq2) {
+          const transStart23 = sd2.transitionSlot;
+          const transEnd23 = transStart23 + TRANSITION_SLOTS;
+          if (currentSlot < transStart23) {
+            eq2.setAttribute('transform', 'translate(2.719 -4547)');
+          } else if (currentSlot < transEnd23) {
+            const t = Math.max(0, Math.min(1, (currentSlot - transStart23) / TRANSITION_SLOTS));
+            const e = t * t * (3 - 2 * t);
+            const dx = 457.3 * e, dy = -12 * e;
+            eq2.setAttribute('transform', 'translate(' + (2.719 + dx) + ' ' + (-4547 + dy) + ')');
+          } else {
+            eq2.setAttribute('transform', 'translate(' + (2.719 + 457.3) + ' ' + (-4547 - 12) + ')');
+          }
+        }
+      }
 
       // Scene 6 slide-in transform
       const s5 = SCENE_DEFS[4], s6 = SCENE_DEFS[5];
