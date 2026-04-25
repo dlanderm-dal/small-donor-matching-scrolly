@@ -438,18 +438,20 @@ html, body {
    "...Candidates also can't accept donations of any amount from:"). The
    list items are sized for emphasis, generously spaced, and rendered as
    a 2-column grid so the block stays wide-and-short instead of becoming
-   a tall narrow column that crowds the chart below. */
+   a tall narrow column that crowds the chart below. Padding/row-gap are
+   tight (vs the parent .prohibited-list-svg) so the 3-row block fits in
+   the y=315..585 gap between heading and chart without crowding. */
 .sbs-root .prohibited-list-compact {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 40px;
-  row-gap: 12px;
+  row-gap: 8px;
 }
 .sbs-root .prohibited-list-compact li {
-  padding: 10px 0 10px 56px;
+  padding: 6px 0 6px 56px;
   font-size: 34px;
   color: #2a2a2a;
-  line-height: 1.25;
+  line-height: 1.2;
 }
 .sbs-root .prohibited-list-compact li::before {
   font-size: 46px;
@@ -494,14 +496,6 @@ html, body {
   display: none;
 }
 
-/* Also hide scene 5's "Max county money per election: County Executive
-   $870,170" callout — that figure is shown in the after-scrolly info card,
-   and in scene 5 it overlapped the running-equation overlay. The story is
-   still complete: scene 5's heading already says "the county stops matching
-   when a donor has given more than $150" and the chart shows the cap. */
-.sbs-root #scene-5 g[id="Group_6"] {
-  display: none;
-}
 .sbs-root #scene-2 g[id="Group_2"],
 .sbs-root #scene-3 g[id^="This_is_an_expanded_version_of_the_equation"],
 .sbs-root #scene-4 g[id^="This_is_an_expanded_version"],   /* if any */
@@ -647,48 +641,67 @@ html, body {
 }
 
 /* Mobile responsive
-   The 1920×1280 viewBox is landscape; on a 375×812 portrait phone fitting it
-   to width gave only ~33% of the vertical space to the SVG (the rest was
-   empty letterbox above and below). Two fixes for that:
+   The 1920×1280 viewBox is landscape (aspect 1.5); on a 375×812 portrait
+   phone fitting it to width gives only ~250 device px of SVG height. The
+   prior 72vh stage left ~57% of vertical pixels as empty letterbox.
 
-   1. Drop the sticky-stage to ~70vh so the SVG occupies a larger PROPORTION
-      of the visible pinned area — less wasted space above and below. The
-      reduction also tightens overall scrolly height so you don't burn an
-      eternity scrolling through dead air.
-   2. Bump font-sizes inside SVG foreignObjects (heading paragraph, prohibited
-      list, equation overlay) since the SVG renders at a small device-pixel
-      scale on phones (50px in viewBox ≈ 9.8px on 375-wide screen). Bigger
-      base sizes make text legible without restructuring layout.
+   V2.5 mobile strategy:
+   1. Drop sticky-stage to 56vh so the SVG (which can never grow past its
+      width-constrained height) occupies a much larger PROPORTION of the
+      pinned area (~250/455 = 55% vs 43% at 72vh). Less wasted whitespace
+      above and below the visible content.
+   2. Bump font-sizes inside SVG foreignObjects AND the in-SVG raw <text>
+      labels via attribute-selector targeting. The <text> labels (chart
+      $-amounts, "Donation"/"Candidate receives", "x7" multipliers) are
+      the dense data callouts; bumping them ~1.5× makes them readable on
+      a phone without changing desktop sizing.
+   3. Per-scene transform scale-up applied to scene-stack on mobile —
+      content gets ~1.15x larger visually, with SVG still fitted via
+      `meet` so nothing crops.
 
    The after-scrolly section reflows to a single column. */
 @media (max-width: 768px) {
-  .sbs-root .sticky-stage { height: 72vh; height: 72dvh; }
+  .sbs-root .sticky-stage { height: 56vh; height: 56dvh; min-height: 460px; }
   .sbs-root .svg-wrapper { width: 100%; height: 100%; }
 
   /* Bump in-SVG text sizes so they're legible at the small mobile render
      (foreignObject px tracks viewBox units; on a 375-wide phone fitting a
-     1920-wide viewBox, 1 SVG unit ≈ 0.195 device pixels). The values here
-     are tuned so scene 1's heading (title + multi-line paragraph) FITS in
-     the 280-tall heading foreignObject without overflowing into the chart
-     below. Scene 1's paragraph is the longest at ~165 chars; at 52px it
-     wraps to 3 lines (~190 SVG units tall) plus the 1-line 56px title (~66
-     SVG units) → total 256, fits in 280 with 24-unit headroom. */
+     1920-wide viewBox, 1 SVG unit ≈ 0.195 device pixels). */
   .sbs-root .heading-overlay .heading-title { font-size: 56px; }
   .sbs-root .heading-overlay .heading-paragraph { font-size: 52px; }
   .sbs-root .prohibited-list-svg li { font-size: 42px; }
-  .sbs-root .prohibited-list-compact li { font-size: 38px; }
+  /* Scene 2 prohibited list is bumped slightly bigger on mobile, with
+     tightened padding/row-gap so the 3-row block still clears the chart
+     below at viewBox y=585. */
+  .sbs-root .prohibited-list-compact { row-gap: 6px; column-gap: 30px; }
+  .sbs-root .prohibited-list-compact li { font-size: 38px; padding: 4px 0 4px 50px; line-height: 1.18; }
   .sbs-root .prohibited-list-compact li::before { font-size: 44px; }
   .sbs-root .prohibited-label { font-size: 42px; }
   .sbs-root .eq-overlay { font-size: 42px; }
   .sbs-root .eq-row {
-    /* Wider label column proportionally so "NOT MATCHED" still fits. */
-    grid-template-columns: 380px 130px 36px 130px 36px 170px;
+    /* Wider label column proportionally so "NOT MATCHED" still fits.
+       Total column width × 6 columns ~ 750px so the equation block
+       (anchored at posX=1066) ends by x=1816 — inside the 1920 viewBox. */
+    grid-template-columns: 320px 110px 32px 110px 32px 150px;
   }
   .sbs-root .eq-row.visible { max-height: 80px; }
   .sbs-root .eq-row.eq-total-row {
-    grid-template-columns: 380px 130px 200px 170px 0 0;
+    grid-template-columns: 320px 110px 170px 150px 0 0;
   }
   .sbs-root .eq-row.eq-total-row.visible { max-height: 110px; }
+
+  /* Bump in-SVG raw <text> labels — chart values, Donation/Candidate
+     receives axis labels, multipliers — for mobile legibility. Targeted
+     via attribute selector matching font-size on the original element so
+     each size class scales proportionally. ~1.5× across the board. */
+  .sbs-root #sceneStack text[font-size="20"] { font-size: 30px; }
+  .sbs-root #sceneStack text[font-size="25"] { font-size: 36px; }
+  .sbs-root #sceneStack text[font-size="30"] { font-size: 42px; }
+  .sbs-root #sceneStack text[font-size="35"] { font-size: 48px; }
+  .sbs-root #sceneStack text[font-size="50"] { font-size: 64px; }
+  .sbs-root #sceneStack text[font-size="75"] { font-size: 95px; }
+  .sbs-root #sceneStack text[font-size="110"] { font-size: 130px; }
+  .sbs-root #sceneStack text[font-size="120"] { font-size: 140px; }
 
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
@@ -1032,7 +1045,7 @@ receives" transform="translate(239 4012.5)" fill="#434343" font-size="20" font-f
       <line id="Line_127" data-name="Line 127" x2="105" transform="translate(421.516 4174.5)" fill="none" stroke="#707070" stroke-width="3" stroke-dasharray="5"/>
       <line id="Line_128" data-name="Line 128" x2="105" transform="translate(538.859 4174.5)" fill="none" stroke="#707070" stroke-width="3" stroke-dasharray="5"/>
       <text id="Tier_3-5" data-name="Tier 3" transform="translate(591.359 4058)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 3</tspan></text>
-      <g id="Group_6" data-name="Group 6" transform="translate(380.523 -3660.25)">
+      <g id="Group_6" data-name="Group 6" transform="translate(380.523 -3410.25)">
         <text id="Max_county_money_per_election:_County_Executive" data-name="Max county money 
 per election: 
 County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-132.27" y="0">Max county money </tspan><tspan x="-86.955" y="36">per election: </tspan><tspan x="-117.51" y="72">County Executive</tspan></text>
@@ -1075,7 +1088,7 @@ funded candidate" transform="translate(624 4927)" fill="#434343" font-size="30" 
                   <text id="Becomes-5" data-name="Becomes" transform="translate(995 4653)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
                   <text id="In_total_for_the_candidate-2" data-name="In total for
 the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
-                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(611 4577)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
+                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(611 4595)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
                   <g id="Scene_6A_this_exists_BELOW_Scene_5A_in_the_y_direction_move_scene_5A_out_of_view_upwards_and_down_onto_this_" data-name="Scene 6A (this exists BELOW Scene 5A in the y direction, move scene 5A out of view upwards and down onto this)">
                     <foreignObject x="100" y="4526" width="1720" height="140">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">What’s better: one person giving $100 or 10 people giving $10 each?</div></foreignObject>
@@ -1225,21 +1238,14 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
          visual centerline. -->
     <div class="bar-chart-wrap">
       <svg viewBox="0 0 740 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- ===== TOP-RIGHT bookend totals (per design mockup) =====
-             Both totals live in the unused upper-right white space ABOVE the
-             NOT-MATCHED zone and to the right of the bar columns. Donation
-             amount sits on top in plain green; Candidate gets sits below in
-             a purple-bordered box (signaling the matched-funds total going
-             to the candidate). At all donation levels the columns + red
-             strip stay clear of this region (tier 1/2/3 max widths reach
-             only x=267; the NOT MATCHED red strip lives at y=342-380). -->
-        <!-- Donation amount (top, no box) -->
-        <text x="540" y="90" text-anchor="middle" font-size="22" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
-        <text id="bigDonationValue" x="540" y="155" text-anchor="middle" font-size="56" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
-        <!-- Candidate gets (purple-bordered box) -->
-        <rect x="395" y="190" width="290" height="135" rx="14" ry="14" fill="#fff" stroke="#7600ff" stroke-width="4"/>
-        <text x="540" y="226" text-anchor="middle" font-size="22" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
-        <text id="bigCandidateValue" x="540" y="290" text-anchor="middle" font-size="56" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
+        <!-- ===== TOP-RIGHT bookend totals =====
+             Donation amount (input) and Candidate gets (output) sit
+             side-by-side in the upper-right whitespace, equal weight, no
+             box — they read as bookend results bracketing the chart. -->
+        <text x="420" y="115" text-anchor="middle" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
+        <text id="bigDonationValue" x="420" y="170" text-anchor="middle" font-size="45" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
+        <text x="620" y="115" text-anchor="middle" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="620" y="170" text-anchor="middle" font-size="45" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
 
         <!-- ===== Y-axis label: "County / matching / funds" stacked vertically =====
              Centroid lands at y=240 — the y-position of the tier-1 match
@@ -1290,7 +1296,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           <tr id="eqTier1"><td class="tier-label">Tier 1</td><td class="donor">$50</td><td class="op">+</td><td class="match">$350</td><td class="op">=</td><td class="total">$400</td></tr>
           <tr id="eqTier2"><td class="tier-label">Tier 2</td><td class="donor">$50</td><td class="op">+</td><td class="match">$200</td><td class="op">=</td><td class="total">$250</td></tr>
           <tr id="eqTier3"><td class="tier-label">Tier 3</td><td class="donor">$50</td><td class="op">+</td><td class="match">$100</td><td class="op">=</td><td class="total">$150</td></tr>
-          <tr id="eqTier4"><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="not-matched">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+          <tr id="eqTier4"><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="match not-matched">$0</td><td class="op">=</td><td class="total">$0</td></tr>
           <tr class="total-row" id="eqTotal"><td class="tier-label">Total</td><td class="donor" id="eqTotalDonor">$50</td><td class="op">+</td><td class="match" id="eqTotalMatch">$350</td><td class="op">=</td><td class="total" id="eqTotalTotal">$400</td></tr>
         </tbody>
       </table>
@@ -1683,11 +1689,15 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // matching the visual rhythm of scenes 1 & 2.
     const SCENE_EQUATIONS = [
       { rows: [],                                  rowSubScene: {},                                              posX: 700,  posY: 460, scale: 1.6, op: 0 },  // scene 1
-      { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1 },  // scene 2 (3 sub-scenes; t1 from start)
-      { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 3 (tier-2 row appears with Scene_3C chart)
-      { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 4 (1 sub-scene)
-      { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 600, scale: 1.0, op: 1 },  // scene 5 (1 sub-scene)
-      { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 600, scale: 1.0, op: 0 },  // scene 6
+      { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1 },  // scene 2 (3 sub-scenes; t1 row sits below the prohibited list, beside the chart's mid-height)
+      // Scenes 3-5 share posY=510 so the running equation stays at a stable
+      // y-position as rows are added — no awkward up/down jiggle between
+      // adjacent scenes. Lifted up from 600 so the 5-row scene-5 stack
+      // (height ~362px) clears the chart's long green strip top at y=935.
+      { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 510, scale: 1.0, op: 1 },  // scene 3 (tier-2 row appears with Scene_3C chart)
+      { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 510, scale: 1.0, op: 1 },  // scene 4 (1 sub-scene)
+      { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 510, scale: 1.0, op: 1 },  // scene 5 (1 sub-scene)
+      { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 510, scale: 1.0, op: 0 },  // scene 6
     ];
 
     // Scene-2..5 totals for the running-equation Total row (donor → candidate).
