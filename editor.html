@@ -538,6 +538,11 @@
           <button data-mode="preview" role="radio" aria-checked="false">Live preview</button>
         </div>
       </div>
+      <div class="ca-group">
+        <label class="ab-toggle" title="Source the editor canvas from the live page's SVG (read out of the iframe at the matching scrollY) instead of the hand-coded approximation.">
+          <input type="checkbox" id="liveSourceToggle"> Use live SVG
+        </label>
+      </div>
       <div class="ca-group" style="margin-left:auto; color: var(--ink-3);">
         <span id="livePreviewStatus" style="font-style:italic;">Live preview ready</span>
       </div>
@@ -1885,7 +1890,11 @@
     if (!sceneInfo) return 0;
     const subId = currentSubScene[currentScene] || (currentScene + 'A');
     const subIdx = subId.charCodeAt(subId.length - 1) - 65; // 'A' → 0
-    const slot = sceneInfo.startSlot + Math.max(0, Math.min(sceneInfo.subScenes - 1, subIdx)) + 0.5;
+    // V3.8.4 — slot offset 0.85 (was 0.5). At 0.5 we landed mid-transition
+    // for scenes that have a slide-in (notably scene 6 with slideOffset=1200);
+    // 0.85 puts us deep in the sub-scene's steady state where the slide
+    // animation has completed and the chart is at its final position.
+    const slot = sceneInfo.startSlot + Math.max(0, Math.min(sceneInfo.subScenes - 1, subIdx)) + 0.85;
     const mode = VIEWPORT_MODES[currentViewport];
     const vh = mode.liveDevice[1];
     const REVEAL_VH = 60, TRANSITION_VH = 60;
@@ -1968,8 +1977,286 @@
   applyViewport = function () {
     _origApplyViewport();
     driveLivePreview();
+    if (liveSourceMode) renderSceneFromLiveSVG();
   };
   applyLayoutMode();
+
+  // ---- V3.8.4 Pass 2 — id-→group registry ----
+  // Each scene's element ids that belong to each logical editor group.
+  // Mirrors the V3 dict in scrollytelling-v3.html. When liveSourceMode is
+  // ON, the editor finds these ids in the iframe's SVG, computes a
+  // collective bbox from them, and clones them into the editor canvas as
+  // the rendered group content.
+  // Heading + eqOverlay live OUTSIDE the per-scene <g> in the live page —
+  // they are global overlay elements driven by the slot logic. We list
+  // them under a special pseudo-scene-id 'overlay' so the editor can
+  // optionally include them.
+  const LIVE_GROUP_REGISTRY = {
+    '1': {
+      heading: ['headingOverlayG'],
+      boxDiagram: [
+        'Donation-24', 'Rectangle_54', '_50-59',
+        '_3', 'Rectangle_55', '_350-37',
+        '_4', 'Rectangle_56', '_400-34',
+        'First_50_matched_seven_times_by_county-4',
+      ],
+      barChart: [
+        'Rectangle_58', 'Rectangle_57',
+        'Line_15', 'Line_16',
+        'x7-16', '_50-60', '_350-38',
+      ],
+    },
+    '2': {
+      heading: ['headingOverlayG'],
+      prohibitedList: ['scene2ListFo'],
+      barChart: [
+        'Rectangle_61', 'Line_18', 'Line_19', 'Line_22',
+        '_50-48', '_400-28', 'x7-15',
+      ],
+      equation: ['eqOverlayG'],
+    },
+    '3': {
+      heading: ['headingOverlayG'],
+      barChart: [
+        'Rectangle_103', 'Rectangle_83', 'Path_29',
+        'Line_68', 'Line_69', 'Line_109',
+        'Tier_1-9', 'x4-9',
+        '_400-30', '_50-50', '_200-12', '_50-51', '_100-21',
+      ],
+      equation: ['eqOverlayG'],
+    },
+    '4': {
+      heading: ['headingOverlayG'],
+      barChart: [
+        'Rectangle_104', 'Rectangle_105', 'Rectangle_106', 'Path_41',
+        'Line_110', 'Line_111', 'Line_112', 'Line_113',
+        'Tier_1-11', 'Tier_2-7', 'x2-6',
+        '_400-32', '_250-10', '_100-23', '_50-55', '_50-54', '_100-24', '_150-13',
+      ],
+      equation: ['eqOverlayG'],
+    },
+    '5': {
+      heading: ['headingOverlayG'],
+      barChart: [
+        'Rectangle_107', 'Rectangle_108', 'Rectangle_109', 'Path_44',
+        'Line_119', 'Line_120', 'Line_121', 'Line_122',
+        'Tier_1-7', 'Tier_2-5', 'Tier_3-5',
+        '_400-25', '_250-7', '_100-18', '_50-44', '_100-19', '_150-11', '_500-11',
+      ],
+      equation: ['eqOverlayG'],
+    },
+    '6': {
+      heading: ['headingOverlayG'],
+      topRow: [
+        'One_person_giving-2', 'Donation_to_publicly_funded_candidate-2',
+        'Rectangle_116', '_100-26',
+        'Becomes-5', 'sceneSixArrowGroup',
+        'In_total_for_the_candidate-2', 'Rectangle_118', '_650-11',
+      ],
+      perDonorRow: [
+        'Rectangle_113', '_10-2',
+        'Rectangle_114', '_70-2',
+        'Rectangle_112', '_80-2',
+      ],
+      multiplication: [
+        'Line_137', 'One_100_donor-2',
+        'x-2', '_10_People-2',
+        'Ten_10_donors-2',
+      ],
+      finalRow: [
+        'Rectangle_110', '_650-10', '_650-8',
+        'vs-2',
+        'Rectangle_111', '_800-3',
+      ],
+    },
+  };
+
+  // ---- V3.8.4 Pass 2 — Use live SVG toggle + clone path ----
+  let liveSourceMode = false;
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    if (typeof prefs.liveSourceMode === 'boolean') liveSourceMode = prefs.liveSourceMode;
+  } catch (e) {}
+  const liveSrcToggle = document.getElementById('liveSourceToggle');
+  if (liveSrcToggle) {
+    liveSrcToggle.checked = liveSourceMode;
+    liveSrcToggle.addEventListener('change', () => {
+      liveSourceMode = liveSrcToggle.checked;
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode, liveSourceMode })); } catch (e) {}
+      if (liveSourceMode) {
+        // Force iframe load if not already
+        if (layoutMode === 'editor') driveLivePreview();
+        renderSceneFromLiveSVG();
+      } else {
+        renderScene(); // back to hand-coded
+      }
+    });
+  }
+
+  // Get the iframe's SVG element. Returns null if iframe not loaded yet.
+  function getIframeSVG() {
+    const fr = document.getElementById('liveFrame');
+    if (!fr || !fr.contentDocument) return null;
+    return fr.contentDocument.querySelector('.sticky-stage svg');
+  }
+
+  // Clone the iframe's SVG state into the editor canvas. For each group
+  // in the registry, find the member elements, compute their collective
+  // bbox in viewBox coords, and clone them into a <g> that the editor's
+  // selection/drag system can target.
+  function renderSceneFromLiveSVG() {
+    const status = document.getElementById('livePreviewStatus');
+    const iframeSVG = getIframeSVG();
+    if (!iframeSVG) {
+      if (status) status.textContent = '⚠ live SVG not ready';
+      // Fall back to hand-coded so the editor isn't blank
+      renderScene();
+      return;
+    }
+    const layer = document.getElementById('groupsLayer');
+    layer.innerHTML = '';
+    const registry = LIVE_GROUP_REGISTRY[currentScene];
+    if (!registry) {
+      renderScene();
+      return;
+    }
+    // Update the editor canvas viewBox to match the iframe's
+    const iframeVB = iframeSVG.getAttribute('viewBox') || '0 0 1280 1700';
+    document.getElementById('canvas').setAttribute('viewBox', iframeVB);
+
+    // V3.8.4 — getCTM() on an element returns local→viewport (screen) px.
+    // The editor canvas has its own viewBox (same dims as iframe), so we
+    // need local→viewBox to clone correctly. Compute that by:
+    //   svgRoot.getCTM() = viewBox→viewport
+    //   (svgRoot.getCTM())⁻¹ * el.getCTM() = local→viewBox
+    const svgRootCTM = iframeSVG.getCTM();
+    if (!svgRootCTM) {
+      if (status) status.textContent = '⚠ iframe SVG CTM null';
+      renderScene();
+      return;
+    }
+    const svgRootInv = svgRootCTM.inverse();
+    function elInViewBox(el) {
+      const elCTM = el.getCTM();
+      if (!elCTM) return null;
+      return svgRootInv.multiply(elCTM);
+    }
+
+    Object.keys(registry).forEach(groupId => {
+      const elementIds = registry[groupId];
+      const memberEls = elementIds.map(id => iframeSVG.querySelector('#' + CSS.escape(id))).filter(Boolean);
+      if (!memberEls.length) return;
+
+      // Compute collective bbox in VIEWBOX coords.
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      const elTransforms = []; // local→viewBox per element, for cloning
+      memberEls.forEach(srcEl => {
+        try {
+          const bb = srcEl.getBBox();
+          const tx = elInViewBox(srcEl);
+          if (!tx) return;
+          elTransforms.push({ el: srcEl, tx });
+          const corners = [
+            { x: bb.x, y: bb.y },
+            { x: bb.x + bb.width, y: bb.y },
+            { x: bb.x, y: bb.y + bb.height },
+            { x: bb.x + bb.width, y: bb.y + bb.height },
+          ];
+          corners.forEach(p => {
+            const px = tx.a * p.x + tx.c * p.y + tx.e;
+            const py = tx.b * p.x + tx.d * p.y + tx.f;
+            if (px < minX) minX = px;
+            if (py < minY) minY = py;
+            if (px > maxX) maxX = px;
+            if (py > maxY) maxY = py;
+          });
+        } catch (e) {}
+      });
+      if (!isFinite(minX)) return;
+
+      // Build a <g> for the group, translated to (minX, minY) in viewBox.
+      const shell = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      shell.setAttribute('class', 'group-shell live-sourced');
+      shell.setAttribute('data-group', groupId);
+      shell.setAttribute('transform', 'translate(' + minX.toFixed(2) + ' ' + minY.toFixed(2) + ')');
+
+      // Background bbox rect for selection/drag target.
+      const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      bg.setAttribute('class', 'gbg');
+      bg.setAttribute('x', '0');
+      bg.setAttribute('y', '0');
+      bg.setAttribute('width', (maxX - minX).toFixed(2));
+      bg.setAttribute('height', (maxY - minY).toFixed(2));
+      shell.appendChild(bg);
+
+      // Clone each element with its viewBox CTM baked into a matrix(),
+      // offset relative to the group origin.
+      elTransforms.forEach(({ el: srcEl, tx }) => {
+        const clone = srcEl.cloneNode(true);
+        clone.setAttribute('transform',
+          'matrix(' + tx.a.toFixed(4) + ' ' + tx.b.toFixed(4) + ' ' + tx.c.toFixed(4) + ' ' + tx.d.toFixed(4) + ' ' +
+          (tx.e - minX).toFixed(2) + ' ' + (tx.f - minY).toFixed(2) + ')');
+        shell.appendChild(clone);
+      });
+
+      // Group label (top-left of bbox).
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('class', 'glabel');
+      label.setAttribute('x', '0');
+      label.setAttribute('y', '-8');
+      label.textContent = groupId + ' (' + memberEls.length + ' elements)';
+      shell.appendChild(label);
+
+      layer.appendChild(shell);
+    });
+
+    if (status) status.textContent = '✓ Live SVG cloned · ' + currentScene + currentSubScene[currentScene].slice(1) + ' · ' + Object.keys(registry).length + ' groups';
+  }
+
+  // When iframe finishes driving, also re-render from live if toggle on.
+  const _origDriveLivePreview = driveLivePreview;
+  driveLivePreview = function () {
+    _origDriveLivePreview();
+    // After scrollY drives, give the live page a frame to settle, then
+    // re-clone. Use a longer delay because the live page's update() runs
+    // in requestAnimationFrame.
+    if (liveSourceMode) {
+      setTimeout(() => renderSceneFromLiveSVG(), 1200);
+    }
+  };
+
+  // If liveSourceMode is on at startup, kick off iframe load.
+  if (liveSourceMode) {
+    if (layoutMode === 'editor') {
+      // Load iframe even if hidden, so we can clone from it.
+      const fr = document.getElementById('liveFrame');
+      const lp = document.getElementById('livePreview');
+      if (fr && lp) {
+        const mode = VIEWPORT_MODES[currentViewport];
+        const [w, h] = mode.liveDevice;
+        fr.style.width = w + 'px';
+        fr.style.height = h + 'px';
+        lp.style.width = w + 'px';
+        lp.style.height = h + 'px';
+        fr.src = 'scrollytelling-v3.html?embed=1&v=' + Date.now().toString(36).slice(-5);
+        iframeLoadedFor = w + 'x' + h;
+        fr.addEventListener('load', () => {
+          const win = fr.contentWindow;
+          setTimeout(() => {
+            try {
+              const doc = win.document;
+              const scrolly = doc.getElementById('scrolly');
+              const scrollyTop = scrolly ? scrolly.offsetTop : 740;
+              win.scrollTo(0, scrollyTop + computeScrollYForActive());
+              setTimeout(() => renderSceneFromLiveSVG(), 600);
+            } catch (e) {}
+          }, 800);
+        }, { once: true });
+      }
+    } else {
+      driveLivePreview();
+    }
+  }
 
   // ---- V3.8.2: sub-scene tab strip ----
   // Each top-level scene has multiple sub-scene reveal states that drive
