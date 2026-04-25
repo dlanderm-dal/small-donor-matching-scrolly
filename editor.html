@@ -338,6 +338,7 @@
     <button data-align="distributeV" title="Distribute Vertically (3+ selected)" aria-label="Distribute Vertical"><svg viewBox="0 0 18 18"><rect x="4" y="0.5" width="10" height="3" fill="currentColor"/><rect x="4" y="7.5" width="10" height="3" fill="currentColor"/><rect x="4" y="14.5" width="10" height="3" fill="currentColor"/></svg></button>
   </div>
   <div class="ab-right">
+    <button id="undoBtn" title="Undo last change (Cmd/Ctrl+Z)" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">↶ Undo</button>
     <label class="ab-toggle" title="Snap to other elements' edges and centers while dragging"><input type="checkbox" id="snapToggle" checked> Smart guides</label>
     <button class="action secondary" id="downloadSvgsBtn" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Backup SVGs ↓</button>
     <span class="sel-count" id="selCount">0 selected</span>
@@ -374,6 +375,18 @@
       <div><dt>x</dt><dd>—</dd></div>
       <div><dt>y</dt><dd>—</dd></div>
       <div><dt>scale</dt><dd>—</dd></div>
+    </div>
+    <h2>Notes — selected element</h2>
+    <textarea id="elementNotes" placeholder="Anything weird about this element? Type a note here. Saved per element, included in export so the implementer sees it." style="width: 100%; min-height: 80px; border: 1px solid var(--rule-soft); background: #fff; padding: 8px 10px; font: 13px/1.4 'Source Serif 4', serif; resize: vertical;"></textarea>
+
+    <h2>Reference screenshot for Scene <span id="sceneNumLabel2">1</span></h2>
+    <div id="screenshotBlock" style="border: 1px solid var(--rule-soft); background: #fff; padding: 8px;">
+      <input type="file" id="screenshotInput" accept="image/*" style="display: none;">
+      <button id="screenshotBtn" style="width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--rule); cursor: pointer; font: 600 12px/1 'Inter', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);">Upload screenshot ↑</button>
+      <div id="screenshotPreview" style="display: none; margin-top: 8px;">
+        <img id="screenshotImg" style="width: 100%; max-height: 220px; object-fit: contain; background: #f1efe8; border: 1px solid var(--rule-soft);" alt="Reference screenshot">
+        <button id="screenshotClear" style="width: 100%; margin-top: 4px; padding: 4px; background: transparent; border: 1px solid var(--rule-soft); cursor: pointer; font: 500 11px/1 'Inter', sans-serif; color: var(--ink-3);">Remove</button>
+      </div>
     </div>
     <h2>Stage info</h2>
     <div class="readout">
@@ -516,32 +529,20 @@
         id: "barChart",
         name: "Vertical bar chart",
         defaultX: 200, defaultY: 1000, defaultScale: 1.4,
-        bbox: { x: 0, y: 0, w: 360, h: 480 },
+        bbox: { x: 0, y: 0, w: 360, h: 460 },
         render: function () {
-          // Vertical chart: blue tall bar (350) + green short bar (50) below.
-          // Plus axis lines + labels. Normalized to start at (0,0).
+          // Match the actual scrollytelling: y-axis at x=50, x-axis line
+          // is the SAME as the bottom edge of the green donor strip
+          // (no gap). Blue match column flush against green strip below.
           const g = el('g');
-          // y-axis line
-          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          // x-axis line
-          g.appendChild(el('line', { x1: 50, y1: 410, x2: 360, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          // blue tall column
+          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          g.appendChild(el('line', { x1: 50, y1: 400, x2: 360, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
           g.appendChild(el('rect', { x: 50, y: 0, width: 114, height: 350, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
-          // green strip below baseline
           g.appendChild(el('rect', { x: 50, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          // labels
-          g.appendChild(el('text', { x: 107, y: 12, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [
-            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='x7';return t;})()
-          ]));
-          g.appendChild(el('text', { x: 107, y: 270, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
-            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()
-          ]));
-          g.appendChild(el('text', { x: 107, y: 386, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
-            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$50';return t;})()
-          ]));
-          g.appendChild(el('text', { x: 175, y: 470, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [
-            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()
-          ]));
+          g.appendChild(el('text', { x: 107, y: 12, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='x7';return t;})()]));
+          g.appendChild(el('text', { x: 107, y: 270, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()]));
+          g.appendChild(el('text', { x: 107, y: 380, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$50';return t;})()]));
+          g.appendChild(el('text', { x: 107, y: 440, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()]));
           return g;
         }
       }
@@ -611,23 +612,26 @@
         }
       },
       { id: "barChart", name: "Bar chart (Tier 1 + Tier 2 columns)", defaultX: 200, defaultY: 600, defaultScale: 1.6,
-        bbox: { x: 0, y: 0, w: 480, h: 480 },
+        bbox: { x: 0, y: 0, w: 360, h: 480 },
         render: function () {
+          // Bars FLUSH against each other (no gap between Tier 1 and Tier 2),
+          // axis line is the bottom edge of the green donor strip.
           const g = el('g');
-          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          g.appendChild(el('line', { x1: 50, y1: 410, x2: 480, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          // Tier 1 column purple
-          g.appendChild(el('rect', { x: 50, y: 10, width: 114, height: 400, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          g.appendChild(el('text', { x: 107, y: 215, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$400';return t;})()]));
+          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          g.appendChild(el('line', { x1: 50, y1: 400, x2: 360, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          // Tier 1 (purple total, full)
+          g.appendChild(el('rect', { x: 50, y: 0, width: 114, height: 350, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          // Tier 2 (blue match, half-height) — FLUSH against Tier 1's right edge
+          g.appendChild(el('rect', { x: 164, y: 150, width: 114, height: 200, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
+          // Green donor strips — flush with each tier above
+          g.appendChild(el('rect', { x: 50, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 164, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          // Labels
           g.appendChild(el('text', { x: 107, y: -8, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 1';return t;})()]));
-          // Tier 2 column blue
-          g.appendChild(el('rect', { x: 175, y: 210, width: 114, height: 200, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
-          g.appendChild(el('text', { x: 232, y: 320, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$200';return t;})()]));
-          g.appendChild(el('text', { x: 232, y: 192, 'text-anchor': 'middle', 'font-size': 30, 'font-family': 'Source Serif 4, serif', 'font-weight': 700, fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='x4';return t;})()]));
-          // green donor strips below baseline
-          g.appendChild(el('rect', { x: 50, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 175, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('text', { x: 175, y: 478, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()]));
+          g.appendChild(el('text', { x: 221, y: 132, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 2';return t;})()]));
+          g.appendChild(el('text', { x: 107, y: 185, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$400';return t;})()]));
+          g.appendChild(el('text', { x: 221, y: 260, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$200';return t;})()]));
+          g.appendChild(el('text', { x: 165, y: 440, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()]));
           return g;
         }
       },
@@ -654,26 +658,26 @@
         render: function () { return SCENES["3"][0].render(); }
       },
       { id: "barChart", name: "Bar chart (T1 + T2 + T3 columns + green strip)", defaultX: 130, defaultY: 600, defaultScale: 1.5,
-        bbox: { x: 0, y: 0, w: 600, h: 510 },
+        bbox: { x: 0, y: 0, w: 410, h: 480 },
         render: function () {
           const g = el('g');
-          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          g.appendChild(el('line', { x1: 50, y1: 410, x2: 600, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          // Tier 1 + 2 + 3
-          g.appendChild(el('rect', { x: 50, y: 10, width: 114, height: 400, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 175, y: 160, width: 114, height: 250, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 300, y: 260, width: 114, height: 150, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
-          // Green strips
-          g.appendChild(el('rect', { x: 50, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 175, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 300, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          g.appendChild(el('line', { x1: 50, y1: 400, x2: 410, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          // Three tier columns FLUSH against each other.
+          g.appendChild(el('rect', { x: 50, y: 0, width: 114, height: 350, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 164, y: 150, width: 114, height: 200, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 278, y: 250, width: 114, height: 100, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
+          // Green donor strips, flush below
+          g.appendChild(el('rect', { x: 50, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 164, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 278, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
           // Labels
           g.appendChild(el('text', { x: 107, y: -8, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 1';return t;})()]));
-          g.appendChild(el('text', { x: 232, y: 142, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 2';return t;})()]));
-          g.appendChild(el('text', { x: 357, y: 242, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 3';return t;})()]));
-          g.appendChild(el('text', { x: 107, y: 215, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$400';return t;})()]));
-          g.appendChild(el('text', { x: 232, y: 295, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$250';return t;})()]));
-          g.appendChild(el('text', { x: 357, y: 345, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$100';return t;})()]));
+          g.appendChild(el('text', { x: 221, y: 132, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 2';return t;})()]));
+          g.appendChild(el('text', { x: 335, y: 232, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 3';return t;})()]));
+          g.appendChild(el('text', { x: 107, y: 185, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$400';return t;})()]));
+          g.appendChild(el('text', { x: 221, y: 260, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$250';return t;})()]));
+          g.appendChild(el('text', { x: 335, y: 310, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$100';return t;})()]));
           return g;
         }
       },
@@ -708,26 +712,26 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 460, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "barChart", name: "Bar chart (T1+T2+T3 + long $500 green strip)", defaultX: 130, defaultY: 600, defaultScale: 1.4,
+      { id: "barChart", name: "Bar chart (T1+T2+T3 + long $500 green strip)", defaultX: 90, defaultY: 600, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 1100, h: 480 },
         render: function () {
+          // Same flush-bars logic as scene 4, plus the long green strip
+          // for the >$150 (NOT MATCHED) donor amount runs flush from the
+          // tier-3 right edge to the right end of the chart.
           const g = el('g');
-          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          g.appendChild(el('line', { x1: 50, y1: 410, x2: 1100, y2: 410, stroke: '#707070', 'stroke-width': 4 }));
-          // Tier columns
-          g.appendChild(el('rect', { x: 50, y: 10, width: 114, height: 400, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 175, y: 160, width: 114, height: 250, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 300, y: 260, width: 114, height: 150, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
-          // green strips below — short for tiers 1-3, long $500 strip for the rest
-          g.appendChild(el('rect', { x: 50, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 175, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 300, y: 410, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('rect', { x: 425, y: 410, width: 670, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          // labels
+          g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          g.appendChild(el('line', { x1: 50, y1: 400, x2: 1100, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          g.appendChild(el('rect', { x: 50, y: 0, width: 114, height: 350, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 164, y: 150, width: 114, height: 200, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 278, y: 250, width: 114, height: 100, fill: 'rgba(118,0,255,0.15)', stroke: '#7600ff', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 50, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 164, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 278, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
+          g.appendChild(el('rect', { x: 392, y: 350, width: 708, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
           g.appendChild(el('text', { x: 107, y: -8, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 1';return t;})()]));
-          g.appendChild(el('text', { x: 232, y: 142, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 2';return t;})()]));
-          g.appendChild(el('text', { x: 357, y: 242, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 3';return t;})()]));
-          g.appendChild(el('text', { x: 760, y: 442, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()]));
+          g.appendChild(el('text', { x: 221, y: 132, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 2';return t;})()]));
+          g.appendChild(el('text', { x: 335, y: 232, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 3';return t;})()]));
+          g.appendChild(el('text', { x: 746, y: 380, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350 NOT MATCHED';return t;})()]));
           return g;
         }
       },
@@ -799,36 +803,53 @@
           return g;
         }
       },
-      { id: "vsDivider", name: "VS divider", defaultX: 540, defaultY: 730, defaultScale: 1.0,
-        bbox: { x: 0, y: 0, w: 200, h: 100 },
+      // Scene 6 mirrors the DESKTOP narrative now (corrected). Three rows
+      // after topRow: per-donor breakdown ($10 + $70 = $80) → multiplication
+      // (× 10 People line) → final comparison ($650 vs $800). The change
+      // for mobile is RELATIVE size + position only — these are draggable.
+      { id: "perDonorRow", name: "Per-donor: $10 + $70 = $80", defaultX: 60, defaultY: 730, defaultScale: 0.85,
+        bbox: { x: 0, y: 0, w: 770, h: 240 },
         render: function () {
           const g = el('g');
-          g.appendChild(el('line', { x1: 0, y1: 50, x2: 60, y2: 50, stroke: '#1a1a1a', 'stroke-width': 2 }));
-          g.appendChild(el('text', { x: 100, y: 65, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', 'font-weight': 700, fill: '#1a1a1a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='vs.';return t;})()]));
-          g.appendChild(el('line', { x1: 140, y1: 50, x2: 200, y2: 50, stroke: '#1a1a1a', 'stroke-width': 2 }));
+          g.appendChild(el('text', { x: 86, y: 30, 'text-anchor': 'middle', 'font-size': 26, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation to publicly funded candidate';return t;})()]));
+          g.appendChild(el('rect', { x: 0, y: 60, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#229500', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 86, y: 148, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$10';return t;})()]));
+          g.appendChild(el('text', { x: 230, y: 165, 'text-anchor': 'middle', 'font-size': 60, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='+';return t;})()]));
+          g.appendChild(el('text', { x: 376, y: 30, 'text-anchor': 'middle', 'font-size': 26, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Tier 1 match — 7 × $10';return t;})()]));
+          g.appendChild(el('rect', { x: 290, y: 60, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#0027ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 376, y: 148, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$70';return t;})()]));
+          g.appendChild(el('text', { x: 520, y: 165, 'text-anchor': 'middle', 'font-size': 60, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='=';return t;})()]));
+          g.appendChild(el('rect', { x: 580, y: 60, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#7600ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 666, y: 148, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$80';return t;})()]));
+          g.appendChild(el('text', { x: 666, y: 230, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', fill: '#7a7a7a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='per donor';return t;})()]));
           return g;
         }
       },
-      { id: "bottomRow", name: "Bottom row — 10 × $10 → $1,150", defaultX: 60, defaultY: 880, defaultScale: 1.0,
-        bbox: { x: 0, y: 0, w: 1160, h: 320 },
+      { id: "multiplication", name: "× 10 People multiplication", defaultX: 280, defaultY: 1020, defaultScale: 1.0,
+        bbox: { x: 0, y: 0, w: 540, h: 130 },
         render: function () {
           const g = el('g');
-          g.appendChild(el('text', { x: 86, y: 30, 'text-anchor': 'middle', 'font-size': 30, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Ten people giving';return t;})()]));
-          // 10 small green $10 boxes (visual cluster representing "10 × $10")
-          for (let i = 0; i < 10; i++) {
-            const cx = 30 + (i % 5) * 32;
-            const cy = 80 + Math.floor(i / 5) * 70;
-            g.appendChild(el('rect', { x: cx, y: cy, width: 28, height: 56, rx: 6, fill: '#fff', stroke: '#229500', 'stroke-width': 4 }));
-            g.appendChild(el('text', { x: cx + 14, y: cy + 36, 'text-anchor': 'middle', 'font-size': 16, 'font-family': 'JetBrains Mono, monospace', fill: '#229500', 'font-weight': 700 }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$10';return t;})()]));
-          }
-          // Becomes
-          g.appendChild(el('text', { x: 435, y: 90, 'text-anchor': 'middle', 'font-size': 30, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Becomes';return t;})()]));
-          g.appendChild(el('g', { transform: 'translate(435 158) scale(1.4)' }, [
-            el('path', { d: 'M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z', fill: '#434343' })
-          ]));
-          // purple $1,150 box
-          g.appendChild(el('rect', { x: 720, y: 80, width: 220, height: 136, rx: 27, fill: '#fff', stroke: '#7600ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
-          g.appendChild(el('text', { x: 830, y: 168, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$1,150';return t;})()]));
+          g.appendChild(el('text', { x: 0, y: 80, 'font-size': 90, 'font-family': 'Helvetica Neue, sans-serif', stroke: '#000', 'stroke-width': 2, fill: '#1a1a1a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='×';return t;})()]));
+          g.appendChild(el('line', { x1: 80, y1: 90, x2: 540, y2: 90, stroke: '#000', 'stroke-width': 6 }));
+          g.appendChild(el('text', { x: 290, y: 70, 'text-anchor': 'middle', 'font-size': 60, 'font-family': 'Source Serif 4, serif', fill: '#1a1a1a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='10 People';return t;})()]));
+          g.appendChild(el('text', { x: 290, y: 125, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', fill: '#7a7a7a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='each giving the same way';return t;})()]));
+          return g;
+        }
+      },
+      { id: "finalRow", name: "Final comparison — $650 vs $800", defaultX: 100, defaultY: 1240, defaultScale: 0.95,
+        bbox: { x: 0, y: 0, w: 1000, h: 320 },
+        render: function () {
+          const g = el('g');
+          g.appendChild(el('text', { x: 110, y: 30, 'text-anchor': 'middle', 'font-size': 26, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='One $100 donor';return t;})()]));
+          g.appendChild(el('text', { x: 870, y: 30, 'text-anchor': 'middle', 'font-size': 26, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Ten $10 donors';return t;})()]));
+          g.appendChild(el('rect', { x: 24, y: 60, width: 171, height: 136, rx: 27, fill: '#fff', stroke: 'rgba(118,0,255,0.53)', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 110, y: 148, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$650';return t;})()]));
+          g.appendChild(el('text', { x: 500, y: 145, 'text-anchor': 'middle', 'font-size': 80, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', 'font-weight': 700, stroke: '#000', 'stroke-width': 2, fill: '#a0a0a0' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='vs';return t;})()]));
+          g.appendChild(el('rect', { x: 784, y: 60, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#7600ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 870, y: 148, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$800';return t;})()]));
+          g.appendChild(el('text', { x: 110, y: 230, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', fill: '#7a7a7a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='gives candidate';return t;})()]));
+          g.appendChild(el('text', { x: 870, y: 230, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'Source Serif 4, serif', 'font-style': 'italic', fill: '#7a7a7a' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='give candidate';return t;})()]));
+          g.appendChild(el('text', { x: 500, y: 295, 'text-anchor': 'middle', 'font-size': 24, 'font-family': 'Source Serif 4, serif', 'font-weight': 700, fill: '#1a5928' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Ten small donors give MORE.';return t;})()]));
           return g;
         }
       }
@@ -836,14 +857,26 @@
   };
 
   // ---- state ----
-  const STORAGE_KEY = 'sbs-portrait-editor-v2';
-  const ALIGN_LOG_KEY = 'sbs-portrait-align-log-v2';
+  const STORAGE_KEY = 'sbs-portrait-editor-v3';
+  const ALIGN_LOG_KEY = 'sbs-portrait-align-log-v3';
+  const NOTES_KEY = 'sbs-portrait-notes-v3';
+  const SCREENSHOTS_KEY = 'sbs-portrait-screenshots-v3';
+  const UNDO_KEY = 'sbs-portrait-undo-v3';
   let currentScene = '1';
   let layout = {};       // { sceneId: { groupId: { x, y, scaleX, scaleY, hidden } } }
-  let selected = null;   // single-element handle for backward compat with the readout
-  let selectedIds = new Set();  // multi-selection set (group ids in current scene)
-  let alignmentLog = []; // every alignment/distribute op the user runs (recorded in export)
-  let snapEnabled = true;  // smart guides on by default
+  let selected = null;
+  let selectedIds = new Set();
+  let alignmentLog = [];
+  let snapEnabled = true;
+  // Per-element notes: { sceneId: { groupId: "note text" } }
+  let elementNotes = {};
+  // Per-scene reference screenshot: { sceneId: { dataUrl, filename, uploadedAt } }
+  let sceneScreenshots = {};
+  // Undo stack — keeps the last 50 layout snapshots so the user can step
+  // back through changes. Each entry is a deep clone of `layout`. We also
+  // capture a label describing what the action was.
+  let undoStack = [];
+  const UNDO_MAX = 50;
 
   function load() {
     try {
@@ -854,7 +887,18 @@
       const lg = JSON.parse(localStorage.getItem(ALIGN_LOG_KEY) || '[]');
       if (Array.isArray(lg)) alignmentLog = lg;
     } catch (e) { alignmentLog = []; }
-    // Seed missing groups with defaults
+    try {
+      const n = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+      if (n && typeof n === 'object') elementNotes = n;
+    } catch (e) { elementNotes = {}; }
+    try {
+      const ss = JSON.parse(localStorage.getItem(SCREENSHOTS_KEY) || '{}');
+      if (ss && typeof ss === 'object') sceneScreenshots = ss;
+    } catch (e) { sceneScreenshots = {}; }
+    try {
+      const u = JSON.parse(localStorage.getItem(UNDO_KEY) || '[]');
+      if (Array.isArray(u)) undoStack = u;
+    } catch (e) { undoStack = []; }
     Object.keys(SCENES).forEach(s => {
       layout[s] = layout[s] || {};
       SCENES[s].forEach(g => {
@@ -868,8 +912,36 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
       localStorage.setItem(ALIGN_LOG_KEY, JSON.stringify(alignmentLog));
+      localStorage.setItem(NOTES_KEY, JSON.stringify(elementNotes));
+      // Screenshots can get big — try and skip silently if quota exceeded.
+      try { localStorage.setItem(SCREENSHOTS_KEY, JSON.stringify(sceneScreenshots)); } catch (e) {}
+      localStorage.setItem(UNDO_KEY, JSON.stringify(undoStack));
     } catch (e) {}
     document.getElementById('savedTag').textContent = 'Saved · ' + new Date().toLocaleTimeString();
+  }
+
+  // ---- undo ----
+  // pushUndo(label) before mutating layout. Then mutate. Then save().
+  // popUndo() restores the most recent snapshot.
+  function pushUndo(label) {
+    undoStack.push({
+      label: label || 'change',
+      timestamp: Date.now(),
+      layoutSnapshot: JSON.parse(JSON.stringify(layout))
+    });
+    // Keep only the last UNDO_MAX entries
+    if (undoStack.length > UNDO_MAX) undoStack.splice(0, undoStack.length - UNDO_MAX);
+  }
+  function popUndo() {
+    if (undoStack.length === 0) {
+      flashMessage('Nothing to undo');
+      return;
+    }
+    const last = undoStack.pop();
+    layout = last.layoutSnapshot;
+    save();
+    renderScene();
+    flashMessage('Undid: ' + last.label);
   }
 
   // ---- alignment math ----
@@ -903,6 +975,7 @@
   function alignSelected(action) {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
+    pushUndo(action + ' (' + ids.length + ' element' + (ids.length===1?'':'s') + ')');
     const mode = ids.length === 1 ? 'canvas' : 'selection';
     const target = mode === 'canvas' ? canvasBounds() : unionBounds(ids);
 
@@ -1075,6 +1148,7 @@
     });
 
     refreshSelectionUI();
+    refreshScreenshotUI();
   }
 
   function attachInteractions(shell, g) {
@@ -1095,6 +1169,9 @@
     function start(evt) {
       evt.preventDefault();
       evt.stopPropagation();
+      // Push undo before any drag / resize starts (only one snapshot per
+      // gesture — drag start, not every pointermove tick).
+      pushUndo(evt.target.classList && evt.target.classList.contains('handle') ? 'resize ' + g.name : 'move ' + g.name);
       const target = evt.target;
       const isHandle = target.classList && target.classList.contains('handle');
       const additive = evt.shiftKey || evt.metaKey || evt.ctrlKey;
@@ -1212,16 +1289,49 @@
     const sc = document.getElementById('selCount');
     sc.textContent = n + ' selected';
     sc.classList.toggle('has', n > 0);
-    // Update label "Align to canvas" vs "Align to selection"
     const lbl = document.getElementById('abLabel');
     if (n === 0) lbl.textContent = 'No selection';
     else if (n === 1) lbl.textContent = 'Align to canvas';
     else lbl.textContent = 'Align to selection (' + n + ')';
-    // Disable distribute when < 3 selected
     document.querySelectorAll('.ab-group button[data-align="distributeH"], .ab-group button[data-align="distributeV"]').forEach(b => {
       b.disabled = n < 3;
     });
     refreshReadout();
+    // Update notes textarea — bound to single-select; when 0 or multi-
+    // selected, disable the textarea so the user knows it doesn't apply.
+    const notesEl = document.getElementById('elementNotes');
+    if (notesEl) {
+      if (n === 1) {
+        const id = Array.from(selectedIds)[0];
+        notesEl.disabled = false;
+        notesEl.placeholder = 'Anything weird about ' + (SCENES[currentScene].find(g => g.id === id) || {name:''}).name + '? Type a note here.';
+        notesEl.value = (elementNotes[currentScene] && elementNotes[currentScene][id]) || '';
+      } else {
+        notesEl.disabled = true;
+        notesEl.placeholder = n === 0 ? 'Select an element to add a note.' : 'Select a single element to add a note.';
+        notesEl.value = '';
+      }
+    }
+  }
+
+  // Refresh the per-scene screenshot block — show preview if uploaded,
+  // otherwise show the upload button.
+  function refreshScreenshotUI() {
+    const ssLabel = document.getElementById('sceneNumLabel2');
+    if (ssLabel) ssLabel.textContent = currentScene;
+    const block = document.getElementById('screenshotBlock');
+    const preview = document.getElementById('screenshotPreview');
+    const img = document.getElementById('screenshotImg');
+    const btn = document.getElementById('screenshotBtn');
+    const ss = sceneScreenshots[currentScene];
+    if (ss && ss.dataUrl) {
+      preview.style.display = 'block';
+      btn.style.display = 'none';
+      img.src = ss.dataUrl;
+    } else {
+      preview.style.display = 'none';
+      btn.style.display = 'block';
+    }
   }
 
   function refreshReadout() {
@@ -1267,6 +1377,49 @@
     snapEnabled = e.target.checked;
   });
 
+  // ---- undo ----
+  document.getElementById('undoBtn').addEventListener('click', popUndo);
+
+  // ---- per-element notes ----
+  // Auto-save on input (debounced lightly via the document-level save()).
+  const notesEl = document.getElementById('elementNotes');
+  notesEl.addEventListener('input', () => {
+    if (selectedIds.size !== 1) return;
+    const id = Array.from(selectedIds)[0];
+    elementNotes[currentScene] = elementNotes[currentScene] || {};
+    if (notesEl.value.trim() === '') delete elementNotes[currentScene][id];
+    else elementNotes[currentScene][id] = notesEl.value;
+    save();
+  });
+
+  // ---- per-scene screenshot upload ----
+  const screenshotInput = document.getElementById('screenshotInput');
+  document.getElementById('screenshotBtn').addEventListener('click', () => screenshotInput.click());
+  screenshotInput.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      sceneScreenshots[currentScene] = {
+        dataUrl: ev.target.result,
+        filename: file.name,
+        uploadedAt: new Date().toISOString(),
+        size: file.size
+      };
+      save();
+      refreshScreenshotUI();
+      flashMessage('Screenshot uploaded for scene ' + currentScene);
+    };
+    reader.readAsDataURL(file);
+    screenshotInput.value = '';
+  });
+  document.getElementById('screenshotClear').addEventListener('click', () => {
+    delete sceneScreenshots[currentScene];
+    save();
+    refreshScreenshotUI();
+    flashMessage('Screenshot removed');
+  });
+
   // ---- background click clears selection ----
   document.getElementById('canvas').addEventListener('pointerdown', (evt) => {
     // Only if click hits the SVG itself (not inside a group)
@@ -1302,16 +1455,21 @@
     renderScene();
   });
 
-  // ---- esc to deselect, cmd/ctrl-A to select all in scene ----
+  // ---- esc to deselect, cmd/ctrl-A to select all, cmd/ctrl-Z to undo ----
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
+    // Don't capture shortcuts when typing in an input/textarea (notes etc.).
+    const inField = e.target && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT');
+    if (e.key === 'Escape' && !inField) {
       selectedIds.clear();
       selected = null;
       refreshSelectionUI();
-    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a' && !e.shiftKey) {
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a' && !e.shiftKey && !inField) {
       e.preventDefault();
       selectedIds = new Set(SCENES[currentScene].map(g => g.id));
       refreshSelectionUI();
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !e.shiftKey && !inField) {
+      e.preventDefault();
+      popUndo();
     }
   });
 
@@ -1335,17 +1493,25 @@
       alignmentLog: alignmentLog.slice() // append-only history of XD-style ops
     };
     Object.keys(SCENES).forEach(s => {
-      out.scenes[s] = {};
+      out.scenes[s] = {
+        groups: {},
+        // Per-scene reference screenshot (base64 data URL). The next round
+        // of work cross-references this against the actual rendering of
+        // the same scene to spot drift.
+        referenceScreenshot: sceneScreenshots[s] || null
+      };
       SCENES[s].forEach(g => {
         const st = layout[s][g.id];
-        out.scenes[s][g.id] = {
+        out.scenes[s].groups[g.id] = {
           name: g.name,
           x: Math.round(st.x),
           y: Math.round(st.y),
           scaleX: Number(st.scaleX.toFixed(3)),
           scaleY: Number(st.scaleY.toFixed(3)),
           hidden: !!st.hidden,
-          bbox: g.bbox
+          bbox: g.bbox,
+          // Per-element user note (free-form). Only present if non-empty.
+          notes: (elementNotes[s] && elementNotes[s][g.id]) || null
         };
       });
     });

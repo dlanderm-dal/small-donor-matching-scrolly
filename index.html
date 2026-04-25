@@ -1005,14 +1005,22 @@ html, body {
   .sbs-root #scene-1 #First_50_matched_seven_times_by_county-4 {
     display: none;
   }
-  /* Scene-6 mobile pruning: the comparison narrative ("$100 donor vs.
-     ten $10 donors") doesn't fit into portrait without overlaps. Hide
-     the recap "Already Seen" label, the per-person breakdown row
-     (Tier 1 Matching 7×$10), the $80 sum step, the +/= operators, the
-     bottom comparison row ($650/$800/Ten donors), and the multiplication
-     line + "10 People" label. The remaining content is just the
-     heading + the headline comparison ($100 donor → $650 to candidate)
-     plus the "Becomes" connector — the simplest possible scene-6 frame. */
+  /* Scene-6 mobile — partial restoration (V2.16). The DESKTOP scene-6
+     narrative has 4 horizontal rows (top boxes / per-donor breakdown /
+     × 10 multiplication / final comparison) that would massively overlap
+     when squeezed into the 1280-wide mobile viewBox. We hide ONLY the
+     middle "per-donor breakdown" row ($10 + $70 = $80 box step) on
+     mobile, since those three boxes physically can't fit side-by-side
+     with the +/= operators between them. The top boxes, the × 10
+     multiplication, and the final $650-vs-$800 comparison row all
+     stay visible — that gives the reader the full punchline:
+       (1) $100 donor → $650 candidate  (already seen)
+       (2) × 10 People (multiplication callout)
+       (3) $650 vs $800 — ten small donors give MORE than one big donor.
+     The mobile slot timing for scene-6 has 3 sub-scenes that reveal
+     content from the hidden per-donor row; on mobile those slots become
+     "hold time" where the scene state doesn't change. Acceptable until
+     the layout editor pass produces a redrawn mobile-portrait scene 6. */
   .sbs-root #scene-6 #Already_Seen\:-2,
   .sbs-root #scene-6 #_10-2,
   .sbs-root #scene-6 #Rectangle_114,
@@ -1023,19 +1031,20 @@ html, body {
   .sbs-root #scene-6 #_80-2,
   .sbs-root #scene-6 #Rectangle_112,
   .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-3,
-  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-4,
-  .sbs-root #scene-6 #Rectangle_110,
-  .sbs-root #scene-6 #_650-10,
-  .sbs-root #scene-6 #One_100_donor-2,
-  .sbs-root #scene-6 #Rectangle_111,
-  .sbs-root #scene-6 #_800-3,
-  .sbs-root #scene-6 #Ten_10_donors-2,
-  .sbs-root #scene-6 #vs-2,
-  .sbs-root #scene-6 #Line_137,
-  .sbs-root #scene-6 #x-2,
-  .sbs-root #scene-6 #_10_People-2 {
+  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-4 {
     display: none;
   }
+  /* "vs" between Rectangle_110 ($650) and shifted Rectangle_111 ($800) on
+     mobile — at desktop's 110-px font-size it would still overlap both
+     boxes once they're 22 viewBox units apart. Shrink to 50 on mobile so
+     it sits cleanly in the gap. */
+  .sbs-root #scene-6 #vs-2 { font-size: 50px; }
+  /* Scene-6 bottom-row labels ("One $100 donor" / "Ten $10 donors") at
+     desktop's 30-px size are wider than the box gap on mobile and run
+     into each other. Shrink to 22 px so each label sits inside its
+     respective box's column. */
+  .sbs-root #scene-6 #One_100_donor-2,
+  .sbs-root #scene-6 #Ten_10_donors-2 { font-size: 22px; }
   .sbs-root .svg-wrapper { width: 100%; height: 100%; }
 
   /* CH26: fill mobile vertical space by SIZING UP elements. Heading
@@ -1197,7 +1206,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V2.15</strong> · XD-style alignment toolbar + 21 SVG element backups · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V2.16</strong> · scene 6 mobile restored + editor notes / screenshots / undo · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -1990,16 +1999,17 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
 
     // Scene 6 right-column comparison ($650/$80/$800 boxes + Ten $10 donors
     // labels). x-extent up to 1617 (Line_137); shift left to fit 1280.
+    // x-2 (the × multiplication symbol) pairs with Line_137 in the
+    // "× 10 People" callout, so it shifts with the line.
     // The + / = symbols sit BETWEEN left-column boxes ($10/$70/$650) and
-    // are intentionally NOT in this list — they'd shift away from the
-    // boxes they punctuate if grouped with the right-column.
+    // are NOT in this list — they belong to SCENE6_MIDDLE_IDS.
     const SCENE6_RIGHT_IDS = [
       'Rectangle_111', '_800-3',
       'Rectangle_112', '_80-2',
       'Rectangle_118', '_650-11',
       'In_total_for_the_candidate-2',
       'Ten_10_donors-2',
-      'Line_137', '_10_People-2',
+      'Line_137', '_10_People-2', 'x-2',
     ];
     const SCENE6_RIGHT_DX = -340;
 
@@ -2008,13 +2018,18 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // column shifts -340 left, these middle elements would sit INSIDE the
     // right-column box at their desktop x. Shift them about half as much so
     // they continue to sit in the gap between left and shifted-right boxes.
+    // 'vs-2' (the "vs." comparison symbol on the bottom row) sits between
+    // the unshifted Rectangle_110 ($650) and the shifted Rectangle_111
+    // ($800) — same gap pattern, same shift.
     const SCENE6_MIDDLE_IDS = [
       'Becomes-5',
-      'sceneSixArrowGroup',  // id added to the block-arrow <g> in the SVG
+      'sceneSixArrowGroup',
       // The + and = symbols (at x=809 and x=1182) now sit in this middle
       // band too; they connect the same shifted boxes.
       'until_scene_2H_this_element_is_100_opacity-3',
       'until_scene_2H_this_element_is_100_opacity-4',
+      // "vs." between Rectangle_110 (no shift) and Rectangle_111 (-340).
+      'vs-2',
     ];
     const SCENE6_MIDDLE_DX = -170;
 
