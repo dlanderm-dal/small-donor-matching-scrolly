@@ -666,14 +666,12 @@ html, body {
 
    The after-scrolly section reflows to a single column. */
 @media (max-width: 768px) {
-  /* Mobile portrait: SVG viewBox swaps to 1280×2400 (aspect 0.533) via JS.
-     On a 375-wide phone the SVG fits to ~375×703 device px. Stage height
-     must be ≥ 703 device px so the SVG renders edge-to-edge with no left/
-     right letterbox; 95vh ≈ 771 device px on an iPhone gives comfortable
-     room. Background stays transparent so the small top/bottom collar
-     blends with the page. */
+  /* Mobile portrait: SVG viewBox swaps to 1280×2050 (aspect 0.624) via JS.
+     On a 375-wide phone the SVG fits to ~375×600 device px. Stage at 80vh
+     ≈ 650 device px on an iPhone fits the SVG edge-to-edge with a small
+     vertical collar that blends with the page background. */
   .sbs-root .sticky-stage {
-    height: 95vh; height: 95dvh; min-height: 700px;
+    height: 80vh; height: 80dvh; min-height: 600px;
     background: transparent;
   }
   /* Scene-2 prohibited list: switch to single-column on mobile portrait so
@@ -682,17 +680,74 @@ html, body {
   .sbs-root .prohibited-list-compact {
     grid-template-columns: 1fr !important;
     column-gap: 0;
-    row-gap: 12px;
+    row-gap: 8px;
+  }
+  /* Hide chart axis labels that visually overlap with chart content on
+     mobile-portrait. On desktop these axis annotations sit OUTSIDE the
+     chart (left of the y-axis line); on the narrower mobile portrait the
+     labels render close enough to the chart bars that they read as
+     overlapping the bars themselves. The numeric labels inside each bar
+     ($350, $250, $400) carry the same information. */
+  .sbs-root #scene-1 #Candidate_receives-23,
+  .sbs-root #scene-1 #_400-35,
+  .sbs-root #scene-1 #_350-38,
+  .sbs-root #scene-2 #Candidate_receives-19,
+  .sbs-root #scene-2 #_400-27,
+  .sbs-root #scene-2 #_400-28,
+  .sbs-root #scene-3 #Candidate_receives-20,
+  .sbs-root #scene-3 #_400-30,
+  .sbs-root #scene-4 #Candidate_receives-21,
+  .sbs-root #scene-4 #_400-32,
+  .sbs-root #scene-5 #Candidate_receives-18,
+  .sbs-root #scene-5 #_400-25 {
+    display: none;
+  }
+  /* Scene-1 boxes diagram label "First $50 matched seven times by county"
+     is wider than the gap between adjacent labels on mobile and overlaps
+     with "Candidate receives". The "x7" multiplier on the bar chart below
+     conveys the same information, so drop the wide label on mobile. */
+  .sbs-root #scene-1 #First_50_matched_seven_times_by_county-4 {
+    display: none;
+  }
+  /* Scene-6 mobile pruning: the comparison narrative ("$100 donor vs.
+     ten $10 donors") doesn't fit into portrait without overlaps. Hide
+     the recap "Already Seen" label, the per-person breakdown row
+     (Tier 1 Matching 7×$10), the $80 sum step, the +/= operators, the
+     bottom comparison row ($650/$800/Ten donors), and the multiplication
+     line + "10 People" label. The remaining content is just the
+     heading + the headline comparison ($100 donor → $650 to candidate)
+     plus the "Becomes" connector — the simplest possible scene-6 frame. */
+  .sbs-root #scene-6 #Already_Seen\:-2,
+  .sbs-root #scene-6 #_10-2,
+  .sbs-root #scene-6 #Rectangle_114,
+  .sbs-root #scene-6 #Donation_to_publicly_funded_candidate-2,
+  .sbs-root #scene-6 #_70-2,
+  .sbs-root #scene-6 #Rectangle_113,
+  .sbs-root #scene-6 #Tier_1_Matching_7_x_10,
+  .sbs-root #scene-6 #_80-2,
+  .sbs-root #scene-6 #Rectangle_112,
+  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-3,
+  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-4,
+  .sbs-root #scene-6 #Rectangle_110,
+  .sbs-root #scene-6 #_650-10,
+  .sbs-root #scene-6 #One_100_donor-2,
+  .sbs-root #scene-6 #Rectangle_111,
+  .sbs-root #scene-6 #_800-3,
+  .sbs-root #scene-6 #Ten_10_donors-2,
+  .sbs-root #scene-6 #vs-2,
+  .sbs-root #scene-6 #Line_137,
+  .sbs-root #scene-6 #x-2,
+  .sbs-root #scene-6 #_10_People-2 {
+    display: none;
   }
   .sbs-root .svg-wrapper { width: 100%; height: 100%; }
 
-  /* Bump in-SVG text sizes so they're legible at the small mobile render.
-     On the 1280×2400 mobile-portrait viewBox at 375 device px wide, 1 SVG
-     unit ≈ 0.293 device pixels — so 50px viewBox ≈ 14.6 device px. Heading
-     font tuned smaller (50/46) than first pass (56/52) so a 10-line scene-5
-     paragraph fits in the 620-tall heading band without clipping. */
-  .sbs-root .heading-overlay .heading-title { font-size: 54px; }
-  .sbs-root .heading-overlay .heading-paragraph { font-size: 46px; line-height: 1.22; }
+  /* Mobile-portrait heading: tighter font sizing so the 5-line scene-5
+     paragraph fits inside the 300-tall heading band without clipping.
+     Scale: 1280-wide viewBox at 375 device px → 1 SVG unit ≈ 0.293 device
+     px, so 44px viewBox ≈ 13 device px reading text. */
+  .sbs-root .heading-overlay .heading-title { font-size: 50px; }
+  .sbs-root .heading-overlay .heading-paragraph { font-size: 44px; line-height: 1.18; }
   .sbs-root .prohibited-list-svg li { font-size: 42px; }
   /* Scene 2 prohibited list is bumped slightly bigger on mobile, with
      tightened padding/row-gap so the 3-row block still clears the chart
@@ -1111,7 +1166,7 @@ receives" transform="translate(239 4012.5)" fill="#434343" font-size="20" font-f
                 <text id="Donation_to_publicly_funded_candidate-2" data-name="Donation to publicly 
 funded candidate" transform="translate(624 4927)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-138.09" y="0">Donation to publicly </tspan><tspan x="-117.54" y="36">funded candidate</tspan></text>
                 <g id="Scene_6B" data-name="Scene 6B">
-                  <g transform="translate(995 4726.0) scale(1.2)"><path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/></g>
+                  <g id="sceneSixArrowGroup" transform="translate(995 4726.0) scale(1.2)"><path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/></g>
                   <text id="Becomes-5" data-name="Becomes" transform="translate(995 4653)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
                   <text id="In_total_for_the_candidate-2" data-name="In total for
 the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
@@ -1515,6 +1570,9 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
 
     // Scene 6 right-column comparison ($650/$80/$800 boxes + Ten $10 donors
     // labels). x-extent up to 1617 (Line_137); shift left to fit 1280.
+    // The + / = symbols sit BETWEEN left-column boxes ($10/$70/$650) and
+    // are intentionally NOT in this list — they'd shift away from the
+    // boxes they punctuate if grouped with the right-column.
     const SCENE6_RIGHT_IDS = [
       'Rectangle_111', '_800-3',
       'Rectangle_112', '_80-2',
@@ -1522,10 +1580,23 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       'In_total_for_the_candidate-2',
       'Ten_10_donors-2',
       'Line_137', '_10_People-2',
-      'until_scene_2H_this_element_is_100_opacity-3',  // + symbol
-      'until_scene_2H_this_element_is_100_opacity-4',  // = symbol
     ];
     const SCENE6_RIGHT_DX = -340;
+
+    // Scene 6 middle column — the "Becomes" label + block-arrow that connect
+    // the left $100/$10 box to the right $650/$1150 box. After the right
+    // column shifts -340 left, these middle elements would sit INSIDE the
+    // right-column box at their desktop x. Shift them about half as much so
+    // they continue to sit in the gap between left and shifted-right boxes.
+    const SCENE6_MIDDLE_IDS = [
+      'Becomes-5',
+      'sceneSixArrowGroup',  // id added to the block-arrow <g> in the SVG
+      // The + and = symbols (at x=809 and x=1182) now sit in this middle
+      // band too; they connect the same shifted boxes.
+      'until_scene_2H_this_element_is_100_opacity-3',
+      'until_scene_2H_this_element_is_100_opacity-4',
+    ];
+    const SCENE6_MIDDLE_DX = -170;
 
     // Cache original transforms so we can restore on resize back to desktop.
     function snapshotTransform(el) {
@@ -1544,11 +1615,11 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     }
 
     // Per-element mobile y-shifts. The scene-1 box diagram is positioned
-    // ABOVE the bar chart on mobile (boxes at y≈800-950; chart at y≈1290-1690)
-    // — without this dy shift, the box diagram would overlay the chart at
-    // the same y-band (they're at the same y on desktop, just different x).
-    const SCENE1_BOX_DY = -380;
-    [...SCENE1_BOX_IDS, ...SCENE6_RIGHT_IDS].forEach(id => {
+    // ABOVE the bar chart on mobile — without this dy shift, the box diagram
+    // would overlay the chart at the same y-band (they're at the same y on
+    // desktop, just different x).
+    const SCENE1_BOX_DY = -260;
+    [...SCENE1_BOX_IDS, ...SCENE6_RIGHT_IDS, ...SCENE6_MIDDLE_IDS].forEach(id => {
       snapshotTransform(document.getElementById(id));
     });
     // Group_6 in scene 5 (Max-county-money callout) — sits far right on
@@ -1582,18 +1653,18 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       headingFo.setAttribute('data-orig-height', headingFo.getAttribute('height'));
     }
 
-    // Mobile portrait y-stack:
-    //   y=  60..680  — heading band (overlay; ~10 lines at 46px font fit)
-    //   y= 740..950  — auxiliary content band (scene-1 boxes / scene-2 list)
-    //   y=1290..1690 — bar chart band (sceneStack + 700 lifts charts here)
-    //   y=1850..2360 — running-equation band (eqOverlay; tallest = scene 5)
-    const MOBILE_STACK_DY = 700;
+    // Mobile portrait y-stack (tightened in V2.12 — eliminates wasted space):
+    //   y=  40..340  — heading band (overlay; ~5 lines at 44px font fit)
+    //   y= 380..720  — auxiliary content band (scene-1 boxes / scene-2 list)
+    //   y= 990..1390 — bar chart band (sceneStack + 400 lifts charts here)
+    //   y=1450..1900 — running-equation band (eqOverlay; tallest = scene 5)
+    const MOBILE_STACK_DY = 400;
 
     function applyMobileLayout() {
       const isMobile = window.innerWidth <= MOBILE_BP;
       window.__mobilePortrait = isMobile;
       if (isMobile) {
-        svg.setAttribute('viewBox', '0 0 1280 2400');
+        svg.setAttribute('viewBox', '0 0 1280 2050');
         // Shift entire sceneStack down so heading clears the chart top.
         sceneStack.setAttribute('transform', 'translate(0 ' + MOBILE_STACK_DY + ')');
         // Shift scene 1 box-equation diagram LEFT (fit 1280 viewBox) AND
@@ -1611,33 +1682,43 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           const orig = el.getAttribute('data-orig-transform') || '';
           el.setAttribute('transform', 'translate(' + SCENE6_RIGHT_DX + ' 0) ' + orig);
         });
+        // Shift scene 6 MIDDLE column ("Becomes" + arrow + +/= symbols) by
+        // half as much so they continue to sit in the gap between left
+        // boxes and the shifted-right boxes.
+        SCENE6_MIDDLE_IDS.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const orig = el.getAttribute('data-orig-transform') || '';
+          el.setAttribute('transform', 'translate(' + SCENE6_MIDDLE_DX + ' 0) ' + orig);
+        });
         // Hide Group_6 (Max county callout) on mobile — same data lives in
         // the after-scrolly minor card so the in-scrolly callout is dropped
         // here rather than fighting for space in the portrait stack.
         if (group6) group6.style.display = 'none';
         // Scene 2 prohibited list — set y in scene-2 local coords so the
-        // effective viewBox y lands at ~770 (between heading and chart).
+        // effective viewBox y lands at ~466 (between heading and chart).
         // local_y = target_effective_y - sceneStack_dy + scene2_dy_translate
-        //         = 770 - 700 + 727 = 797 (scene 2 transform is translate(0,-727))
+        //         = 466 - 400 + 727 = 793 (scene 2 transform is translate(0,-727))
         // Width clamped to 1160 to fit 1280 viewBox interior with gutters.
         if (scene2ListFo) {
           scene2ListFo.setAttribute('x', '60');
-          scene2ListFo.setAttribute('y', '797');
+          scene2ListFo.setAttribute('y', '793');
           scene2ListFo.setAttribute('width', '1160');
-          scene2ListFo.setAttribute('height', '480');
+          scene2ListFo.setAttribute('height', '420');
         }
-        // Heading: 60-unit gutters, ~620 tall for paragraph wrapping.
+        // Heading: 60-unit gutters, ~300 tall for ~5 wrapped lines at 44px.
         if (headingFo) {
           headingFo.setAttribute('x', '60');
-          headingFo.setAttribute('y', '60');
+          headingFo.setAttribute('y', '40');
           headingFo.setAttribute('width', '1160');
-          headingFo.setAttribute('height', '620');
+          headingFo.setAttribute('height', '300');
         }
       } else {
         svg.setAttribute('viewBox', '0 0 1920 1280');
         restoreTransform(sceneStack);
         SCENE1_BOX_IDS.forEach(id => restoreTransform(document.getElementById(id)));
         SCENE6_RIGHT_IDS.forEach(id => restoreTransform(document.getElementById(id)));
+        SCENE6_MIDDLE_IDS.forEach(id => restoreTransform(document.getElementById(id)));
         restoreTransform(group6);
         if (group6) group6.style.display = '';
         if (scene2ListFo) {
@@ -1885,24 +1966,23 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // matching the visual rhythm of scenes 1 & 2.
     const SCENE_EQUATIONS = [
       // mobilePosX/mobilePosY/mobileScale apply when the SVG is in mobile-
-      // portrait viewBox mode (1280×2400). The sceneStack shifts down by
-      // MOBILE_STACK_DY=700, putting the bar chart at viewBox y≈1290-1690.
-      // The equation overlay sits BELOW the chart in the y=1850-2360 band,
-      // so the page reads heading → aux content → chart → equation
-      // top-to-bottom in portrait. mobilePosX=240 centers the 800-wide
-      // foreignObject in the 1280 viewBox.
+      // portrait viewBox mode (1280×2050). With sceneStack shift +400, the
+      // bar chart sits at viewBox y≈990-1390. The equation overlay stacks
+      // below the chart in the y=1450-1980 band, so the page reads
+      // heading → aux content → chart → equation top-to-bottom in portrait.
+      // mobilePosX=240 centers the 800-wide foreignObject in 1280 viewBox.
       { rows: [],                                  rowSubScene: {},                                              posX: 700,  posY: 460, scale: 1.6, op: 0,
-        mobilePosX: 240, mobilePosY: 1850, mobileScale: 1.0 },  // scene 1
+        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 1 (eq hidden but staged here)
       { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1850, mobileScale: 1.0 },  // scene 2
+        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 2
       { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1850, mobileScale: 1.0 },  // scene 3
+        mobilePosX: 240, mobilePosY: 1520, mobileScale: 1.0 },  // scene 3
       { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1820, mobileScale: 1.0 },  // scene 4 (taller, more rows)
+        mobilePosX: 240, mobilePosY: 1500, mobileScale: 1.0 },  // scene 4 (taller, more rows)
       { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1790, mobileScale: 1.0 },  // scene 5 (tallest stack)
+        mobilePosX: 240, mobilePosY: 1480, mobileScale: 1.0 },  // scene 5 (tallest stack — 5 rows + total)
       { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 510, scale: 1.0, op: 0,
-        mobilePosX: 240, mobilePosY: 1850, mobileScale: 1.0 },  // scene 6
+        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 6
     ];
 
     // Scene-2..5 totals for the running-equation Total row (donor → candidate).
