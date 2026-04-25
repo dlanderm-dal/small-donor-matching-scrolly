@@ -1206,7 +1206,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V2.17</strong> · editor: drag-drop, multi-screenshot+annotation, persisted state, scene-SVG export, new-session prefix · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V2.18</strong> · scene-1 mobile portrait: bar chart 1.4× + recentered, box-eq dx -460, dialect-cascade comments · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -1987,15 +1987,29 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // ========================================================================
     const MOBILE_BP = 768;
 
+    // ─────────────────────────────────────────────────────────────────────
+    // DIALECT NOTE — When reading these per-element shifts, remember the
+    // live page renders each element through a 4-LAYER transform cascade:
+    //   L1: element's own transform=  (Adobe XD desktop coord, frozen at export)
+    //   L2: per-scene baseTransform   (scene-1 translate(0,0); scene-2 (0,-727); scene-3 (0,-1470); etc.)
+    //   L3: per-element mobile shift  (these SCENE*_*_IDS lists, prepended on mobile)
+    //   L4: sceneStack mobile shift   (translate(0, +400) on mobile)
+    // Effective viewBox position = L1 + L2 + L3 + L4. The editor.html mock
+    // operates in absolute viewBox coords (single layer) — that's why its
+    // renders look cleaner than the live page; we have to stack 4 layers
+    // every time we predict where an element actually lands.
+    // ─────────────────────────────────────────────────────────────────────
+
     // Box-equation diagram in scene 1 ($50 + $350 = $400 boxes + symbols).
     // Original x-extent 542..1495 doesn't fit in a 1280 viewBox; shift left.
+    // V2.18: -380 → -460 — gives "Candidate receives" label more right-edge breathing room.
     const SCENE1_BOX_IDS = [
       '_3', '_4',
       'Rectangle_54', '_50-59', 'Donation-24',
       'Rectangle_55', '_350-37', 'First_50_matched_seven_times_by_county-4',
       'Rectangle_56', '_400-34', 'Candidate_receives-22',
     ];
-    const SCENE1_BOX_DX = -380;
+    const SCENE1_BOX_DX = -460;
 
     // Scene 6 right-column comparison ($650/$80/$800 boxes + Ten $10 donors
     // labels). x-extent up to 1617 (Line_137); shift left to fit 1280.
@@ -2054,7 +2068,37 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // would overlay the chart at the same y-band (they're at the same y on
     // desktop, just different x).
     const SCENE1_BOX_DY = -260;
-    [...SCENE1_BOX_IDS, ...SCENE6_RIGHT_IDS, ...SCENE6_MIDDLE_IDS].forEach(id => {
+
+    // V2.18 — Scene 1 bar chart was rendering at native 1× scale, anchored to
+    // viewBox x≈296 (left third of canvas). At mobile portrait this meant the
+    // bar was 32px wide on a 375px screen, with ~70% empty white space to its
+    // right and another ~32% empty band below. Scale the chart 1.4× and shift
+    // it right + up so the bar centers around viewBox x=640 and the chart top
+    // stays in the same y-band (~y=975 effective after sceneStack +400).
+    //
+    // Effective transform: prepend  translate(SCENE1_CHART_DX, SCENE1_CHART_DY) scale(SCENE1_CHART_SCALE)
+    // to each chart element's existing translate(orig_x, orig_y), yielding:
+    //   final viewBox x = 1.4 * orig_x + 146 + 0   (sceneStack adds 0 in x)
+    //   final viewBox y = 1.4 * orig_y - 230 + 400 (sceneStack adds 400 in y on mobile)
+    // Verification: Rectangle_58 at orig (296, 586.5) → mobile (560, 990) ✓ centered.
+    const SCENE1_CHART_IDS = [
+      'Rectangle_58',           // Tier 1 blue bar fill
+      'Rectangle_57',           // Tier 1 green strip (donation slice)
+      'Line_15',                // chart x-axis
+      'Line_16',                // chart y-axis
+      'Line_17',                // chart $400 tick mark
+      '_50-60',                 // $50 label inside green strip
+      'Donation-23',            // chart x-axis label
+      'x7-16',                  // x7 multiplier (above bar)
+      '_350-38',                // $350 label inside blue bar
+      'Candidate_receives-23',  // chart y-axis label ("Candidate receives")
+      '_400-35',                // chart $400 y-axis tick label
+    ];
+    const SCENE1_CHART_SCALE = 1.4;
+    const SCENE1_CHART_DX = 146;   // shift right to center bar at viewBox x=640
+    const SCENE1_CHART_DY = -230;  // compensate for scale-induced y shift
+
+    [...SCENE1_BOX_IDS, ...SCENE1_CHART_IDS, ...SCENE6_RIGHT_IDS, ...SCENE6_MIDDLE_IDS].forEach(id => {
       snapshotTransform(document.getElementById(id));
     });
     // Group_6 in scene 5 (Max-county-money callout) — sits far right on
@@ -2110,6 +2154,17 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           const orig = el.getAttribute('data-orig-transform') || '';
           el.setAttribute('transform', 'translate(' + SCENE1_BOX_DX + ' ' + SCENE1_BOX_DY + ') ' + orig);
         });
+        // V2.18 — Scale scene 1 bar chart 1.4× and recenter so it commands
+        // the lower half of the portrait viewBox instead of hugging the left
+        // edge with empty space all around.
+        SCENE1_CHART_IDS.forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const orig = el.getAttribute('data-orig-transform') || '';
+          el.setAttribute('transform',
+            'translate(' + SCENE1_CHART_DX + ' ' + SCENE1_CHART_DY + ') ' +
+            'scale(' + SCENE1_CHART_SCALE + ') ' + orig);
+        });
         // Shift scene 6 right-column comparison left
         SCENE6_RIGHT_IDS.forEach(id => {
           const el = document.getElementById(id);
@@ -2153,6 +2208,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
         svg.setAttribute('viewBox', '0 0 1920 1280');
         restoreTransform(sceneStack);
         SCENE1_BOX_IDS.forEach(id => restoreTransform(document.getElementById(id)));
+        SCENE1_CHART_IDS.forEach(id => restoreTransform(document.getElementById(id)));
         SCENE6_RIGHT_IDS.forEach(id => restoreTransform(document.getElementById(id)));
         SCENE6_MIDDLE_IDS.forEach(id => restoreTransform(document.getElementById(id)));
         restoreTransform(group6);
