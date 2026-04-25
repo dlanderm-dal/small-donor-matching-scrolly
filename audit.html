@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrollytelling redesign audit — Montgomery County small-donor matching</title>
+<!-- Editorial typography from Google Fonts. Source Serif for headlines + body
+     gives the piece an investigative-journalism feel; JetBrains Mono for digits
+     so dollar amounts read as data rather than decoration. Inter for UI. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ea;        /* newsprint cream */
+    --ink: #1a1a1a;
+    --ink-2: #4a4a4a;
+    --ink-3: #7a7a7a;
+    --rule: #1a1a1a;
+    --rule-soft: #c9c2b3;
+    --green: #1a5928;     /* muted forest */
+    --blue:  #11283e;     /* navy */
+    --purple:#5e1c4a;     /* deep magenta */
+    --red:   #8a1f1f;
+    --yes:   #1a5928;
+    --no:    #8a1f1f;
+    --custom:#11283e;
+
+    /* current piece's palette for the BEFORE swatches */
+    --c-green: #229500;
+    --c-blue:  #0027ff;
+    --c-purple:#7600ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- header ---------- */
+
+  .audit-header {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2rem;
+    border-bottom: 2px solid var(--rule);
+  }
+  .kicker {
+    font: 600 12px/1.2 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 1rem;
+  }
+  .audit-header h1 {
+    font: 700 56px/1.05 'Source Serif 4', Georgia, serif;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    max-width: 18ch;
+  }
+  .audit-header .lede {
+    font-size: 21px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin-bottom: 1.25rem;
+  }
+  .byline-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2rem;
+    align-items: baseline;
+    margin-top: 1.75rem;
+    font: 500 13px/1.4 'Inter', sans-serif;
+    color: var(--ink-3);
+  }
+  .byline-row .live-link {
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .byline-row .live-link:hover { color: var(--purple); }
+
+  /* ---------- sticky nav ---------- */
+
+  nav.audit-toc {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule-soft);
+    z-index: 10;
+    padding: 0.6rem 1.5rem;
+    font: 500 12px/1 'Inter', sans-serif;
+  }
+  nav.audit-toc .toc-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    align-items: center;
+  }
+  nav.audit-toc .progress {
+    margin-left: auto;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  nav.audit-toc a {
+    color: var(--ink-2);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+  }
+  nav.audit-toc a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* ---------- main grid ---------- */
+
+  main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .section-head {
+    margin: 3.5rem 0 1.25rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--rule);
+  }
+  .section-head .num {
+    font: 700 13px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .section-head h2 {
+    font: 700 32px/1.1 'Source Serif 4', serif;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .section-head .deck {
+    font-size: 17px;
+    color: var(--ink-2);
+    margin-top: 0.4rem;
+    max-width: 60ch;
+  }
+  .section-head:first-of-type { margin-top: 1rem; border-top: none; }
+
+  /* ---------- change cards ---------- */
+
+  .change {
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 2rem 0 2.25rem;
+  }
+  .change:last-child { border-bottom: none; }
+
+  .change-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  .change-head .num {
+    font: 700 18px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+  }
+  .change-head h3 {
+    font: 700 26px/1.2 'Source Serif 4', serif;
+    letter-spacing: -0.01em;
+    flex: 1;
+  }
+  .change-head .scope {
+    font: 500 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    border-radius: 0;
+    white-space: nowrap;
+  }
+  .change-head .scope.mobile  { color: var(--purple); border-color: var(--purple); }
+  .change-head .scope.desktop { color: var(--blue);   border-color: var(--blue); }
+  .change-head .scope.both    { color: var(--green);  border-color: var(--green); }
+
+  .change .why {
+    color: var(--ink-2);
+    margin-bottom: 1.25rem;
+    max-width: 65ch;
+  }
+  .change .why em { font-style: italic; color: var(--ink); }
+
+  /* before / after grid */
+
+  .ba {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.25rem 0 1.5rem;
+  }
+  @media (max-width: 640px) {
+    .ba { grid-template-columns: 1fr; }
+  }
+  .ba-cell {
+    background: #fff;
+    border: 1px solid var(--rule-soft);
+    padding: 1rem 1.1rem 1.2rem;
+    position: relative;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+  }
+  .ba-cell .label {
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.7rem;
+    align-self: flex-start;
+    padding: 4px 8px;
+    border: 1px solid currentColor;
+  }
+  .ba-cell.before .label { color: var(--no); }
+  .ba-cell.after  .label { color: var(--yes); }
+  .ba-cell .mock { flex: 1; display: flex; align-items: center; justify-content: flex-start; }
+
+  /* ---------- mock styles per change ---------- */
+
+  /* H1 — serif headlines */
+  .mock-head-current  { font: 700 22px/1.18 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #434343; letter-spacing: -0.005em; }
+  .mock-head-proposed { font: 700 26px/1.08 'Source Serif 4', Georgia, serif; color: var(--ink); letter-spacing: -0.018em; }
+
+  /* mono digits */
+  .mock-digits-current { font: 700 36px/1 'Helvetica Neue', sans-serif; }
+  .mock-digits-proposed { font: 700 36px/1 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+  .mock-digits-current  .d  { color: var(--c-green);   margin-right: 12px; }
+  .mock-digits-current  .m  { color: var(--c-blue);    margin-right: 12px; }
+  .mock-digits-current  .t  { color: var(--c-purple); }
+  .mock-digits-proposed .d  { color: var(--green);   margin-right: 12px; }
+  .mock-digits-proposed .m  { color: var(--blue);    margin-right: 12px; }
+  .mock-digits-proposed .t  { color: var(--purple); }
+
+  /* small caps section labels */
+  .mock-section-current { color: var(--ink-2); font-size: 17px; }
+  .mock-section-proposed .seclabel {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--rule-soft);
+    display: block;
+  }
+  .mock-section-proposed h4 {
+    font: 700 20px/1.1 'Source Serif 4', serif;
+    margin-bottom: 6px;
+  }
+  .mock-section-proposed p {
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+
+  /* color palette swatches */
+  .palette { display: flex; gap: 8px; align-items: stretch; }
+  .palette .sw { width: 56px; height: 56px; display: flex; align-items: flex-end; padding: 4px; }
+  .palette .sw span { font: 600 10px/1 'JetBrains Mono', monospace; color: rgba(255,255,255,0.95); }
+
+  /* office selector mocks */
+  .mock-pill-current {
+    display: flex; border: 3px solid #434343; border-radius: 32px; overflow: hidden;
+    font: 500 13px/1.2 Helvetica, sans-serif;
+  }
+  .mock-pill-current button {
+    flex: 1; padding: 10px 6px; border: 0; background: #fff; cursor: default;
+  }
+  .mock-pill-current button + button { border-left: 3px solid #434343; }
+  .mock-pill-current button.active { background: #d7d7d7; font-weight: 600; }
+
+  .mock-tabs-proposed {
+    display: flex;
+    gap: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule-soft);
+    font: 600 12px/1 'Inter', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .mock-tabs-proposed a {
+    padding: 12px 14px;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-right: 1px solid var(--rule-soft);
+  }
+  .mock-tabs-proposed a:last-child { border-right: none; }
+  .mock-tabs-proposed a.active {
+    color: var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  /* slider mocks */
+  .mock-slider-current input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 8px; border-radius: 4px; background: #e5e5e5; margin: 14px 0 6px;
+  }
+  .mock-slider-current input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--c-green);
+    border: 3px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer;
+  }
+  .mock-slider-current label { font: italic 13px/1 Helvetica, sans-serif; color: #777; }
+  .mock-slider-current .val { font: 700 18px/1 Helvetica, sans-serif; color: var(--c-green); margin-left: 6px; }
+
+  .mock-slider-proposed { font: 500 13px/1 'Inter', sans-serif; color: var(--ink-2); }
+  .mock-slider-proposed input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 2px; background: var(--ink); margin: 18px 0 4px;
+  }
+  .mock-slider-proposed input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px; background: var(--green); border: 0; border-radius: 0;
+    cursor: pointer; box-shadow: none;
+  }
+  .mock-slider-proposed .val { font: 700 18px/1 'JetBrains Mono', monospace; color: var(--green); margin-left: 6px; }
+
+  /* restart button mocks */
+  .mock-btn-current {
+    display: inline-block; padding: 0.85rem 1rem; font: 700 14px/1 Helvetica, sans-serif;
+    color: #fff; background: var(--c-purple); border-radius: 12px; cursor: default;
+  }
+  .mock-btn-proposed {
+    font: 600 14px/1.4 'Inter', sans-serif;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+  }
+
+  /* prohibited list mocks */
+  .mock-list-current {
+    background: #fff; border: 3px solid rgba(217,43,43,0.2); border-radius: 14px;
+    padding: 1rem; font-family: Helvetica, sans-serif;
+  }
+  .mock-list-current h5 { font: 700 14px/1.2 inherit; margin-bottom: 0.5rem; }
+  .mock-list-current li { list-style: none; font-size: 13px; padding: 4px 0 4px 22px; position: relative; border-bottom: 1px solid #f3f3f3; }
+  .mock-list-current li::before { content: "×"; color: #d92b2b; position: absolute; left: 4px; font-weight: 700; font-size: 18px; line-height: 1; top: 4px; }
+  .mock-list-current li:last-child { border-bottom: none; }
+
+  .mock-list-proposed { font-family: 'Source Serif 4', serif; }
+  .mock-list-proposed h5 {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 8px;
+  }
+  .mock-list-proposed li {
+    list-style: none; font-size: 15px; padding: 5px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    display: flex; gap: 8px;
+  }
+  .mock-list-proposed li::before {
+    content: "—"; color: var(--red); font-weight: 700; flex: 0 0 auto;
+  }
+
+  /* progress bar mocks */
+  .mock-pb-current { height: 3px; background: #eee; }
+  .mock-pb-current i { display: block; height: 100%; width: 38%; background: var(--c-purple); }
+  .mock-pb-proposed { height: 1px; background: var(--rule-soft); }
+  .mock-pb-proposed i { display: block; height: 1px; width: 38%; background: var(--ink); }
+
+  /* chart fill mocks */
+  .mock-rect-current, .mock-rect-proposed {
+    width: 90px; height: 80px; margin: 8px;
+  }
+  .mock-rect-current  { background: rgba(0,39,255,0.15);  border: 3px solid var(--c-blue); }
+  .mock-rect-proposed { background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.2) 4px 5px); border: 1.5px solid var(--blue); }
+
+  /* annotations / leader lines mock */
+  .mock-anno-current { font: 13px/1.3 Helvetica, sans-serif; color: #434343; }
+  .mock-anno-proposed { font: italic 13px/1.3 'Source Serif 4', serif; color: var(--ink-2); }
+  .mock-anno-proposed::before { content: "— "; color: var(--ink-3); }
+
+  /* byline mocks */
+  .mock-byline-current { color: var(--ink-3); font-size: 14px; font-style: italic; }
+  .mock-byline-proposed {
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .mock-byline-proposed strong { color: var(--ink); }
+
+  /* "max county money" before/after */
+  .mock-callout-current {
+    font-family: Helvetica, sans-serif; text-align: center;
+  }
+  .mock-callout-current .lbl  { font-size: 14px; color: #434343; line-height: 1.2; }
+  .mock-callout-current .lbl > span { display: block; }
+  .mock-callout-current .val  { font: 700 28px/1 Helvetica, sans-serif; color: var(--c-blue); margin-top: 6px; }
+
+  .mock-callout-proposed {
+    border-left: 3px solid var(--ink);
+    padding: 6px 12px;
+    text-align: left;
+  }
+  .mock-callout-proposed .seclbl {
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .mock-callout-proposed .lbl  { font: 17px/1.25 'Source Serif 4', serif; color: var(--ink); margin-bottom: 4px; }
+  .mock-callout-proposed .val  { font: 700 26px/1 'JetBrains Mono', monospace; color: var(--blue); }
+
+  /* mobile sticky vs. linear */
+  .mock-flow-current, .mock-flow-proposed { font: 13px/1.3 'Inter', sans-serif; color: var(--ink-2); }
+  .mock-flow-current strong, .mock-flow-proposed strong { color: var(--ink); }
+
+  /* methodology mock */
+  .mock-meth-current { color: var(--ink-3); font-style: italic; }
+  .mock-meth-proposed {
+    font: 14px/1.5 'Source Serif 4', serif; color: var(--ink-2);
+    border-top: 2px solid var(--ink);
+    padding-top: 10px;
+  }
+  .mock-meth-proposed h6 {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  /* whitespace / density mocks */
+  .mock-density-current { padding: 36px 0; line-height: 2.0; color: var(--ink-3); }
+  .mock-density-proposed { padding: 12px 0; line-height: 1.55; color: var(--ink); }
+
+  /* recap "ALREADY SEEN" */
+  .mock-recap-current { font: 700 13px/1 Helvetica, sans-serif; letter-spacing: 0.1em; color: #888; }
+  .mock-recap-proposed { font: 11px/1 'Inter', sans-serif; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; opacity: 0.6; }
+
+  /* scene 6 comparison */
+  .mock-cmp6-current, .mock-cmp6-proposed { font: 12px/1.3 'Inter', sans-serif; color: var(--ink-2); }
+  .mock-cmp6-current strong, .mock-cmp6-proposed strong { color: var(--ink); }
+
+  /* ---------- decision component ---------- */
+
+  .decision {
+    border: 1px solid var(--rule);
+    background: #fff;
+    padding: 1rem 1.1rem 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .decision legend {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0 6px;
+    color: var(--ink-3);
+  }
+  .decision .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+  }
+  .decision label.opt {
+    flex: 1;
+    min-width: 110px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--rule-soft);
+    cursor: pointer;
+    font: 600 14px/1 'Inter', sans-serif;
+    color: var(--ink-2);
+    user-select: none;
+  }
+  .decision label.opt input { accent-color: var(--ink); }
+  .decision label.opt:has(input:checked) {
+    border-color: var(--ink);
+    background: #fafafa;
+    color: var(--ink);
+  }
+  .decision label.opt.yes:has(input:checked)    { border-color: var(--yes);    background: #f1f7f3; color: var(--yes); }
+  .decision label.opt.no:has(input:checked)     { border-color: var(--no);     background: #fbf1f1; color: var(--no); }
+  .decision label.opt.custom:has(input:checked) { border-color: var(--custom); background: #f0f3f7; color: var(--custom); }
+  .decision textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.6rem;
+    border: 1px solid var(--rule-soft);
+    background: #fafafa;
+    padding: 0.5rem 0.6rem;
+    font: 14px/1.4 'Source Serif 4', serif;
+    resize: vertical;
+    min-height: 64px;
+  }
+
+  /* ---------- export bar ---------- */
+
+  .export-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 1rem 1.5rem;
+    z-index: 20;
+    border-top: 1px solid var(--ink);
+  }
+  .export-bar .inner {
+    max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .export-bar .stats {
+    font: 600 12px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bg);
+  }
+  .export-bar .stats span { display: inline-block; margin-right: 1.25rem; }
+  .export-bar .stats span.y::before { content: "● "; color: #4ec27e; }
+  .export-bar .stats span.n::before { content: "● "; color: #e07474; }
+  .export-bar .stats span.c::before { content: "● "; color: #6da7d6; }
+  .export-bar .stats span.u::before { content: "○ "; color: var(--ink-3); }
+  .export-bar button {
+    margin-left: auto;
+    background: var(--bg);
+    color: var(--ink);
+    border: 0;
+    padding: 0.7rem 1.2rem;
+    font: 700 13px/1 'Inter', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .export-bar button:hover { background: #fff; }
+  .export-bar .secondary {
+    background: transparent;
+    color: var(--bg);
+    border: 1px solid var(--bg);
+  }
+  .export-bar .secondary:hover { background: var(--bg); color: var(--ink); }
+
+  /* ---------- export modal ---------- */
+
+  .export-modal {
+    position: fixed; inset: 0;
+    background: rgba(26,26,26,0.85);
+    z-index: 100;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+  .export-modal.open { display: flex; }
+  .export-modal .panel {
+    background: var(--bg);
+    max-width: 760px;
+    width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--ink);
+  }
+  .export-modal .phead {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .export-modal .phead h4 {
+    font: 700 22px/1.1 'Source Serif 4', serif;
+  }
+  .export-modal .phead button {
+    background: transparent; border: 0; font: 700 24px/1 'Inter'; cursor: pointer; color: var(--ink-2);
+  }
+  .export-modal .body {
+    padding: 1rem 1.25rem 1.25rem;
+    overflow: auto;
+  }
+  .export-modal pre {
+    background: #fff;
+    border: 1px solid var(--rule-soft);
+    padding: 1rem;
+    font: 13px/1.45 'JetBrains Mono', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 50vh;
+    overflow: auto;
+  }
+  .export-modal .actions {
+    margin-top: 1rem;
+    display: flex; gap: 0.6rem; flex-wrap: wrap;
+  }
+  .export-modal .actions button {
+    background: var(--ink); color: var(--bg); border: 0;
+    padding: 0.7rem 1.1rem;
+    font: 700 12px/1 'Inter'; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer;
+  }
+  .export-modal .actions button:hover { background: var(--blue); }
+  .export-modal .actions button.copied { background: var(--green); }
+
+  /* ---------- print fallback ---------- */
+  @media print {
+    .export-bar, nav.audit-toc { display: none; }
+    .ba-cell { break-inside: avoid; }
+    .change { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="audit-toc">
+  <div class="toc-inner">
+    <a href="#typo">Typography</a>
+    <a href="#color">Color</a>
+    <a href="#ui">UI</a>
+    <a href="#layout">Layout</a>
+    <a href="#charts">Charts</a>
+    <a href="#mobile">Mobile</a>
+    <a href="#tone">Tone</a>
+    <span class="progress" id="progressLabel">0 of 22 decided</span>
+  </div>
+</nav>
+
+<header class="audit-header">
+  <div class="kicker">Design audit · v2.11 · Apr 2026</div>
+  <h1>The scrolly looks vibe-coded. Here are 22 ways to make it look like journalism.</h1>
+  <p class="lede">A pass over the small-donor-matching scrollytelling from the perspective of a designer who reads Alberto Cairo, has seen <a class="live-link" href="https://cnsmaryland.org/2025/12/11/some-social-media-platforms-become-more-polarized-reflecting-a-hyper-partisan-america/" target="_blank" rel="noopener">CNS Maryland's editorial style</a>, and is allergic to rounded purple buttons. Each card below proposes one specific change with a side-by-side "current vs. proposed" view. Pick <strong>yes</strong>, <strong>no</strong>, or write a custom counterproposal in plain English. The export bar at the bottom compiles your decisions.</p>
+  <div class="byline-row">
+    <a class="live-link" href="https://dlanderm-dal.github.io/small-donor-matching-scrolly/" target="_blank" rel="noopener">Open the live page in a new tab ↗</a>
+    <span>22 proposed changes · grouped into 7 sections</span>
+    <span id="modeNote">No decision saves until you hit Export.</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ============= TYPOGRAPHY ============= -->
+<div class="section-head" id="typo">
+  <div class="num">Section 01 · Typography</div>
+  <h2>Editorial type, not SaaS-landing-page type</h2>
+  <p class="deck">The current piece sets headlines in Helvetica Neue, body in Helvetica, all numbers in Helvetica. Investigative journalism almost always uses a serif for headlines and a mono for figures — it signals "real reporting" without saying anything.</p>
+</div>
+
+<article class="change" data-id="ch01" data-cat="Typography">
+  <div class="change-head">
+    <span class="num">01</span>
+    <h3>Set the headlines in a serif</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Sans-serif headlines on a piece this serious read as <em>marketing</em>. Switch to a tight news serif (<em>Source Serif 4</em>, <em>Lyon</em>, or just plain <em>Georgia</em>) so the headline carries editorial weight. The big "Once a publicly financed candidate…" intro paragraph would also become a serif body, not Helvetica.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-head-current">Montgomery County Public Campaign Financing Example</div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="mock-head-proposed">Montgomery County Public Campaign Financing Example</div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch01" value="yes"> Yes, ship it</label>
+      <label class="opt no"><input type="radio" name="ch01" value="no"> No, leave it</label>
+      <label class="opt custom"><input type="radio" name="ch01" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch01-custom" placeholder="If 'Custom', describe what you want instead. e.g. 'use Georgia, not Source Serif' or 'serif headlines but keep body in Helvetica'."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch02" data-cat="Typography">
+  <div class="change-head">
+    <span class="num">02</span>
+    <h3>Use a mono font for every dollar amount</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">When the slider moves and the numbers tween, proportional digits jump around because each glyph has a different width. A mono digit font (<em>JetBrains Mono</em>, <em>Roboto Mono</em>, or <em>IBM Plex Mono</em>) keeps the columns rock-steady AND signals "this is data" the second the reader sees it.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-digits-current"><span class="d">$50</span>+<span class="m">$350</span>=<span class="t">$400</span></div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="mock-digits-proposed"><span class="d">$50</span>+<span class="m">$350</span>=<span class="t">$400</span></div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch02" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch02" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch02" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch02-custom" placeholder="e.g. 'mono only in equation table, not in chart'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch03" data-cat="Typography">
+  <div class="change-head">
+    <span class="num">03</span>
+    <h3>Add small-caps section labels with a thin rule</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Right now there's no section structure — the reader floats from "intro" to "tier mechanics" to "interactive slider" with no signposting. CNS Maryland uses small-caps section labels with a horizontal rule. Adds zero pixels of clutter and makes scanning trivially easier.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-section-current">Drag the slider to see how a donation gets matched</div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-section-proposed">
+        <span class="seclabel">Try it yourself</span>
+        <h4>Drag the slider to see how a donation gets matched</h4>
+        <p>Move the handle below to set a donation amount.</p>
+      </div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch03" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch03" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch03" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch03-custom" placeholder="e.g. 'add labels but leave them off the after-scrolly section'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch04" data-cat="Typography">
+  <div class="change-head">
+    <span class="num">04</span>
+    <h3>Bump body type to 18 px / 1.55 line-height</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">The current 16 px Helvetica body is fine for a SaaS dashboard, tight for a piece with this much reading. Long-read sites (NYT, Bloomberg, Reuters) all use 17-19 px body with 1.5-1.6 line-height. Bumping the lede + scene paragraphs makes it physically more comfortable to read for thirty seconds.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock" style="font: 16px/1.5 Helvetica, sans-serif; color: #3a3a3a;">Once a publicly financed candidate for County Executive receives a combined $40,000 from at least 500 residents of their jurisdiction, the matching kicks in.</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock" style="font: 18px/1.55 'Source Serif 4', serif; color: var(--ink);">Once a publicly financed candidate for County Executive receives a combined <strong>$40,000</strong> from at least <strong>500</strong> residents of their jurisdiction, the matching kicks in.</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch04" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch04" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch04" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch04-custom" placeholder="e.g. '18px is too big, try 17'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= COLOR ============= -->
+<div class="section-head" id="color">
+  <div class="num">Section 02 · Color</div>
+  <h2>The palette currently looks like a crypto onboarding deck</h2>
+  <p class="deck">#229500 / #0027ff / #7600ff are <em>juicy</em>. They're saturated to within an inch of their lives. Editorial scrollytellings tend to use muted, slightly-desaturated versions of the same hues so the chart's color doesn't out-volume its content.</p>
+</div>
+
+<article class="change" data-id="ch05" data-cat="Color">
+  <div class="change-head">
+    <span class="num">05</span>
+    <h3>Mute the green / blue / purple by ~30%</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Same color grammar (donor / match / total), darker and less hot. <em>#1a5928</em> instead of <em>#229500</em>, <em>#11283e</em> instead of <em>#0027ff</em>, <em>#5e1c4a</em> instead of <em>#7600ff</em>. Reads as ink, not Crayola.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="palette">
+        <div class="sw" style="background:#229500"><span>#229500</span></div>
+        <div class="sw" style="background:#0027ff"><span>#0027ff</span></div>
+        <div class="sw" style="background:#7600ff"><span>#7600ff</span></div>
+        <div class="sw" style="background:#ffb202; color:#1a1a1a"><span style="color:#1a1a1a">#ffb202</span></div>
+      </div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="palette">
+        <div class="sw" style="background:#1a5928"><span>#1a5928</span></div>
+        <div class="sw" style="background:#11283e"><span>#11283e</span></div>
+        <div class="sw" style="background:#5e1c4a"><span>#5e1c4a</span></div>
+        <div class="sw" style="background:#b97a16"><span>#b97a16</span></div>
+      </div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch05" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch05" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch05" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch05-custom" placeholder="e.g. 'mute green + purple, leave blue alone'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch06" data-cat="Color">
+  <div class="change-head">
+    <span class="num">06</span>
+    <h3>Cream paper background instead of cold white</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">A soft <em>#f7f3ea</em> paper tone reads as <em>"this is a piece of writing"</em> instead of <em>"this is an app screen"</em>. Reduces glare. Doesn't disturb any of the existing UI components.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock" style="background:#fafafa; padding: 14px; width: 100%; height: 100%; min-height: 80px; color: #3a3a3a; font-family: Helvetica;">Page background <code>#fafafa</code></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock" style="background:#f7f3ea; padding: 14px; width: 100%; height: 100%; min-height: 80px; color: var(--ink); font-family: 'Source Serif 4', serif;">Page background <code style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">#f7f3ea</code> — newsprint cream</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch06" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch06" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch06" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch06-custom" placeholder="e.g. 'cream is too warm, try a barely-grey #f5f4f1'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch07" data-cat="Color">
+  <div class="change-head">
+    <span class="num">07</span>
+    <h3>Replace 15% solid fills with hatched fills on bar chart</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">The current chart rectangles are filled with the same color at 15% opacity. It looks soft but reads as <em>shaded UI panel</em>. Replacing the fill with a diagonal hatch keeps the color-coding while making each rect read clearly as a <em>diagram element</em>.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-rect-current"></div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="mock-rect-proposed"></div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch07" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch07" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch07" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch07-custom" placeholder="e.g. 'hatch only the NOT-MATCHED region, leave matched bars solid'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= UI COMPONENTS ============= -->
+<div class="section-head" id="ui">
+  <div class="num">Section 03 · UI Components</div>
+  <h2>Every interactive thing currently looks like a Stripe button</h2>
+  <p class="deck">The pill office selector, the round-thumbed slider with a drop shadow, the chunky purple "Restart Scrollytelling" pill — these are SaaS-landing-page components. Editorial scrollytellings dress controls as <em>part of the article</em>, not as buttons floating above it.</p>
+</div>
+
+<article class="change" data-id="ch08" data-cat="UI">
+  <div class="change-head">
+    <span class="num">08</span>
+    <h3>Office selector: section-tabs, not a pill</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">A 32-px-radius pill divided into three "buttons" is the most recognizable SaaS UX motif on the planet. Replace it with a horizontal text-tab row separated by thin rules — like newspaper section nav.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-pill-current" style="width: 100%; max-width: 360px;">
+        <button class="active">County<br>Executive</button>
+        <button>Council –<br>At Large</button>
+        <button>Council –<br>District</button>
+      </div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-tabs-proposed" style="width: 100%; max-width: 420px;">
+        <a href="#" class="active">County Executive</a>
+        <a href="#">At-Large</a>
+        <a href="#">District</a>
+      </div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch08" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch08" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch08" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch08-custom" placeholder="e.g. 'tabs but keep some chrome — tab background on hover'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch09" data-cat="UI">
+  <div class="change-head">
+    <span class="num">09</span>
+    <h3>Slim the slider — 2 px track, 14 px square thumb, no shadow</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Round green thumb with a white border and box shadow looks like an iOS toggle. A 2-px black track with a small green square thumb (no shadow, no border) is the editorial-data-viz default — gives the slider visual <em>weight zero</em> so the chart can carry the page.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-slider-current" style="width: 100%;">
+        <label>Drag to set donation amount<span class="val">$100</span></label>
+        <input type="range" min="0" max="500" value="100">
+      </div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-slider-proposed" style="width: 100%;">
+        <span style="font: 700 11px/1 'Inter'; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);">DONATION</span>
+        <span class="val">$100</span>
+        <input type="range" min="0" max="500" value="100">
+        <span style="font-size: 11px; color: var(--ink-3);">$0 ────── $50 ─── $100 ─── $150 ─────────── $500</span>
+      </div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch09" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch09" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch09" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch09-custom" placeholder="e.g. 'thinner track but keep the round thumb (more obvious it's draggable)'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch10" data-cat="UI">
+  <div class="change-head">
+    <span class="num">10</span>
+    <h3>Restart link instead of restart button</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">A solid purple, 14-px padded, rounded-corner button reading <em>"↻ Restart Scrollytelling"</em> is impossible to read as anything except <em>"primary CTA on a B2B landing page"</em>. Editorial pages do this with a plain underlined hyperlink. Same affordance, zero design noise.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><span class="mock-btn-current">↻ Restart Scrollytelling</span></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><a class="mock-btn-proposed" href="#">← Replay from the top</a></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch10" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch10" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch10" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch10-custom" placeholder="e.g. 'underlined link is too quiet — small ghost button instead'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch11" data-cat="UI">
+  <div class="change-head">
+    <span class="num">11</span>
+    <h3>Thin the progress bar to 1 px ink, not 3 px purple</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">The 3-px solid purple progress bar at the top of the sticky stage screams "loading screen". A 1-px thin black line on a thin grey rail does the same job and disappears into the layout when the reader doesn't need it.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock" style="width: 100%;"><div class="mock-pb-current" style="width: 100%;"><i></i></div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock" style="width: 100%;"><div class="mock-pb-proposed" style="width: 100%;"><i></i></div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch11" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch11" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch11" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch11-custom" placeholder="e.g. 'kill the progress bar entirely on desktop'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= LAYOUT ============= -->
+<div class="section-head" id="layout">
+  <div class="num">Section 04 · Layout</div>
+  <h2>Borders, cards, and rounded boxes everywhere</h2>
+  <p class="deck">The "prohibited donations" panel is a rounded card with a soft red border. The "max county money" callout is a smaller rounded card. Editorial layouts almost never use cards — they use horizontal rules, indents, and small-caps headers to do the same separating work.</p>
+</div>
+
+<article class="change" data-id="ch12" data-cat="Layout">
+  <div class="change-head">
+    <span class="num">12</span>
+    <h3>Add a real byline at the top</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Currently the page above the scrolly is just lorem ipsum. Even in preview, a small-caps byline ("BY [REPORTER] · APRIL 25, 2026 · CAPITAL NEWS SERVICE") makes the piece read as a real article instead of a graphics-team experiment.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-byline-current">(no byline — just three lorem-ipsum paragraphs)</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-byline-proposed">By <strong>Jane Reporter</strong> · April 25, 2026 · Capital News Service</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch12" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch12" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch12" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch12-custom" placeholder="Custom byline text or 'no, byline gets added in WP'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch13" data-cat="Layout">
+  <div class="change-head">
+    <span class="num">13</span>
+    <h3>Replace bordered cards with horizontal rules</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">The "Candidates can't accept donations from..." card has a 3-px reddish-grey border and a 14-px corner radius. The "Max county money per election" cards have soft grey borders with rounded corners. Replacing both with a thick top rule + small-caps section label removes ~200 KB of visual noise without touching content.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-list-current" style="width:100%; max-width: 320px;">
+        <h5>Candidates can't accept donations of any amount from:</h5>
+        <ul><li>PACs</li><li>Corporations</li><li>Labor unions</li></ul>
+      </div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-list-proposed" style="width:100%; max-width: 320px;">
+        <h5>Prohibited donors</h5>
+        <ul><li><span>PACs</span></li><li><span>Corporations</span></li><li><span>Labor unions</span></li></ul>
+      </div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch13" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch13" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch13" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch13-custom" placeholder="e.g. 'remove cards but keep the red ×'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch14" data-cat="Layout">
+  <div class="change-head">
+    <span class="num">14</span>
+    <h3>"Max county money per election" callout — vertical rule + small-caps eyebrow</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Right now this callout is centered, three lines of label stacked over the value, with a soft grey card border. Even after the alignment fix it reads as a mini-card. Set it as a left-edged pull-quote with an eyebrow ("County match cap"), bold value in mono, single-line label below.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-callout-current">
+        <div class="lbl"><span>Max county money</span><span>per election:</span><span>County Executive</span></div>
+        <div class="val">$870,170</div>
+      </div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="mock-callout-proposed">
+        <div class="seclbl">County match cap</div>
+        <div class="lbl">Per election, County Executive</div>
+        <div class="val">$870,170</div>
+      </div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch14" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch14" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch14" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch14-custom" placeholder="e.g. 'left-edge rule but keep the centered alignment'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch15" data-cat="Layout">
+  <div class="change-head">
+    <span class="num">15</span>
+    <h3>Add an "About this data" methodology footer</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">Currently the piece ends with the restart button. Real journalism almost always ends with a small block disclosing sources, methodology, and limitations. Even ~70 words signals "we know what we're doing" and gives the editor something to point to when readers ask.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-meth-current">(no methodology / source block)</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-meth-proposed" style="width: 100%;">
+        <h6>About this data</h6>
+        Match-multiplier and qualification figures from the Montgomery County Public Election Fund (Bill 16-14, as amended). Maximum-per-election figures are county-published caps in effect for the 2026 cycle. Figures are illustrative and assume the donor lives in the candidate's jurisdiction.
+      </div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch15" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch15" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch15" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch15-custom" placeholder="e.g. 'methodology block but list the specific PDF source URLs'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= CHARTS ============= -->
+<div class="section-head" id="charts">
+  <div class="num">Section 05 · Charts &amp; data viz</div>
+  <h2>The chart is the article. Treat it like one.</h2>
+  <p class="deck">Cairo's whole thing is that an information graphic should explain itself. The current chart has labels stacked next to bars, no leader lines, no annotations, no in-chart explanations of <em>why</em> you're looking at what you're looking at.</p>
+</div>
+
+<article class="change" data-id="ch16" data-cat="Charts">
+  <div class="change-head">
+    <span class="num">16</span>
+    <h3>Add Cairo-style annotations with leader lines</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">When the slider crosses $50, a small annotation should fly in: <em>"Tier 1 fills first — it's matched 7-to-1, so $50 of donor money pulls $350 of county money."</em> Connected to the bar with a thin leader line. This is the single highest-leverage change to make the piece actually <em>teach</em>.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-anno-current">x7 / Tier 1 / $350 — three labels floating around the bar with no leader lines or explanation.</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-anno-proposed">Tier 1 fills first. The first $50 a donor gives is matched seven-to-one — that $50 pulls $350 of county money.</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch16" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch16" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch16" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch16-custom" placeholder="e.g. 'annotations only on the first reveal of each tier'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch17" data-cat="Charts">
+  <div class="change-head">
+    <span class="num">17</span>
+    <h3>Drop "ALREADY SEEN" prefix; lighten the recap row instead</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">"ALREADY SEEN:" is a labeled hand-holding device. Cairo would say a lighter colored / smaller / italicized recap reads as past-tense without anyone having to write the word. Save the explicit label for tooltips.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><div class="mock-recap-current">ALREADY SEEN:</div></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><div class="mock-recap-proposed">Already seen ↓</div></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch17" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch17" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch17" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch17-custom" placeholder="e.g. 'kill the prefix on mobile only'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch18" data-cat="Charts">
+  <div class="change-head">
+    <span class="num">18</span>
+    <h3>Scene 6 comparison: redo "becomes" arrow placement</h3>
+    <span class="scope mobile">Mobile</span>
+  </div>
+  <p class="why">On mobile, the $650 box was shifted left to fit the portrait viewBox, but the "Becomes" label and block-arrow weren't shifted with it — so the arrow now sits <em>inside</em> the $650 box. Either shift the arrow group with the right column, or replace the arrow with an em-dash + serif label between the two values.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-cmp6-current">$100 ─→ <strong>$650</strong> (the "Becomes" text and arrow now overlap the right-hand $650 box because mobile shifted only the box, not the connector.)</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-cmp6-proposed"><strong>$100</strong> donated &nbsp;—&nbsp; <strong>$650</strong> reaches the candidate. Connector is a serif em-dash + verb; no block-arrow needed at narrow widths.</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch18" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch18" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch18" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch18-custom" placeholder="e.g. 'shift the arrow with the box, don't change the visual'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= MOBILE ============= -->
+<div class="section-head" id="mobile">
+  <div class="num">Section 06 · Mobile</div>
+  <h2>Mobile is now legible but still has wasted space</h2>
+  <p class="deck">After the v2.11 fix the portrait stack reads heading → list → chart → equation top-to-bottom without overlaps, but the chart is still ~120 device px tall — small for the most important visual on the page. Two structural moves below.</p>
+</div>
+
+<article class="change" data-id="ch19" data-cat="Mobile">
+  <div class="change-head">
+    <span class="num">19</span>
+    <h3>Scale the bar chart 1.6× on mobile so it fills its band</h3>
+    <span class="scope mobile">Mobile</span>
+  </div>
+  <p class="why">Wrap the chart elements in a group at boot, then apply <code>scale(1.6)</code> on mobile-portrait so the chart takes ~190 device px tall instead of ~120. This is the biggest legibility win available without rewriting the chart geometry.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-flow-current">Chart at <strong>~120 device px</strong> tall — readable but the slider's purpose (compare bar areas as $) gets lost.</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-flow-proposed">Chart at <strong>~190 device px</strong> tall (60% bigger) by wrapping chart elements in a <code>&lt;g transform="scale(1.6)"&gt;</code> at mobile boot.</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch19" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch19" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch19" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch19-custom" placeholder="e.g. 'try 1.4× first, see if strokes look ok'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch20" data-cat="Mobile">
+  <div class="change-head">
+    <span class="num">20</span>
+    <h3>Consider non-sticky linear flow on mobile</h3>
+    <span class="scope mobile">Mobile</span>
+  </div>
+  <p class="why">Sticky stages on phones are awkward — the address bar steals viewport, the user can't see what's coming, the scroll feels stuck. Editorial mobile scrollytellings (e.g. Pudding, Reuters Graphics) often skip sticky on phones and let scenes flow as full-screen sections. Keeps reveals scroll-driven, drops the "stuck" feel.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-flow-current">Sticky 95vh stage on mobile. Reveals trigger via scroll. Reader's thumb scrolls over a "stuck" graphic for the entire scrolly.</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-flow-proposed">On mobile only: stack scenes as discrete <strong>full-viewport sections</strong>, one after another. Each section reveals on enter (intersection observer). Page scrolls naturally; no stickiness.</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch20" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch20" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch20" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch20-custom" placeholder="e.g. 'keep sticky but reduce scrolly height so the reader gets through faster'..."></textarea>
+  </fieldset>
+</article>
+
+<!-- ============= TONE ============= -->
+<div class="section-head" id="tone">
+  <div class="num">Section 07 · Tone &amp; voice</div>
+  <h2>Small word changes the piece can't make automatically</h2>
+  <p class="deck">A few text edits live outside the visual redesign but matter for how editorial the piece reads.</p>
+</div>
+
+<article class="change" data-id="ch21" data-cat="Tone">
+  <div class="change-head">
+    <span class="num">21</span>
+    <h3>Replace "Drag to set donation amount" with editorial directive</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">"Drag to set donation amount" reads as an instruction for a Stripe checkout. Editorial would say something like <em>"Move the slider to model a donation."</em> — same instruction, less customer-onboarding voice.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock"><span style="font: italic 14px/1.2 Helvetica, sans-serif; color: #777;">Drag to set donation amount</span></div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock"><span style="font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);">DONATION</span></div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch21" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch21" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch21" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch21-custom" placeholder="e.g. 'just the word DONATION, no other label'..."></textarea>
+  </fieldset>
+</article>
+
+<article class="change" data-id="ch22" data-cat="Tone">
+  <div class="change-head">
+    <span class="num">22</span>
+    <h3>Tighten over-spaced editorial whitespace, reduce big paddings</h3>
+    <span class="scope both">Both</span>
+  </div>
+  <p class="why">The after-scrolly section pads at 2.5 rem top, 3 rem bottom, with 1.75 rem on the office selector and 1.5 rem on the slider wrap. CNS Maryland and Pudding both run tighter — ~1 rem section padding, smaller gaps. Information density is a journalism virtue, not a bug.</p>
+  <div class="ba">
+    <div class="ba-cell before"><span class="label">Current</span>
+      <div class="mock-density-current">Section A<br>Section B<br>Section C</div>
+    </div>
+    <div class="ba-cell after"><span class="label">Proposed</span>
+      <div class="mock-density-proposed">Section A<br>Section B<br>Section C</div>
+    </div>
+  </div>
+  <fieldset class="decision">
+    <legend>Apply this change?</legend>
+    <div class="row">
+      <label class="opt yes"><input type="radio" name="ch22" value="yes"> Yes</label>
+      <label class="opt no"><input type="radio" name="ch22" value="no"> No</label>
+      <label class="opt custom"><input type="radio" name="ch22" value="custom"> Custom</label>
+    </div>
+    <textarea name="ch22-custom" placeholder="e.g. 'tighten desktop only, leave mobile breathing room'..."></textarea>
+  </fieldset>
+</article>
+
+</main>
+
+<!-- ============= EXPORT BAR ============= -->
+<div class="export-bar">
+  <div class="inner">
+    <div class="stats" id="stats">
+      <span class="y">0 yes</span>
+      <span class="n">0 no</span>
+      <span class="c">0 custom</span>
+      <span class="u">22 unanswered</span>
+    </div>
+    <button class="secondary" id="resetBtn">Reset</button>
+    <button id="exportBtn">Export decisions ↗</button>
+  </div>
+</div>
+
+<div class="export-modal" id="modal">
+  <div class="panel">
+    <div class="phead">
+      <h4>Your audit decisions</h4>
+      <button id="closeBtn" aria-label="Close">×</button>
+    </div>
+    <div class="body">
+      <p style="margin-bottom: 0.6rem; color: var(--ink-2); font-size: 14px;">Copy the markdown block below, or download as JSON. Both contain your yes / no / custom verdicts on every proposed change.</p>
+      <pre id="exportOut"></pre>
+      <div class="actions">
+        <button id="copyMd">Copy markdown</button>
+        <button id="downloadJson">Download .json</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const changes = Array.from(document.querySelectorAll('.change'));
+
+  // ---- Custom textarea reveal logic ----
+  changes.forEach(article => {
+    const id = article.dataset.id;
+    const radios = article.querySelectorAll('input[type=radio]');
+    const ta = article.querySelector('textarea');
+    if (ta) ta.style.display = 'none';
+    radios.forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked && r.value === 'custom') {
+          ta.style.display = '';
+          ta.focus();
+        } else if (r.checked) {
+          ta.style.display = 'none';
+        }
+        updateStats();
+      });
+    });
+  });
+
+  // ---- Stats / progress ----
+  const stats = document.getElementById('stats');
+  const progressLabel = document.getElementById('progressLabel');
+  function tally() {
+    let y=0, n=0, c=0, u=0;
+    changes.forEach(article => {
+      const id = article.dataset.id;
+      const sel = article.querySelector('input[type=radio]:checked');
+      if (!sel) { u++; return; }
+      if (sel.value === 'yes') y++;
+      else if (sel.value === 'no') n++;
+      else if (sel.value === 'custom') c++;
+    });
+    return {y, n, c, u, total: changes.length};
+  }
+  function updateStats() {
+    const t = tally();
+    stats.innerHTML =
+      `<span class="y">${t.y} yes</span>` +
+      `<span class="n">${t.n} no</span>` +
+      `<span class="c">${t.c} custom</span>` +
+      `<span class="u">${t.u} unanswered</span>`;
+    const decided = t.y + t.n + t.c;
+    progressLabel.textContent = decided + ' of ' + t.total + ' decided';
+  }
+  updateStats();
+
+  // ---- Reset ----
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Reset every decision and custom note?')) return;
+    changes.forEach(article => {
+      article.querySelectorAll('input[type=radio]').forEach(r => { r.checked = false; });
+      const ta = article.querySelector('textarea');
+      if (ta) { ta.value = ''; ta.style.display = 'none'; }
+    });
+    updateStats();
+  });
+
+  // ---- Build export payload ----
+  function buildPayload() {
+    return changes.map(article => {
+      const id = article.dataset.id;
+      const cat = article.dataset.cat;
+      const title = article.querySelector('h3').textContent.trim();
+      const sel = article.querySelector('input[type=radio]:checked');
+      const decision = sel ? sel.value : 'unanswered';
+      const customEl = article.querySelector('textarea');
+      const custom = customEl ? customEl.value.trim() : '';
+      return { id, category: cat, title, decision, custom };
+    });
+  }
+
+  function renderMarkdown(payload) {
+    const t = tally();
+    const lines = [];
+    lines.push('# Scrollytelling redesign audit — decisions');
+    lines.push('');
+    lines.push('_Generated ' + new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC_');
+    lines.push('');
+    lines.push('**Summary** · ' + t.y + ' yes · ' + t.n + ' no · ' + t.c + ' custom · ' + t.u + ' unanswered (out of ' + t.total + ')');
+    lines.push('');
+    // group by category
+    const byCat = {};
+    payload.forEach(p => {
+      (byCat[p.category] = byCat[p.category] || []).push(p);
+    });
+    Object.keys(byCat).forEach(cat => {
+      lines.push('## ' + cat);
+      lines.push('');
+      byCat[cat].forEach(p => {
+        const mark = p.decision === 'yes' ? '✅' : p.decision === 'no' ? '❌' : p.decision === 'custom' ? '✏️' : '○';
+        lines.push('- ' + mark + ' **' + p.id.toUpperCase() + ' — ' + p.title + '** — `' + p.decision + '`');
+        if (p.decision === 'custom' && p.custom) {
+          lines.push('    > ' + p.custom.split('\n').join('\n    > '));
+        }
+      });
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
+  // ---- Modal open/close ----
+  const modal = document.getElementById('modal');
+  const exportOut = document.getElementById('exportOut');
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const payload = buildPayload();
+    exportOut.textContent = renderMarkdown(payload);
+    modal.classList.add('open');
+    // store last payload for copy/download
+    window._auditPayload = payload;
+  });
+  document.getElementById('closeBtn').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) modal.classList.remove('open');
+  });
+
+  // ---- Copy / download ----
+  const copyBtn = document.getElementById('copyMd');
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(exportOut.textContent).then(() => {
+      copyBtn.textContent = 'Copied ✓';
+      copyBtn.classList.add('copied');
+      setTimeout(() => { copyBtn.textContent = 'Copy markdown'; copyBtn.classList.remove('copied'); }, 1800);
+    });
+  });
+  document.getElementById('downloadJson').addEventListener('click', () => {
+    const payload = window._auditPayload || buildPayload();
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scrollytelling-audit-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // ---- Persist decisions in localStorage ----
+  const KEY = 'sbs-audit-v2.11';
+  function save() {
+    const payload = buildPayload();
+    try { localStorage.setItem(KEY, JSON.stringify(payload)); } catch (e) {}
+  }
+  function restore() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+      if (!saved.length) return;
+      saved.forEach(p => {
+        if (!p.id || p.decision === 'unanswered') return;
+        const r = document.querySelector('input[name="' + p.id + '"][value="' + p.decision + '"]');
+        if (r) {
+          r.checked = true;
+          if (p.decision === 'custom') {
+            const ta = document.querySelector('textarea[name="' + p.id + '-custom"]');
+            if (ta) { ta.value = p.custom || ''; ta.style.display = ''; }
+          }
+        }
+      });
+      updateStats();
+    } catch (e) {}
+  }
+  document.addEventListener('change', save);
+  document.addEventListener('input', save);
+  restore();
+
+})();
+</script>
+
+</body>
+</html>

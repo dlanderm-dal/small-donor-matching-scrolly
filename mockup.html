@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — small-donor matching, redesigned in CNS Maryland editorial style</title>
+<!-- Editorial type stack: Source Serif for body+headlines (newsprint feel),
+     Inter for UI/labels (small-caps eyebrows, byline), JetBrains Mono for
+     dollar amounts (numbers as data, columns aligned). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f3ea;
+    --paper: #fcf9f1;
+    --ink: #1a1a1a;
+    --ink-2: #4a4a4a;
+    --ink-3: #7a7a7a;
+    --ink-4: #b8b1a3;
+    --rule: #1a1a1a;
+    --rule-soft: #c9c2b3;
+    --green: #1a5928;
+    --blue:  #11283e;
+    --purple:#5e1c4a;
+    --red:   #8a1f1f;
+    --amber: #b97a16;
+    --green-fill:  rgba(26, 89, 40, 0.10);
+    --blue-fill:   rgba(17, 40, 62, 0.10);
+    --purple-fill: rgba(94, 28, 74, 0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 18px/1.55 'Source Serif 4', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* sticky preview banner */
+  .preview-banner {
+    background: var(--ink);
+    color: var(--bg);
+    font: 600 11px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    text-align: center;
+  }
+  .preview-banner a {
+    color: var(--bg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ==== article shell ==== */
+
+  .masthead {
+    border-bottom: 2px solid var(--rule);
+    padding: 1.25rem 1.5rem;
+  }
+  .masthead .inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .masthead .logo {
+    font: 700 18px/1 'Source Serif 4', serif;
+    letter-spacing: -0.005em;
+  }
+  .masthead .nav {
+    margin-left: auto;
+    display: flex;
+    gap: 1.25rem;
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .masthead .nav a { color: inherit; text-decoration: none; }
+  .masthead .nav a:hover { color: var(--ink); }
+
+  article {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  .kicker {
+    font: 700 12px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+  h1.headline {
+    font: 700 52px/1.06 'Source Serif 4', serif;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  .deck {
+    font: 400 22px/1.4 'Source Serif 4', serif;
+    color: var(--ink-2);
+    margin-bottom: 1.5rem;
+  }
+
+  .byline {
+    font: 600 12px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border-top: 1px solid var(--rule-soft);
+    border-bottom: 1px solid var(--rule-soft);
+    padding: 0.6rem 0;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: baseline;
+  }
+  .byline strong { color: var(--ink); }
+
+  article p {
+    margin-bottom: 1.1rem;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  article p strong { font-weight: 700; color: var(--ink); }
+  article a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
+  article a:hover { color: var(--purple); }
+
+  /* drop cap on first paragraph */
+  article p.lede:first-letter {
+    float: left;
+    font: 700 76px/0.85 'Source Serif 4', serif;
+    color: var(--ink);
+    margin: 6px 8px -2px 0;
+  }
+
+  /* ==== section labels ==== */
+
+  .seclabel {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0.6rem 0;
+    border-top: 2px solid var(--ink);
+    margin: 2.5rem 0 1.25rem;
+  }
+  .seclabel.numbered::before {
+    content: counter(sec, decimal-leading-zero) ' / ';
+    color: var(--red);
+    margin-right: 4px;
+  }
+  body { counter-reset: sec; }
+  .seclabel.numbered { counter-increment: sec; }
+
+  h2.sub {
+    font: 700 30px/1.1 'Source Serif 4', serif;
+    letter-spacing: -0.012em;
+    margin-bottom: 0.75rem;
+  }
+
+  /* ==== inline pull-quote ==== */
+
+  blockquote.pull {
+    font: 600 26px/1.25 'Source Serif 4', serif;
+    color: var(--ink);
+    border-left: 3px solid var(--red);
+    padding: 0.4rem 0 0.4rem 1.1rem;
+    margin: 1.75rem 0;
+    letter-spacing: -0.005em;
+  }
+  blockquote.pull cite {
+    display: block;
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-style: normal;
+    margin-top: 0.6rem;
+  }
+
+  /* ==== STAGE — illustrative scene composite ==== */
+
+  .stage {
+    margin: 2rem -1.5rem;
+    padding: 2rem 1.5rem;
+    background: var(--paper);
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+  .stage .stage-eyebrow {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.8rem;
+  }
+  .stage h3 {
+    font: 700 26px/1.2 'Source Serif 4', serif;
+    margin-bottom: 1.5rem;
+    max-width: 28ch;
+    letter-spacing: -0.01em;
+  }
+
+  /* "scene 1" composite chart — heading on top, boxes-equation in middle,
+     vertical bar chart at bottom. Drawn in CSS so the mockup is single-file. */
+  .scene1-fig {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 640px) {
+    .scene1-fig { grid-template-columns: 1fr; }
+  }
+  .scene1-fig .col-left .annotation {
+    font: italic 15px/1.4 'Source Serif 4', serif;
+    color: var(--ink-2);
+    margin-bottom: 0.6rem;
+  }
+  .scene1-fig .col-left .annotation strong {
+    font-style: normal;
+    color: var(--ink);
+  }
+
+  /* boxes-equation composite */
+  .eq-strip {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0.4rem 0 1.2rem;
+    font: 700 28px/1 'JetBrains Mono', monospace;
+    letter-spacing: -0.02em;
+    flex-wrap: wrap;
+  }
+  .eq-strip .box {
+    border: 2px solid currentColor;
+    padding: 6px 10px;
+    background: transparent;
+    min-width: 78px;
+    text-align: center;
+  }
+  .eq-strip .box.donor   { color: var(--green); background: var(--green-fill); }
+  .eq-strip .box.match   { color: var(--blue);  background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.10) 4px 5px); }
+  .eq-strip .box.total   { color: var(--purple); background: var(--purple-fill); }
+  .eq-strip .op { color: var(--ink-3); font-weight: 500; padding: 0 4px; }
+  .eq-strip .annot {
+    flex: 1 0 100%;
+    font: italic 13px/1.4 'Source Serif 4', serif;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+
+  /* vertical bar chart */
+  .bar {
+    position: relative;
+    border-bottom: 2px solid var(--ink);
+    border-left: 1px solid var(--rule-soft);
+    height: 240px;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 0 0 8px;
+    margin-top: 1rem;
+  }
+  .bar .col {
+    width: 70px;
+    margin-right: 18px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .bar .col .stack {
+    border-top: 2px solid var(--blue);
+    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.18) 4px 5px);
+    width: 100%;
+    position: relative;
+  }
+  .bar .col .stack::after {
+    content: attr(data-amount);
+    position: absolute;
+    inset: auto 0 6px 0;
+    text-align: center;
+    font: 700 13px/1 'JetBrains Mono', monospace;
+    color: var(--blue);
+  }
+  .bar .col .donor-strip {
+    height: 18px;
+    background: var(--green-fill);
+    border-top: 2px solid var(--green);
+    margin-top: 0;
+  }
+  .bar .col .donor-strip::after {
+    content: attr(data-amount);
+    display: block;
+    text-align: center;
+    font: 700 12px/18px 'JetBrains Mono', monospace;
+    color: var(--green);
+  }
+  .bar .col .mult {
+    position: absolute;
+    top: -22px;
+    left: 0; right: 0;
+    text-align: center;
+    font: 700 12px/1 'JetBrains Mono', monospace;
+    color: var(--ink);
+  }
+  .bar .col .axis-tick {
+    position: absolute;
+    bottom: -22px;
+    left: 0; right: 0;
+    text-align: center;
+    font: 12px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+  }
+  .bar-leader {
+    margin-top: 38px;
+    font: italic 13px/1.4 'Source Serif 4', serif;
+    color: var(--ink-2);
+    border-top: 1px dashed var(--rule-soft);
+    padding-top: 6px;
+  }
+
+  /* ==== AFTER-SCROLLY — interactive panel mockup ==== */
+
+  .after {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--paper);
+    border-top: 2px solid var(--ink);
+  }
+  .after .seclabel { margin: 0 0 0.6rem; padding: 0; border: 0; }
+  .after h2.sub { margin-bottom: 0.4rem; }
+  .after .deck { font-size: 18px; margin-bottom: 1.5rem; }
+
+  .office-tabs {
+    display: flex;
+    gap: 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: 1.5rem;
+    font: 600 12px/1 'Inter', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .office-tabs a {
+    padding: 14px 16px;
+    color: var(--ink-2);
+    text-decoration: none;
+    border-right: 1px solid var(--rule-soft);
+  }
+  .office-tabs a:last-child { border-right: none; }
+  .office-tabs a.active {
+    color: var(--bg);
+    background: var(--ink);
+  }
+
+  .as-heading {
+    font: 19px/1.5 'Source Serif 4', serif;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .as-heading .accent { color: var(--green); font-weight: 700; }
+  .as-heading .office-name { font-weight: 700; }
+
+  .slider-wrap {
+    margin-bottom: 1.5rem;
+  }
+  .slider-wrap .slabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .slider-wrap .slabel .lbl {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .slider-wrap .slabel .val {
+    font: 700 22px/1 'JetBrains Mono', monospace;
+    color: var(--green);
+    letter-spacing: -0.02em;
+  }
+  .slider-wrap input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 2px; background: var(--ink); outline: none;
+    margin: 6px 0 4px;
+  }
+  .slider-wrap input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 14px;
+    background: var(--green);
+    border: 0;
+    cursor: pointer;
+    box-shadow: none;
+  }
+  .slider-wrap input[type=range]::-moz-range-thumb {
+    width: 14px; height: 14px; background: var(--green); border: 0; cursor: pointer;
+  }
+  .slider-ticks {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    font: 11px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+    margin-top: 8px;
+  }
+  .slider-ticks span:nth-child(even) { color: transparent; }
+
+  .as-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 720px) { .as-grid { grid-template-columns: 1fr; } }
+
+  /* mini sideways chart */
+  .as-chart {
+    border-left: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    height: 200px;
+    position: relative;
+    padding: 12px 0 0 12px;
+  }
+  .as-chart .ax-y {
+    position: absolute;
+    left: -64px;
+    top: 50%;
+    transform: rotate(-90deg);
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  .as-chart .col {
+    position: absolute;
+    bottom: 0;
+    border-top: 2px solid var(--blue);
+    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.15) 4px 5px);
+  }
+  .as-chart .col::after {
+    content: attr(data-amount);
+    position: absolute;
+    inset: 6px 0 auto 0;
+    text-align: center;
+    font: 700 12px/1 'JetBrains Mono', monospace;
+    color: var(--blue);
+  }
+  .as-chart .donor-strip {
+    position: absolute;
+    bottom: -22px;
+    height: 14px;
+    border-top: 2px solid var(--green);
+    background: var(--green-fill);
+  }
+  .as-chart .x-tick {
+    position: absolute;
+    bottom: -42px;
+    transform: translateX(-50%);
+    font: 10px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+  }
+
+  .as-chart-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 60px;
+    font: 12px/1.3 'Source Serif 4', serif;
+    color: var(--ink-2);
+  }
+  .as-chart-legend .key {
+    display: inline-block;
+    width: 16px;
+    height: 12px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .as-chart-legend .key.donor { background: var(--green-fill); border: 1.5px solid var(--green); }
+  .as-chart-legend .key.match { background: repeating-linear-gradient(45deg, transparent 0 3px, rgba(17,40,62,0.2) 3px 4px); border: 1.5px solid var(--blue); }
+
+  /* equation table — mono digits, no card */
+  .eq-table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 14px/1.4 'Source Serif 4', serif;
+  }
+  .eq-table thead th {
+    text-align: left;
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 6px 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eq-table thead th:not(:first-child) { text-align: right; }
+  .eq-table td {
+    padding: 8px 8px;
+    border-bottom: 1px solid var(--rule-soft);
+    font: 14px/1.2 'Source Serif 4', serif;
+    color: var(--ink);
+  }
+  .eq-table td:not(:first-child) {
+    text-align: right;
+    font: 600 16px/1.2 'JetBrains Mono', monospace;
+    letter-spacing: -0.02em;
+  }
+  .eq-table .donor { color: var(--green); }
+  .eq-table .match { color: var(--blue); }
+  .eq-table .total { color: var(--purple); }
+  .eq-table .total-row td { font-weight: 700; border-top: 2px solid var(--ink); border-bottom: none; padding-top: 12px; }
+  .eq-table .nm { color: var(--red); font-weight: 700; }
+
+  /* prohibited list — no card, just typography */
+  .prohibited {
+    margin: 2rem 0;
+  }
+  .prohibited h4 {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+  .prohibited ul {
+    list-style: none;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+  @media (max-width: 600px) { .prohibited ul { columns: 1; } }
+  .prohibited li {
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--ink);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--rule-soft);
+    break-inside: avoid;
+    display: flex;
+    gap: 8px;
+  }
+  .prohibited li::before {
+    content: "—";
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* callout — left-edge rule + small caps */
+  .callout {
+    border-left: 3px solid var(--ink);
+    padding: 6px 14px;
+    margin: 1.75rem 0;
+  }
+  .callout .seclbl {
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+  }
+  .callout .lbl  { font: 17px/1.3 'Source Serif 4', serif; color: var(--ink); margin-bottom: 4px; }
+  .callout .val  { font: 700 28px/1 'JetBrains Mono', monospace; color: var(--blue); letter-spacing: -0.02em; }
+
+  /* replay link — text, not button */
+  .replay {
+    margin: 2.5rem 0 1rem;
+    font: 600 14px/1.3 'Inter', sans-serif;
+  }
+  .replay a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+  }
+
+  /* methodology footer */
+  .meth {
+    border-top: 2px solid var(--ink);
+    margin: 3rem 0 0;
+    padding: 1rem 0 2rem;
+  }
+  .meth h5 {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .meth p {
+    font: 14px/1.55 'Source Serif 4', serif;
+    color: var(--ink-2);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ==== mobile column ==== */
+  @media (max-width: 700px) {
+    article { padding: 2rem 1.25rem; }
+    h1.headline { font-size: 36px; }
+    .deck { font-size: 18px; }
+    .stage { padding: 1.5rem 1.25rem; margin: 2rem -1.25rem; }
+    .scene1-fig { gap: 2rem; }
+    .scene1-fig .bar { height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-banner">
+  Mockup · what the page would look like with all 22 audit changes applied · <a href="audit.html">go back to audit</a>
+</div>
+
+<div class="masthead">
+  <div class="inner">
+    <span class="logo">Capital News Service</span>
+    <span class="nav">
+      <a href="#">Politics</a>
+      <a href="#">Government</a>
+      <a href="#">Investigations</a>
+      <a href="#">Multimedia</a>
+    </span>
+  </div>
+</div>
+
+<article>
+
+  <div class="kicker">Politics · Government · Investigations</div>
+  <h1 class="headline">A $50 donation in Montgomery County is worth $400 to a candidate. Here's the math.</h1>
+  <p class="deck">The county's small-donor matching program turns a $50 check from a constituent into $400 of campaign money — but only for candidates who agree to forgo PAC dollars and stay under tight donation caps. The mechanics aren't obvious. They are also the entire point.</p>
+
+  <div class="byline">
+    <span>By <strong>Jane Reporter</strong></span>
+    <span>April 25, 2026</span>
+    <span>Capital News Service · 6 min read</span>
+  </div>
+
+  <p class="lede">When Marc Elrich first ran for Montgomery County Executive in 2018, he turned down nearly every donor who could give more than $150 and won anyway. He was one of the first three Maryland candidates to ever fund a county-level race entirely through small individual donations, and the program that made it possible — Bill 16-14, signed in 2014 — has since been imitated by Howard, Baltimore, and Prince George's counties.</p>
+
+  <p>The program works on a simple but unintuitive premise: the smaller the donation, the more the county is willing to match it. The first $50 a constituent gives a publicly-financed candidate is matched <em>seven-to-one</em>. The next $50 is matched four-to-one. The $50 after that, two-to-one. Everything past $150 from a single donor receives no match at all.</p>
+
+  <p>The result is a steep ramp at the bottom of the donation curve and a flat line above it — by design.</p>
+
+  <blockquote class="pull">
+    "It changes who you spend your time on the phone with. You stop calling the donor who can write you a $4,000 check, and you start calling fifty people who can each write you $50."
+    <cite>— Marc Elrich, County Executive (2018-2026)</cite>
+  </blockquote>
+
+  <!-- ============= STAGE: scene 1 illustrative composite ============= -->
+  <div class="stage">
+    <div class="stage-eyebrow">Tier 1 · The first $50</div>
+    <h3>Why $50 of donor money becomes $400 of candidate money</h3>
+
+    <div class="scene1-fig">
+      <div class="col-left">
+        <p class="annotation"><strong>One donor.</strong> One $50 check. The candidate has already qualified for matching by raising <strong>$40,000</strong> from at least <strong>500</strong> in-jurisdiction residents.</p>
+
+        <div class="eq-strip">
+          <span class="box donor">$50</span>
+          <span class="op">+</span>
+          <span class="box match">$350</span>
+          <span class="op">=</span>
+          <span class="box total">$400</span>
+          <span class="annot">Donor money plus county match equals what the campaign actually spends.</span>
+        </div>
+
+        <p class="annotation">The county's match is <strong>seven times</strong> the donor's contribution because this is Tier 1 — the highest match multiplier the program offers. Above $150, that multiplier drops to zero.</p>
+      </div>
+
+      <div class="col-right">
+        <div class="bar">
+          <div class="col" style="height:240px;">
+            <span class="mult">×7</span>
+            <div class="stack" data-amount="$350" style="height: calc(100% - 18px);"></div>
+            <div class="donor-strip" data-amount="$50"></div>
+            <span class="axis-tick">Tier 1</span>
+          </div>
+        </div>
+        <p class="bar-leader">The blue rectangle is what the county adds. The thin green strip below the axis is what the donor gave.</p>
+      </div>
+    </div>
+  </div>
+
+  <p>The next two tiers each add another $50 of donor money — but the county adds proportionally less each time. By the time a donor has given $150, the candidate has $800 to spend. Past $150, the donor can keep writing checks (up to a $500 cap), but the county stops matching.</p>
+
+  <p>The next chart lets you set any donation amount and watch the math work in real time.</p>
+
+  <!-- ============= AFTER-SCROLLY ============= -->
+  <div class="after">
+    <div class="seclabel numbered">Try it yourself</div>
+    <h2 class="sub">Set a donation, see what the candidate gets</h2>
+    <p class="deck">Multipliers and qualification thresholds vary by office. Pick one to start.</p>
+
+    <div class="office-tabs">
+      <a href="#" class="active">County Executive</a>
+      <a href="#">At-Large Council</a>
+      <a href="#">District Council</a>
+    </div>
+
+    <p class="as-heading">
+      Once a publicly financed candidate for
+      <span class="office-name">County Executive</span>
+      receives a combined
+      <span class="accent">$40,000</span>
+      from at least
+      <span class="accent">500</span>
+      residents of their jurisdiction, the matching kicks in:
+    </p>
+
+    <div class="slider-wrap">
+      <div class="slabel">
+        <span class="lbl">Donation</span>
+        <span class="val">$100</span>
+      </div>
+      <input type="range" min="0" max="500" value="100">
+      <div class="slider-ticks">
+        <span>$0</span><span></span><span>$50</span><span></span><span>$100</span><span></span><span>$150</span><span></span><span></span><span></span><span>$500</span>
+      </div>
+    </div>
+
+    <div class="as-grid">
+      <div>
+        <div style="display: flex; gap: 32px; align-items: baseline; margin-bottom: 16px;">
+          <div>
+            <div style="font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px;">Donation</div>
+            <div style="font: 700 30px/1 'JetBrains Mono', monospace; color: var(--green); letter-spacing: -0.02em;">$100</div>
+          </div>
+          <div>
+            <div style="font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px;">Candidate gets</div>
+            <div style="font: 700 30px/1 'JetBrains Mono', monospace; color: var(--purple); letter-spacing: -0.02em;">$650</div>
+          </div>
+        </div>
+
+        <div class="as-chart">
+          <span class="ax-y">County match</span>
+          <div class="col" style="left: 12px; bottom: 0; width: 60px; height: 168px;" data-amount="$350"></div>
+          <div class="col" style="left: 84px; bottom: 0; width: 60px; height: 96px;" data-amount="$200"></div>
+          <div class="donor-strip" style="left: 12px; width: 132px;"></div>
+          <span class="x-tick" style="left: 42px;">$50</span>
+          <span class="x-tick" style="left: 114px;">$100</span>
+          <span class="x-tick" style="left: 186px;">$150</span>
+        </div>
+        <div class="as-chart-legend">
+          <span><span class="key donor"></span>Donor money</span>
+          <span><span class="key match"></span>County match</span>
+        </div>
+      </div>
+
+      <div>
+        <table class="eq-table">
+          <thead>
+            <tr><th>Tier</th><th>Donor</th><th>Match</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Tier 1 (×7)</td><td class="donor">$50</td><td class="match">$350</td><td class="total">$400</td></tr>
+            <tr><td>Tier 2 (×4)</td><td class="donor">$50</td><td class="match">$200</td><td class="total">$250</td></tr>
+            <tr><td style="color: var(--ink-3);">Tier 3 (×2)</td><td style="color: var(--ink-3);">—</td><td style="color: var(--ink-3);">—</td><td style="color: var(--ink-3);">—</td></tr>
+            <tr class="total-row"><td>Donor → candidate</td><td class="donor">$100</td><td>becomes</td><td class="total">$650</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="prohibited">
+      <h4>Prohibited donors</h4>
+      <ul>
+        <li><span>Political action committees (PACs)</span></li>
+        <li><span>Corporations</span></li>
+        <li><span>Labor unions</span></li>
+        <li><span>Limited liability companies</span></li>
+        <li><span>State or local party central committees</span></li>
+        <li><span>Donors who have already given $500</span></li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <div class="seclbl">County match cap</div>
+      <div class="lbl">Per election, County Executive</div>
+      <div class="val">$870,170</div>
+    </div>
+
+    <div class="replay">
+      <a href="#">← Replay from the top</a>
+    </div>
+  </div>
+
+  <p>Since 2014, every successful Montgomery County Executive — Elrich in 2018 and 2022, and Marc Elrich's successor in 2026 — has been publicly financed. So have a majority of the council. Whether the program will survive a court challenge from outside the county is a different question.</p>
+
+  <div class="meth">
+    <h5>About this data</h5>
+    <p>Match-multiplier and qualification figures are drawn from the Montgomery County Public Election Fund (Bill 16-14, as amended through 2024). Maximum-per-election figures are county-published caps in effect for the 2026 cycle. Figures are illustrative and assume the donor lives in the candidate's jurisdiction; out-of-jurisdiction donations and any donations from prohibited sources are not eligible for matching.</p>
+    <p>Reporting by Jane Reporter. Data visualization by the Capital News Service graphics desk.</p>
+  </div>
+
+</article>
+
+</body>
+</html>
