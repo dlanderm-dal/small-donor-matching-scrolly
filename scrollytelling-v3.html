@@ -1243,7 +1243,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V3.4-wip</strong> · scenes 1-5 V3 + chart band moved up 300 to close empty gap · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V3.5-wip</strong> · chart band y=850 (V3.4 was too high, overlapped list) · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -2225,13 +2225,13 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
         // reads as a connected unit instead of having dead vertical space).
         // Bar group native 114×350 → with scale 1.4 → 160×490 visual.
         // Bar at x=560..720, centered horizontally near viewBox x=640.
-        'Rectangle_58':           { x: 560, y: 700, scale: 1.4 },
-        'Rectangle_57':           { x: 560, y: 1190, scale: 1.4 },
-        'Line_15':                { x1: 560, y1: 1260, x2: 1064, y2: 1260 },
-        'Line_16':                { x1: 560, y1: 700,  x2: 560,  y2: 1260 },
-        'x7-16':                  { x: 640, y: 685,  textAnchor: 'middle', fontSize: 35 },
-        '_50-60':                 { x: 640, y: 1232, textAnchor: 'middle', fontSize: 30 },
-        'Donation-23':            { x: 640, y: 1310, textAnchor: 'middle', fontSize: 30 },
+        'Rectangle_58':           { x: 560, y: 850, scale: 1.4 },
+        'Rectangle_57':           { x: 560, y: 1340, scale: 1.4 },
+        'Line_15':                { x1: 560, y1: 1410, x2: 1064, y2: 1410 },
+        'Line_16':                { x1: 560, y1: 850, x2: 560,  y2: 1410 },
+        'x7-16':                  { x: 640, y: 835, textAnchor: 'middle', fontSize: 35 },
+        '_50-60':                 { x: 640, y: 1382,textAnchor: 'middle', fontSize: 30 },
+        'Donation-23':            { x: 640, y: 1460,textAnchor: 'middle', fontSize: 30 },
         // Hidden on mobile (already CSS-hidden but reaffirm in dict for clarity):
         '_350-38':                { hide: true }, // $350 inside blue bar
         'Candidate_receives-23':  { hide: true }, // y-axis label
@@ -2246,14 +2246,14 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // ════════════════════════════════════════════════════════════════
       '2': {
         // V3.4: chart band moved up 300 units to close gap with prohibited list above.
-        'Rectangle_61': { x: 560, y: 700, scale: 1.4 }, // Tier 1 purple bar (114×400 → 160×560)
-        'Line_18':      { x1: 560, y1: 1260, x2: 1064, y2: 1260 }, // x-axis
-        'Line_19':      { x1: 560, y1: 700,  x2: 560,  y2: 1260 }, // y-axis
-        'Line_22':      { x1: 560, y1: 1190, x2: 720,  y2: 1190 }, // dashed $50 boundary
-        '_50-48':       { x: 640, y: 1230, textAnchor: 'middle', fontSize: 30 }, // $50 below dashed
+        'Rectangle_61': { x: 560, y: 850, scale: 1.4 }, // Tier 1 purple bar (114×400 → 160×560)
+        'Line_18':      { x1: 560, y1: 1410, x2: 1064, y2: 1410 }, // x-axis
+        'Line_19':      { x1: 560, y1: 850, x2: 560,  y2: 1410 }, // y-axis
+        'Line_22':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 }, // dashed $50 boundary
+        '_50-48':       { x: 640, y: 1380,textAnchor: 'middle', fontSize: 30 }, // $50 below dashed
         '_400-28':      { x: 640, y: 980,  textAnchor: 'middle', fontSize: 30 }, // $400 in upper bar
-        'Donation-20':  { x: 640, y: 1310, textAnchor: 'middle', fontSize: 30 }, // x-axis label
-        'x7-15':        { x: 640, y: 685,  textAnchor: 'middle', fontSize: 35 }, // x7 above bar
+        'Donation-20':  { x: 640, y: 1460,textAnchor: 'middle', fontSize: 30 }, // x-axis label
+        'x7-15':        { x: 640, y: 835, textAnchor: 'middle', fontSize: 35 }, // x7 above bar
         // Hidden — small ticks and y-axis labels redundant on narrow mobile.
         '_400-27':                { hide: true },
         'Candidate_receives-19':  { hide: true },
@@ -2268,20 +2268,20 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // ════════════════════════════════════════════════════════════════
       '3': {
         // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_103': { x: 480, y: 700,  scale: 1.4 },
-        'Rectangle_83':  { x: 640, y: 980,  scale: 1.4 },
-        'Path_29':       { x: 640, y: 1190, scale: 1.4 },
-        'Line_68':       { x1: 480, y1: 1260, x2: 1064, y2: 1260 },
-        'Line_69':       { x1: 480, y1: 700,  x2: 480,  y2: 1260 },
-        'Line_109':      { x1: 480, y1: 1190, x2: 640,  y2: 1190 },
-        'Tier_1-9':      { x: 560, y: 685,  textAnchor: 'middle', fontSize: 30 },
-        'x4-9':          { x: 720, y: 965,  textAnchor: 'middle', fontSize: 35 },
+        'Rectangle_103': { x: 480, y: 850,  scale: 1.4 },
+        'Rectangle_83':  { x: 640, y: 1130,  scale: 1.4 },
+        'Path_29':       { x: 640, y: 1340, scale: 1.4 },
+        'Line_68':       { x1: 480, y1: 1410, x2: 1064, y2: 1410 },
+        'Line_69':       { x1: 480, y1: 850, x2: 480,  y2: 1410 },
+        'Line_109':      { x1: 480, y1: 1340, x2: 640,  y2: 1340 },
+        'Tier_1-9':      { x: 560, y: 835, textAnchor: 'middle', fontSize: 30 },
+        'x4-9':          { x: 720, y: 1115, textAnchor: 'middle', fontSize: 35 },
         '_400-30':       { x: 560, y: 980,  textAnchor: 'middle', fontSize: 30 },
-        '_50-50':        { x: 560, y: 1230, textAnchor: 'middle', fontSize: 28 },
+        '_50-50':        { x: 560, y: 1380,textAnchor: 'middle', fontSize: 28 },
         '_200-12':       { x: 720, y: 1120, textAnchor: 'middle', fontSize: 30 },
-        '_50-51':        { x: 720, y: 1235, textAnchor: 'middle', fontSize: 28 },
-        '_100-21':       { x: 720, y: 1310, textAnchor: 'middle', fontSize: 28 },
-        'Donation-21':   { x: 640, y: 1355, textAnchor: 'middle', fontSize: 30 },
+        '_50-51':        { x: 720, y: 1385,textAnchor: 'middle', fontSize: 28 },
+        '_100-21':       { x: 720, y: 1460,textAnchor: 'middle', fontSize: 28 },
+        'Donation-21':   { x: 640, y: 1505,textAnchor: 'middle', fontSize: 30 },
         'Candidate_receives-20': { hide: true },
       },
 
@@ -2291,26 +2291,26 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // ════════════════════════════════════════════════════════════════
       '4': {
         // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_104': { x: 400, y: 700,  scale: 1.4 },
-        'Rectangle_105': { x: 560, y: 980,  scale: 1.4 },
-        'Rectangle_106': { x: 720, y: 1120, scale: 1.4 },
-        'Path_41':       { x: 720, y: 1190, scale: 1.4 },
-        'Line_110':      { x1: 400, y1: 1260, x2: 1064, y2: 1260 },
-        'Line_111':      { x1: 400, y1: 700,  x2: 400,  y2: 1260 },
-        'Line_112':      { x1: 400, y1: 1190, x2: 560,  y2: 1190 },
-        'Line_113':      { x1: 560, y1: 1190, x2: 720,  y2: 1190 },
+        'Rectangle_104': { x: 400, y: 850,  scale: 1.4 },
+        'Rectangle_105': { x: 560, y: 1130,  scale: 1.4 },
+        'Rectangle_106': { x: 720, y: 1270, scale: 1.4 },
+        'Path_41':       { x: 720, y: 1340, scale: 1.4 },
+        'Line_110':      { x1: 400, y1: 1410, x2: 1064, y2: 1410 },
+        'Line_111':      { x1: 400, y1: 850, x2: 400,  y2: 1410 },
+        'Line_112':      { x1: 400, y1: 1340, x2: 560,  y2: 1340 },
+        'Line_113':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 },
         'Line_118':      { hide: true },
-        'Tier_1-11':     { x: 480, y: 685,  textAnchor: 'middle', fontSize: 28 },
-        'Tier_2-7':      { x: 640, y: 965,  textAnchor: 'middle', fontSize: 28 },
-        'x2-6':          { x: 800, y: 1105, textAnchor: 'middle', fontSize: 32 },
+        'Tier_1-11':     { x: 480, y: 835, textAnchor: 'middle', fontSize: 28 },
+        'Tier_2-7':      { x: 640, y: 1115, textAnchor: 'middle', fontSize: 28 },
+        'x2-6':          { x: 800, y: 1255,textAnchor: 'middle', fontSize: 32 },
         '_400-32':       { x: 480, y: 980,  textAnchor: 'middle', fontSize: 26 },
         '_250-10':       { x: 640, y: 1120, textAnchor: 'middle', fontSize: 26 },
-        '_100-23':       { x: 800, y: 1180, textAnchor: 'middle', fontSize: 26 },
-        '_50-55':        { x: 480, y: 1230, textAnchor: 'middle', fontSize: 26 },
-        '_50-54':        { x: 640, y: 1230, textAnchor: 'middle', fontSize: 26 },
-        '_100-24':       { x: 800, y: 1230, textAnchor: 'middle', fontSize: 26 },
-        '_150-13':       { x: 800, y: 1310, textAnchor: 'middle', fontSize: 26 },
-        'Donation-22':   { x: 640, y: 1355, textAnchor: 'middle', fontSize: 30 },
+        '_100-23':       { x: 800, y: 1330,textAnchor: 'middle', fontSize: 26 },
+        '_50-55':        { x: 480, y: 1380,textAnchor: 'middle', fontSize: 26 },
+        '_50-54':        { x: 640, y: 1380,textAnchor: 'middle', fontSize: 26 },
+        '_100-24':       { x: 800, y: 1380,textAnchor: 'middle', fontSize: 26 },
+        '_150-13':       { x: 800, y: 1460,textAnchor: 'middle', fontSize: 26 },
+        'Donation-22':   { x: 640, y: 1505,textAnchor: 'middle', fontSize: 30 },
         'Candidate_receives-21': { hide: true },
       },
 
@@ -2320,28 +2320,28 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // ════════════════════════════════════════════════════════════════
       '5': {
         // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_107': { x: 400, y: 700,  scale: 1.4 },
-        'Rectangle_108': { x: 560, y: 980,  scale: 1.4 },
-        'Rectangle_109': { x: 720, y: 1120, scale: 1.4 },
-        'Path_44':       { x: 720, y: 1190, scale: 1.4 },
-        'Line_119':      { x1: 400, y1: 1260, x2: 1064, y2: 1260 },
-        'Line_120':      { x1: 400, y1: 700,  x2: 400,  y2: 1260 },
-        'Line_121':      { x1: 400, y1: 1190, x2: 560,  y2: 1190 },
-        'Line_122':      { x1: 560, y1: 1190, x2: 720,  y2: 1190 },
+        'Rectangle_107': { x: 400, y: 850,  scale: 1.4 },
+        'Rectangle_108': { x: 560, y: 1130,  scale: 1.4 },
+        'Rectangle_109': { x: 720, y: 1270, scale: 1.4 },
+        'Path_44':       { x: 720, y: 1340, scale: 1.4 },
+        'Line_119':      { x1: 400, y1: 1410, x2: 1064, y2: 1410 },
+        'Line_120':      { x1: 400, y1: 850, x2: 400,  y2: 1410 },
+        'Line_121':      { x1: 400, y1: 1340, x2: 560,  y2: 1340 },
+        'Line_122':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 },
         'Line_127':      { hide: true },
         'Line_128':      { hide: true },
-        'Tier_1-7':      { x: 480, y: 685,  textAnchor: 'middle', fontSize: 28 },
-        'Tier_2-5':      { x: 640, y: 965,  textAnchor: 'middle', fontSize: 28 },
-        'Tier_3-5':      { x: 800, y: 1105, textAnchor: 'middle', fontSize: 28 },
+        'Tier_1-7':      { x: 480, y: 835, textAnchor: 'middle', fontSize: 28 },
+        'Tier_2-5':      { x: 640, y: 1115, textAnchor: 'middle', fontSize: 28 },
+        'Tier_3-5':      { x: 800, y: 1255,textAnchor: 'middle', fontSize: 28 },
         '_400-25':       { x: 480, y: 980,  textAnchor: 'middle', fontSize: 26 },
         '_250-7':        { x: 640, y: 1120, textAnchor: 'middle', fontSize: 26 },
-        '_100-18':       { x: 800, y: 1180, textAnchor: 'middle', fontSize: 26 },
-        '_50-44':        { x: 480, y: 1230, textAnchor: 'middle', fontSize: 26 },
-        '_100-19':       { x: 640, y: 1230, textAnchor: 'middle', fontSize: 26 },
-        '_150-11':       { x: 800, y: 1230, textAnchor: 'middle', fontSize: 26 },
+        '_100-18':       { x: 800, y: 1330,textAnchor: 'middle', fontSize: 26 },
+        '_50-44':        { x: 480, y: 1380,textAnchor: 'middle', fontSize: 26 },
+        '_100-19':       { x: 640, y: 1380,textAnchor: 'middle', fontSize: 26 },
+        '_150-11':       { x: 800, y: 1380,textAnchor: 'middle', fontSize: 26 },
         '_350-30':       { hide: true },
-        '_500-11':       { x: 950, y: 1225, textAnchor: 'middle', fontSize: 26 },
-        'Donation-19':   { x: 640, y: 1355, textAnchor: 'middle', fontSize: 30 },
+        '_500-11':       { x: 950, y: 1375,textAnchor: 'middle', fontSize: 26 },
+        'Donation-19':   { x: 640, y: 1505,textAnchor: 'middle', fontSize: 30 },
         'Candidate_receives-18': { hide: true },
       },
 
@@ -2813,17 +2813,17 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // label (at 1355). Scene 5 (tallest, 5 rows) fits at 1420..1670, OK.
       // mobilePosX=240 centers the 800-wide foreignObject in 1280 viewBox.
       { rows: [],                                  rowSubScene: {},                                              posX: 700,  posY: 460, scale: 1.6, op: 0,
-        mobilePosX: 240, mobilePosY: 1420, mobileScale: 1.0 },  // scene 1 (eq hidden)
+        mobilePosX: 240, mobilePosY: 1570, mobileScale: 1.0 },  // scene 1 (eq hidden)
       { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1420, mobileScale: 1.0 },  // scene 2 (1 row)
+        mobilePosX: 240, mobilePosY: 1570, mobileScale: 1.0 },  // scene 2 (1 row)
       { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1400, mobileScale: 1.0 },  // scene 3 (3 rows)
+        mobilePosX: 240, mobilePosY: 1550, mobileScale: 1.0 },  // scene 3 (3 rows)
       { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1400, mobileScale: 1.0 },  // scene 4 (4 rows)
+        mobilePosX: 240, mobilePosY: 1550, mobileScale: 1.0 },  // scene 4 (4 rows)
       { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1400, mobileScale: 1.0 },  // scene 5 (5 rows)
+        mobilePosX: 240, mobilePosY: 1550, mobileScale: 1.0 },  // scene 5 (5 rows)
       { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 510, scale: 1.0, op: 0,
-        mobilePosX: 240, mobilePosY: 1420, mobileScale: 1.0 },  // scene 6
+        mobilePosX: 240, mobilePosY: 1570, mobileScale: 1.0 },  // scene 6
     ];
 
     // Scene-2..5 totals for the running-equation Total row (donor → candidate).
