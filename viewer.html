@@ -1,0 +1,873 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Multi-method viewer · cross-reference for design audits</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #181b21;
+    --panel-2: #20242c;
+    --border: #2a2f38;
+    --text: #e7eaf0;
+    --muted: #9aa0aa;
+    --accent: #7aa2ff;
+    --accent-2: #65d6a0;
+    --warn: #f4b942;
+    --error: #f56565;
+    --ok: #65d6a0;
+    --row-hover: #232831;
+    --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    overflow: hidden;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  header .sub {
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+  .scene-tabs {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+  .scene-tab {
+    padding: 6px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+  .scene-tab.active {
+    background: var(--accent);
+    color: #0f1115;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .scene-tab:hover:not(.active) { background: var(--row-hover); }
+  .toolbar-btn {
+    padding: 6px 12px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .toolbar-btn:hover { background: var(--row-hover); }
+  .toolbar-btn.primary {
+    background: var(--accent-2);
+    color: #0f1115;
+    border-color: var(--accent-2);
+    font-weight: 600;
+  }
+  .source-toggle {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .source-toggle button {
+    padding: 6px 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    border: 0;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+  .source-toggle button.active {
+    background: var(--accent);
+    color: #0f1115;
+    font-weight: 600;
+  }
+  main {
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    height: calc(100vh - 100px);
+  }
+  .iframe-pane {
+    background: #1a1d23;
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .iframe-frame {
+    width: 375px;
+    height: 812px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .iframe-frame iframe {
+    width: 375px;
+    height: 812px;
+    border: 0;
+    display: block;
+  }
+  .bbox-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .bbox-overlay svg { width: 100%; height: 100%; display: block; }
+  .iframe-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .right-pane {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .pane-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .pane-header .title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .pane-header .count {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-weight: 400;
+    margin-left: 8px;
+  }
+  .concerns-list {
+    padding: 0 16px;
+    margin: 0;
+    list-style: none;
+  }
+  .concern {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .concern:last-child { border-bottom: none; }
+  .concern .icon {
+    font-size: 16px;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .concern.severity-error .icon { color: var(--error); }
+  .concern.severity-warn .icon { color: var(--warn); }
+  .concern.severity-info .icon { color: var(--accent); }
+  .concern.severity-ok .icon { color: var(--ok); }
+  .concern .body { display: flex; flex-direction: column; gap: 4px; }
+  .concern .head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .concern .rule {
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .concern .badge {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .concern .badge.id { color: var(--accent); }
+  .concern .desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .concern .desc code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--panel-2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--text);
+  }
+  .summary-bar {
+    display: flex;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-family: var(--mono);
+    flex-wrap: wrap;
+  }
+  .summary-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .summary-stat.error { color: var(--error); }
+  .summary-stat.warn { color: var(--warn); }
+  .summary-stat.ok { color: var(--ok); }
+  .summary-stat .num {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .status {
+    padding: 8px 16px;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .status .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--warn);
+    margin-right: 6px;
+  }
+  .status.ready .dot { background: var(--ok); }
+  .status.error .dot { background: var(--error); }
+  .empty-state {
+    padding: 40px 16px;
+    text-align: center;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Multi-method viewer</h1>
+  <span class="sub">Cross-reference: bbox + concerns + visual overlay · 1280×2050 viewBox · 375×812 screen</span>
+  <div class="source-toggle">
+    <button class="active" data-src="scrollytelling-v3.html">V3</button>
+    <button data-src="scrollytelling-v2.html">V2</button>
+  </div>
+  <div class="scene-tabs" id="sceneTabs">
+    <button class="scene-tab active" data-scene="1">Scene 1</button>
+    <button class="scene-tab" data-scene="2">Scene 2</button>
+    <button class="scene-tab" data-scene="3">Scene 3</button>
+    <button class="scene-tab" data-scene="4">Scene 4</button>
+    <button class="scene-tab" data-scene="5">Scene 5</button>
+    <button class="scene-tab" data-scene="6">Scene 6</button>
+  </div>
+  <button class="toolbar-btn" id="reloadBtn" title="Reload iframe">↻ Reload</button>
+  <button class="toolbar-btn" id="overlayBtn" title="Toggle bbox overlay on iframe">⊞ Overlay</button>
+</header>
+
+<main>
+  <section class="iframe-pane">
+    <div class="iframe-frame">
+      <iframe id="liveFrame" src="scrollytelling-v3.html"></iframe>
+      <div class="bbox-overlay" id="bboxOverlay" style="display:none;"></div>
+    </div>
+    <div class="iframe-meta" id="iframeMeta">Loading…</div>
+  </section>
+
+  <section class="right-pane">
+    <div class="pane-header">
+      <span class="title">Auto-detected concerns <span class="count" id="concernCount"></span></span>
+    </div>
+    <div class="summary-bar" id="summaryBar"></div>
+    <ul class="concerns-list" id="concernsList">
+      <li class="empty-state">Run an audit to see concerns…</li>
+    </ul>
+  </section>
+</main>
+
+<div class="status" id="status">
+  <span><span class="dot"></span><span id="statusText">Initializing…</span></span>
+  <span style="margin-left:auto;color:var(--muted);">
+    Concerns are heuristic. Click an entry to outline that element in the iframe (when bbox overlay is on).
+  </span>
+</div>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────────────────────────────────
+// Multi-method viewer — automated design-concern detection.
+//
+// Loads the live page in an iframe (V2 or V3 selectable) at mobile portrait,
+// scrolls to a scene, runs heuristic CONCERN_RULES against the rendered DOM,
+// and reports issues. Each rule is one specific category of "this might be
+// rendering wrong" — text overflowing its container, element outside the
+// viewBox, suspicious empty space, etc.
+//
+// PURPOSE: replace "Claude eyeballs a screenshot and decides things look fine"
+// with "automated rules flag specific defects." This addresses the
+// interpretation problem where my visual review misses bugs the user can see
+// on a real device.
+// ─────────────────────────────────────────────────────────────────────────
+
+const SCENE_SCROLL_FRACS = {
+  1: 0.14, 2: 0.30, 3: 0.45, 4: 0.58, 5: 0.65, 6: 0.85
+};
+
+const frame = document.getElementById('liveFrame');
+const sceneTabs = document.querySelectorAll('.scene-tab');
+const sourceToggle = document.querySelectorAll('.source-toggle button');
+const concernsList = document.getElementById('concernsList');
+const concernCount = document.getElementById('concernCount');
+const summaryBar = document.getElementById('summaryBar');
+const iframeMeta = document.getElementById('iframeMeta');
+const statusEl = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+const reloadBtn = document.getElementById('reloadBtn');
+const overlayBtn = document.getElementById('overlayBtn');
+const bboxOverlay = document.getElementById('bboxOverlay');
+
+let currentScene = 1;
+let frameReady = false;
+let lastConcerns = [];
+let lastSnapshot = null;
+let overlayOn = false;
+
+function setStatus(text, kind) {
+  statusText.textContent = text;
+  statusEl.classList.remove('ready', 'error');
+  if (kind === 'ready') statusEl.classList.add('ready');
+  if (kind === 'error') statusEl.classList.add('error');
+}
+
+frame.addEventListener('load', () => {
+  frameReady = false;
+  setStatus('Frame loaded — waiting for boot…', 'busy');
+  setTimeout(() => {
+    if (!frame.contentWindow) {
+      setStatus('Frame inaccessible', 'error'); return;
+    }
+    if (!frame.contentWindow.__mobilePortrait) {
+      setTimeout(checkAndAudit, 500);
+      return;
+    }
+    frameReady = true;
+    auditCurrentScene();
+  }, 800);
+});
+
+function checkAndAudit() {
+  if (frame.contentWindow && frame.contentWindow.__mobilePortrait) {
+    frameReady = true;
+    auditCurrentScene();
+  } else {
+    setTimeout(checkAndAudit, 300);
+  }
+}
+
+reloadBtn.addEventListener('click', () => {
+  const src = document.querySelector('.source-toggle button.active').dataset.src;
+  frame.src = src + '?_t=' + Date.now();
+});
+
+sourceToggle.forEach(btn => {
+  btn.addEventListener('click', () => {
+    sourceToggle.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    frame.src = btn.dataset.src + '?_t=' + Date.now();
+  });
+});
+
+sceneTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    sceneTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentScene = parseInt(tab.dataset.scene, 10);
+    auditCurrentScene();
+  });
+});
+
+overlayBtn.addEventListener('click', () => {
+  overlayOn = !overlayOn;
+  overlayBtn.classList.toggle('primary', overlayOn);
+  bboxOverlay.style.display = overlayOn ? 'block' : 'none';
+  if (overlayOn && lastSnapshot) drawOverlay(lastSnapshot);
+});
+
+function scrollIframeToScene(n) {
+  const win = frame.contentWindow;
+  const doc = frame.contentDocument;
+  if (!win || !doc) return false;
+  const scrolly = doc.querySelector('#scrolly');
+  if (!scrolly) return false;
+  const r = scrolly.getBoundingClientRect();
+  const scrollyTop = r.top + win.scrollY;
+  const target = scrollyTop + scrolly.offsetHeight * (SCENE_SCROLL_FRACS[n] || 0);
+  win.scrollTo(0, target);
+  return true;
+}
+
+async function auditCurrentScene() {
+  if (!frameReady) return;
+  setStatus('Scrolling to scene ' + currentScene + '…', 'busy');
+  if (!scrollIframeToScene(currentScene)) {
+    setStatus('Scroll failed', 'error');
+    return;
+  }
+  await sleep(500);
+  const snap = takeSnapshot(currentScene);
+  if (!snap) { setStatus('Snapshot failed', 'error'); return; }
+  lastSnapshot = snap;
+  const concerns = runConcernRules(snap);
+  lastConcerns = concerns;
+  renderConcerns(concerns);
+  updateMeta(snap);
+  if (overlayOn) drawOverlay(snap);
+  setStatus(`Scene ${currentScene} audited · ${concerns.length} concerns`, 'ready');
+}
+
+function takeSnapshot(sceneNum) {
+  const win = frame.contentWindow;
+  const doc = frame.contentDocument;
+  if (!win || !doc) return null;
+  const svg = doc.querySelector('#svgWrap svg');
+  if (!svg) return null;
+  const svgRect = svg.getBoundingClientRect();
+  const vb = svg.viewBox.baseVal;
+  const sx = svgRect.width / vb.width;
+  const sy = svgRect.height / vb.height;
+
+  // Capture EVERY [id] element under the SVG, with effective viewBox bbox.
+  // Across scenes — not just current, since cross-scene checks need them.
+  const idEls = svg.querySelectorAll('[id]');
+  const captured = [];
+  idEls.forEach(el => {
+    const r = el.getBoundingClientRect();
+    const cs = win.getComputedStyle(el);
+    const opacity = parseFloat(cs.opacity);
+    const visible = r.width > 0 && r.height > 0 && opacity > 0 && cs.display !== 'none' && cs.visibility !== 'hidden';
+    if (!visible) return;
+    captured.push({
+      id: el.id,
+      tag: el.tagName.toLowerCase(),
+      vb: {
+        x: (r.left - svgRect.left) / sx,
+        y: (r.top - svgRect.top) / sy,
+        w: r.width / sx,
+        h: r.height / sy,
+      },
+      screen: { l: r.left, t: r.top, w: r.width, h: r.height },
+      opacity,
+      fill: el.getAttribute('fill'),
+      stroke: el.getAttribute('stroke'),
+      text: (el.tagName === 'text') ? el.textContent.trim() : null,
+      el,
+      sceneAncestor: getSceneAncestor(el),
+    });
+  });
+
+  // Find the active scene (visible scene group with highest opacity).
+  const sceneEls = doc.querySelectorAll('[id^="scene-"][data-scene]');
+  let activeScene = null;
+  let maxOp = 0;
+  sceneEls.forEach(s => {
+    const op = parseFloat(getComputedStyle(s).opacity);
+    if (op > maxOp) { maxOp = op; activeScene = s.id; }
+  });
+
+  return {
+    sceneNum,
+    activeScene,
+    viewBox: { x: vb.x, y: vb.y, w: vb.width, h: vb.height },
+    svgScreen: svgRect,
+    elements: captured,
+  };
+}
+
+function getSceneAncestor(el) {
+  let cur = el;
+  while (cur && cur.parentElement) {
+    if (cur.id && /^scene-\d$/.test(cur.id)) return cur.id;
+    cur = cur.parentElement;
+  }
+  return null;
+}
+
+// ─── Concern rules ───────────────────────────────────────────────────────
+const CONCERN_RULES = [
+  {
+    id: 'text-overflow-box',
+    name: 'Text overflows its box',
+    severity: 'error',
+    detect(snap) {
+      const findings = [];
+      // Pair text elements with rect-group siblings; flag when text bbox
+      // extends past the rect bbox. Heuristic: same scene ancestor, text
+      // visually within rect's y-range.
+      const rects = snap.elements.filter(e => /^Rectangle_/.test(e.id));
+      const texts = snap.elements.filter(e => e.tag === 'text');
+      for (const r of rects) {
+        for (const t of texts) {
+          if (!t.text || t.sceneAncestor !== r.sceneAncestor) continue;
+          // Is text inside rect's y-range?
+          const tCenterY = t.vb.y + t.vb.h / 2;
+          if (tCenterY < r.vb.y || tCenterY > r.vb.y + r.vb.h) continue;
+          // Is text inside rect's x-range?
+          const tCenterX = t.vb.x + t.vb.w / 2;
+          if (tCenterX < r.vb.x - 20 || tCenterX > r.vb.x + r.vb.w + 20) continue;
+          // OK — likely a rect-text pair. Check if text extends past rect.
+          const overflowL = Math.max(0, r.vb.x - t.vb.x);
+          const overflowR = Math.max(0, (t.vb.x + t.vb.w) - (r.vb.x + r.vb.w));
+          if (overflowL > 5 || overflowR > 5) {
+            findings.push({
+              ruleId: this.id, severity: this.severity, name: this.name,
+              elementId: t.id,
+              detail: `Text "${t.text}" extends ${overflowL.toFixed(0)} units left and ${overflowR.toFixed(0)} units right of box ${r.id} (text vb ${t.vb.x.toFixed(0)}–${(t.vb.x+t.vb.w).toFixed(0)}, box vb ${r.vb.x.toFixed(0)}–${(r.vb.x+r.vb.w).toFixed(0)})`,
+              affectedIds: [t.id, r.id],
+            });
+          }
+        }
+      }
+      return findings;
+    }
+  },
+  {
+    id: 'outside-viewbox',
+    name: 'Element outside viewBox',
+    severity: 'error',
+    detect(snap) {
+      const findings = [];
+      for (const e of snap.elements) {
+        // Skip scene containers, sceneStack, headingOverlayG, eqOverlayG, and other
+        // structural groups whose bbox naturally exceeds viewBox bounds.
+        if (!e.id || /^scene-\d|^Scene_|^sceneStack$|OverlayG$|^Group_\d/.test(e.id)) continue;
+        if (e.tag === 'g' && e.vb.w > snap.viewBox.w * 0.8) continue; // skip wide group containers
+        const vbR = e.vb.x + e.vb.w;
+        const vbB = e.vb.y + e.vb.h;
+        if (vbR > snap.viewBox.w + 10 || e.vb.x < -10 || vbB > snap.viewBox.h + 10 || e.vb.y < -10) {
+          findings.push({
+            ruleId: this.id, severity: this.severity, name: this.name,
+            elementId: e.id,
+            detail: `Element bbox (${e.vb.x.toFixed(0)}, ${e.vb.y.toFixed(0)}, ${vbR.toFixed(0)}, ${vbB.toFixed(0)}) extends past viewBox (0..${snap.viewBox.w}, 0..${snap.viewBox.h})`,
+            affectedIds: [e.id],
+          });
+        }
+      }
+      return findings;
+    }
+  },
+  {
+    id: 'far-off-center',
+    name: 'Major element far from horizontal center',
+    severity: 'warn',
+    detect(snap) {
+      const findings = [];
+      const vbCenter = snap.viewBox.w / 2;
+      // Only flag CHART bars (data viz). Equation row boxes (rounded $50/$350/$400)
+      // are EXPECTED to span the viewBox horizontally as a row.
+      const chartBars = snap.elements.filter(e =>
+        /^Rectangle_(57|58|61|83|103|104|105|106|107|108|109)$/.test(e.id) &&
+        e.vb.w > 50
+      );
+      // Compute average chart bar center — flag the chart group as off-center
+      // if the AVERAGE is far from viewBox center (means the whole chart is
+      // anchored left/right, not just one bar).
+      if (chartBars.length === 0) return findings;
+      const avgCenter = chartBars.reduce((s, e) => s + (e.vb.x + e.vb.w / 2), 0) / chartBars.length;
+      const off = Math.abs(avgCenter - vbCenter);
+      if (off > 200) {
+        findings.push({
+          ruleId: this.id, severity: this.severity, name: this.name,
+          elementId: chartBars[0].id,
+          detail: `Bar chart centered at viewBox x=${avgCenter.toFixed(0)}, ${off.toFixed(0)} units from viewBox center (${vbCenter}). Chart is anchored to the ${avgCenter < vbCenter ? 'left' : 'right'}.`,
+          affectedIds: chartBars.map(b => b.id),
+        });
+      }
+      // Also retain individual flagging for very extreme off-centers.
+      for (const e of chartBars) {
+        const elCenter = e.vb.x + e.vb.w / 2;
+        const off = Math.abs(elCenter - vbCenter);
+        if (off > 400) {
+          findings.push({
+            ruleId: this.id, severity: this.severity, name: this.name,
+            elementId: e.id,
+            detail: `Element center (${elCenter.toFixed(0)}) is ${off.toFixed(0)} units from viewBox center (${vbCenter}). This is >20% of viewBox width — likely off-center.`,
+            affectedIds: [e.id],
+          });
+        }
+      }
+      return findings;
+    }
+  },
+  {
+    id: 'empty-bottom',
+    name: 'Significant empty space at bottom of viewBox',
+    severity: 'warn',
+    detect(snap) {
+      // Find lowest visible element. If gap from there to viewBox bottom > 30%, flag.
+      let maxY = 0;
+      for (const e of snap.elements) {
+        if (!e.id || /^Scene_|^scene-/.test(e.id)) continue;
+        const elBottom = e.vb.y + e.vb.h;
+        if (elBottom > maxY && elBottom < snap.viewBox.h) maxY = elBottom;
+      }
+      const emptyPx = snap.viewBox.h - maxY;
+      const emptyPct = (emptyPx / snap.viewBox.h) * 100;
+      if (emptyPct > 30) {
+        return [{
+          ruleId: this.id, severity: 'warn', name: 'Significant empty space at bottom',
+          elementId: null,
+          detail: `Lowest visible element ends at y=${maxY.toFixed(0)}; viewBox is ${snap.viewBox.h} tall; ${emptyPct.toFixed(0)}% of canvas (${emptyPx.toFixed(0)} units) is empty below.`,
+          affectedIds: [],
+        }];
+      }
+      return [];
+    }
+  },
+  {
+    id: 'overlapping-text',
+    name: 'Two text elements overlap',
+    severity: 'warn',
+    detect(snap) {
+      const findings = [];
+      const texts = snap.elements.filter(e => e.tag === 'text' && e.text && e.vb.w > 5);
+      for (let i = 0; i < texts.length; i++) {
+        for (let j = i + 1; j < texts.length; j++) {
+          const a = texts[i], b = texts[j];
+          if (a.sceneAncestor !== b.sceneAncestor) continue;
+          // Check bbox overlap
+          const overlapX = Math.max(0, Math.min(a.vb.x + a.vb.w, b.vb.x + b.vb.w) - Math.max(a.vb.x, b.vb.x));
+          const overlapY = Math.max(0, Math.min(a.vb.y + a.vb.h, b.vb.y + b.vb.h) - Math.max(a.vb.y, b.vb.y));
+          if (overlapX > 4 && overlapY > 4) {
+            findings.push({
+              ruleId: this.id, severity: this.severity, name: this.name,
+              elementId: a.id,
+              detail: `"${a.text.slice(0,30)}" (${a.id}) overlaps "${b.text.slice(0,30)}" (${b.id}) by ${overlapX.toFixed(0)}×${overlapY.toFixed(0)} viewBox units`,
+              affectedIds: [a.id, b.id],
+            });
+          }
+        }
+      }
+      return findings;
+    }
+  },
+  {
+    id: 'cropped-by-screen',
+    name: 'Element extends past visible screen edge',
+    severity: 'error',
+    detect(snap) {
+      const findings = [];
+      const screenW = snap.svgScreen.width;
+      for (const e of snap.elements) {
+        if (!e.id || /^Scene_|^scene-|^sceneStack$|OverlayG$|^Group_\d/.test(e.id)) continue;
+        if (e.tag === 'g' && e.vb.w > snap.viewBox.w * 0.8) continue;
+        if (e.screen.l + e.screen.w > snap.svgScreen.left + screenW + 5) {
+          findings.push({
+            ruleId: this.id, severity: this.severity, name: this.name,
+            elementId: e.id,
+            detail: `Element right edge (screen ${(e.screen.l + e.screen.w).toFixed(0)}px) past screen right (${(snap.svgScreen.left + screenW).toFixed(0)}px)`,
+            affectedIds: [e.id],
+          });
+        }
+        if (e.screen.l < snap.svgScreen.left - 5) {
+          findings.push({
+            ruleId: this.id, severity: this.severity, name: this.name,
+            elementId: e.id,
+            detail: `Element left edge (screen ${e.screen.l.toFixed(0)}px) past screen left (${snap.svgScreen.left.toFixed(0)}px)`,
+            affectedIds: [e.id],
+          });
+        }
+      }
+      return findings;
+    }
+  },
+];
+
+function runConcernRules(snap) {
+  const all = [];
+  for (const rule of CONCERN_RULES) {
+    try {
+      const findings = rule.detect(snap);
+      all.push(...findings);
+    } catch (e) {
+      console.warn('Rule', rule.id, 'threw:', e);
+    }
+  }
+  return all;
+}
+
+function renderConcerns(concerns) {
+  // Group by severity.
+  const errors = concerns.filter(c => c.severity === 'error');
+  const warns = concerns.filter(c => c.severity === 'warn');
+  const infos = concerns.filter(c => c.severity === 'info');
+
+  concernCount.textContent = `· ${concerns.length} total`;
+
+  summaryBar.innerHTML = `
+    <div class="summary-stat error"><span class="num">${errors.length}</span> errors</div>
+    <div class="summary-stat warn"><span class="num">${warns.length}</span> warnings</div>
+    <div class="summary-stat ok"><span class="num">${concerns.length === 0 ? '✓' : ''}</span> ${concerns.length === 0 ? 'all clean' : ''}</div>
+  `;
+
+  if (concerns.length === 0) {
+    concernsList.innerHTML = '<li class="empty-state">✓ No concerns detected for this scene.</li>';
+    return;
+  }
+
+  const html = concerns.map(c => `
+    <li class="concern severity-${c.severity}" data-id="${escapeHtml(c.elementId || '')}">
+      <span class="icon">${c.severity === 'error' ? '⛔' : c.severity === 'warn' ? '⚠' : 'ℹ'}</span>
+      <div class="body">
+        <div class="head">
+          <span class="rule">${escapeHtml(c.name)}</span>
+          ${c.elementId ? `<span class="badge id">#${escapeHtml(c.elementId)}</span>` : ''}
+          <span class="badge">${c.ruleId}</span>
+        </div>
+        <div class="desc">${escapeHtml(c.detail)}</div>
+      </div>
+    </li>
+  `).join('');
+  concernsList.innerHTML = html;
+
+  concernsList.querySelectorAll('.concern').forEach(li => {
+    li.addEventListener('click', () => {
+      const id = li.dataset.id;
+      if (id) highlightInIframe(id);
+    });
+  });
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function updateMeta(snap) {
+  iframeMeta.innerHTML = `
+    <strong>Scene ${snap.sceneNum}</strong> · active group: <code>${snap.activeScene}</code><br>
+    ${snap.elements.length} visible elements · viewBox ${snap.viewBox.w}×${snap.viewBox.h}
+  `;
+}
+
+let highlightedEl = null;
+function highlightInIframe(elementId) {
+  const doc = frame.contentDocument;
+  if (!doc || !elementId) return;
+  if (highlightedEl) {
+    highlightedEl.style.outline = '';
+    highlightedEl.style.outlineOffset = '';
+  }
+  const el = doc.getElementById(elementId);
+  if (!el) return;
+  el.style.outline = '3px solid #ff4dff';
+  el.style.outlineOffset = '2px';
+  highlightedEl = el;
+}
+
+function drawOverlay(snap) {
+  // Draw bbox rectangles on overlay SVG, scaled to iframe screen coords.
+  const svgNS = 'http://www.w3.org/2000/svg';
+  let overlaySvg = bboxOverlay.querySelector('svg');
+  if (!overlaySvg) {
+    overlaySvg = document.createElementNS(svgNS, 'svg');
+    overlaySvg.setAttribute('viewBox', `0 0 375 812`);
+    overlaySvg.setAttribute('preserveAspectRatio', 'none');
+    bboxOverlay.appendChild(overlaySvg);
+  }
+  // Clear
+  while (overlaySvg.firstChild) overlaySvg.removeChild(overlaySvg.firstChild);
+  // Iframe is at 375×812 fixed.
+  const iframeRect = frame.getBoundingClientRect();
+  for (const e of snap.elements) {
+    if (!e.id || /^Scene_|^scene-/.test(e.id)) continue;
+    // Element's screen position is in PARENT (viewer) coords. To draw in
+    // the iframe's local coords (0..375, 0..812), subtract iframe origin.
+    const lx = e.screen.l - iframeRect.left;
+    const ly = e.screen.t - iframeRect.top;
+    const r = document.createElementNS(svgNS, 'rect');
+    r.setAttribute('x', lx);
+    r.setAttribute('y', ly);
+    r.setAttribute('width', e.screen.w);
+    r.setAttribute('height', e.screen.h);
+    r.setAttribute('fill', 'rgba(255, 77, 255, 0.08)');
+    r.setAttribute('stroke', 'rgba(255, 77, 255, 0.5)');
+    r.setAttribute('stroke-width', 0.5);
+    overlaySvg.appendChild(r);
+    if (e.screen.w > 30) {
+      const t = document.createElementNS(svgNS, 'text');
+      t.setAttribute('x', lx + 2);
+      t.setAttribute('y', ly + 9);
+      t.setAttribute('font-size', '7');
+      t.setAttribute('fill', '#ff4dff');
+      t.setAttribute('font-family', 'monospace');
+      t.textContent = e.id.slice(0, 18);
+      overlaySvg.appendChild(t);
+    }
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Public API for Claude/agents
+window.auditScene = async function(n) {
+  if (!frameReady) return null;
+  if (!scrollIframeToScene(n)) return null;
+  await sleep(500);
+  const snap = takeSnapshot(n);
+  return { snap, concerns: runConcernRules(snap) };
+};
+window.auditAllScenes = async function() {
+  const result = {};
+  for (let n = 1; n <= 6; n++) {
+    const r = await window.auditScene(n);
+    if (r) result[n] = { activeScene: r.snap.activeScene, concerns: r.concerns };
+  }
+  return result;
+};
+</script>
+</body>
+</html>

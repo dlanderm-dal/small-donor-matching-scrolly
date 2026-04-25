@@ -2214,7 +2214,10 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
         '_4':                                       { x: 781, y: 787, textAnchor: 'middle' }, // = sign
         'Rectangle_56':                             { x: 882, y: 680 }, // $400 purple box (10 above to match desktop visual)
         '_400-34':                                  { x: 967, y: 770, textAnchor: 'middle' }, // $400 text centered
-        'Candidate_receives-22':                    { x: 967, y: 660, textAnchor: 'middle' }, // label above $400 box
+        // Candidate_receives-22 omitted — its bbox at font-size 30 + the wide
+        // "=" glyph (font-size 110) overlap by ~78 units on mobile. The $400
+        // purple-bordered box already conveys "candidate receives" by color.
+        'Candidate_receives-22':                    { hide: true },
         'First_50_matched_seven_times_by_county-4': { hide: true }, // already hidden via CSS, reaffirm
 
         // Bar chart band — y-band 1000..1620, scale 1.4× via group transform.
