@@ -1737,14 +1737,18 @@
   }
 
   // ---- V3.8.2: viewport-mode toggle ----
-  // V3.8.3 — extended with `liveDevice` (the actual viewport dims to set the
-  // iframe to) and `liveAspectArr` (numeric for slot scrollY math).
+  // V3.8.6 — stageW/stageH now MATCH liveDevice exactly so the editor
+  // canvas renders the SVG at the same physical size as the live-preview
+  // iframe. Without this match, content on the left pane was ~1.43×
+  // bigger than the same content on the right pane (562 wide stage vs
+  // 393 wide iframe at mobile portrait).
+  // Use the zoom slider (40-200%) to scale BOTH panes up for drag work.
   const VIEWPORT_MODES = {
-    mobile_portrait:  { viewBox: '0 0 1280 1700', stageW: 562, stageH: 746,  label: 'Mobile portrait',  liveAspect: '393×852',  liveDevice: [393, 852] },
-    mobile_landscape: { viewBox: '0 0 1700 1280', stageW: 836, stageH: 629,  label: 'Mobile landscape', liveAspect: '852×393',  liveDevice: [852, 393] },
-    tablet_portrait:  { viewBox: '0 0 1280 1700', stageW: 700, stageH: 930,  label: 'Tablet portrait',  liveAspect: '768×1024', liveDevice: [768, 1024] },
-    tablet_landscape: { viewBox: '0 0 1920 1280', stageW: 880, stageH: 587,  label: 'Tablet landscape', liveAspect: '1024×768', liveDevice: [1024, 768] },
-    desktop:          { viewBox: '0 0 1920 1280', stageW: 980, stageH: 653,  label: 'Desktop',          liveAspect: '1280×800', liveDevice: [1280, 800] },
+    mobile_portrait:  { viewBox: '0 0 1280 1700', stageW: 393,  stageH: 852,  label: 'Mobile portrait',  liveAspect: '393×852',  liveDevice: [393, 852] },
+    mobile_landscape: { viewBox: '0 0 1700 1280', stageW: 852,  stageH: 393,  label: 'Mobile landscape', liveAspect: '852×393',  liveDevice: [852, 393] },
+    tablet_portrait:  { viewBox: '0 0 1280 1700', stageW: 768,  stageH: 1024, label: 'Tablet portrait',  liveAspect: '768×1024', liveDevice: [768, 1024] },
+    tablet_landscape: { viewBox: '0 0 1920 1280', stageW: 1024, stageH: 768,  label: 'Tablet landscape', liveAspect: '1024×768', liveDevice: [1024, 768] },
+    desktop:          { viewBox: '0 0 1920 1280', stageW: 1280, stageH: 800,  label: 'Desktop',          liveAspect: '1280×800', liveDevice: [1280, 800] },
   };
   let currentViewport = 'mobile_portrait';
   function applyViewport() {
