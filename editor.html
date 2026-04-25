@@ -64,6 +64,54 @@
   header.bar button.action.secondary:hover { background: var(--bg); color: var(--ink); }
   header.bar .saved-tag { font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b1a3; }
 
+  /* V3.8.2: viewport-mode toggle in the header */
+  .viewport-toggle { display: flex; gap: 0; align-items: center; }
+  .viewport-toggle .vp-btn {
+    background: transparent; color: var(--bg); opacity: 0.55;
+    border: 1px solid var(--bg); border-right-width: 0;
+    padding: 6px 10px;
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .viewport-toggle .vp-btn:last-child { border-right-width: 1px; }
+  .viewport-toggle .vp-btn.active { background: var(--bg); color: var(--ink); opacity: 1; }
+  .viewport-toggle .vp-btn:hover:not(.active) { opacity: 0.85; }
+
+  /* V3.8.2: sub-scene tab strip below the main header bar */
+  .subscene-bar {
+    background: #2a2a2a; color: var(--bg);
+    padding: 0.4rem 1rem;
+    display: flex; align-items: center; gap: 0.4rem;
+    border-bottom: 1px solid #3a3a3a;
+    min-height: 36px;
+    flex-wrap: wrap;
+  }
+  .subscene-bar .ss-label {
+    font: 600 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #888;
+    margin-right: 0.4rem;
+  }
+  .subscene-bar .ss-tab {
+    background: transparent; color: var(--bg); opacity: 0.55;
+    border: 1px solid #555;
+    padding: 4px 10px;
+    font: 600 11px/1 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .subscene-bar .ss-tab.active { background: var(--bg); color: var(--ink); opacity: 1; border-color: var(--bg); }
+  .subscene-bar .ss-tab:hover:not(.active) { opacity: 0.85; border-color: #888; }
+  .subscene-bar .ss-note {
+    margin-left: auto;
+    font: 400 11px/1.4 'Source Serif 4', serif;
+    color: #b8b1a3;
+    font-style: italic;
+  }
+
   main { flex: 1; display: flex; min-height: 0; }
   .canvas-area {
     flex: 1; min-width: 0;
@@ -347,12 +395,30 @@
     <button class="scene-tab" data-scene="5">Scene 5</button>
     <button class="scene-tab" data-scene="6">Scene 6</button>
   </div>
+  <!-- V3.8.2: viewport-mode toggle. Each viewport has its own canvas
+       viewBox + stage aspect; layouts are stored per-viewport so adjusting
+       mobile portrait doesn't clobber a desktop arrangement. -->
+  <div class="viewport-toggle" id="viewportToggle" role="radiogroup" aria-label="Viewport mode">
+    <button class="vp-btn active" data-viewport="mobile_portrait" title="Mobile portrait — 1280×1700 viewBox" role="radio" aria-checked="true">📱 mob ▯</button>
+    <button class="vp-btn" data-viewport="mobile_landscape" title="Mobile landscape — 1700×1280 viewBox" role="radio" aria-checked="false">📱 mob ▭</button>
+    <button class="vp-btn" data-viewport="tablet_portrait" title="Tablet portrait — 1280×1700 viewBox at wider stage" role="radio" aria-checked="false">▯ tab</button>
+    <button class="vp-btn" data-viewport="tablet_landscape" title="Tablet landscape — 1920×1280 viewBox" role="radio" aria-checked="false">▭ tab</button>
+    <button class="vp-btn" data-viewport="desktop" title="Desktop landscape — 1920×1280 viewBox" role="radio" aria-checked="false">🖥 desk</button>
+  </div>
   <div class="right">
     <span class="saved-tag" id="savedTag">Saved locally</span>
     <button class="action secondary" id="resetBtn">Reset scene</button>
     <button class="action" id="exportBtn">Export ↗</button>
   </div>
 </header>
+
+<!-- V3.8.2: sub-scene tab strip. Each top-level scene has multiple sub-scene
+     reveal states (Scene_1A through 1D, Scene_2A-C, Scene_6A-H, etc.) that
+     drive which elements appear at each scroll-progress slot on the live
+     page. Selecting a sub-scene records the active state in PREFS so the
+     reviewer can think about per-state layouts. Per-element visibility per
+     sub-scene is a follow-up — for now this strip is a navigation surface. -->
+<div class="subscene-bar" id="subsceneBar" aria-label="Sub-scene"></div>
 
 <!-- Adobe-XD-style alignment toolbar. With ONE element selected, alignment
      buttons align that element to the CANVAS (artboard). With multiple
@@ -427,10 +493,11 @@
       </button>
     </div>
     <h2>Stage info</h2>
-    <div class="readout">
-      <div><dt>viewBox</dt><dd>1280 × 1700</dd></div>
-      <div><dt>aspect</dt><dd>≈ 3 : 4 (V3.8)</dd></div>
-      <div><dt>phone</dt><dd>375 × 500 ish</dd></div>
+    <div class="readout" id="stageInfoReadout">
+      <div><dt>viewBox</dt><dd id="stageInfoViewBox">1280 × 1700</dd></div>
+      <div><dt>aspect</dt><dd id="stageInfoAspect">≈ 3 : 4 (V3.8)</dd></div>
+      <div><dt>device</dt><dd id="stageInfoDevice">393 × 852 ish</dd></div>
+      <div><dt>mode</dt><dd id="stageInfoMode">Mobile portrait</dd></div>
     </div>
   </aside>
 </main>
@@ -1559,6 +1626,120 @@
       `<div><dt>scale</dt><dd>${sX === sY ? sX : `${sX} × ${sY}`}</dd></div>`;
   }
 
+  // ---- V3.8.2: viewport-mode toggle ----
+  // Each mode has its own canvas viewBox + stage aspect. Layout state is
+  // namespaced per viewport so adjustments in mobile portrait don't bleed
+  // into the desktop arrangement (and vice versa).
+  const VIEWPORT_MODES = {
+    mobile_portrait:  { viewBox: '0 0 1280 1700', stageW: 562, stageH: 746,  label: 'Mobile portrait',  liveAspect: '393×852' },
+    mobile_landscape: { viewBox: '0 0 1700 1280', stageW: 836, stageH: 629,  label: 'Mobile landscape', liveAspect: '852×393' },
+    tablet_portrait:  { viewBox: '0 0 1280 1700', stageW: 700, stageH: 930,  label: 'Tablet portrait',  liveAspect: '768×1024' },
+    tablet_landscape: { viewBox: '0 0 1920 1280', stageW: 880, stageH: 587,  label: 'Tablet landscape', liveAspect: '1024×768' },
+    desktop:          { viewBox: '0 0 1920 1280', stageW: 980, stageH: 653,  label: 'Desktop',          liveAspect: '1280×800' },
+  };
+  let currentViewport = 'mobile_portrait';
+  function applyViewport() {
+    const mode = VIEWPORT_MODES[currentViewport] || VIEWPORT_MODES.mobile_portrait;
+    const svgEl = document.getElementById('canvas');
+    const stageEl = document.querySelector('.stage');
+    if (svgEl) svgEl.setAttribute('viewBox', mode.viewBox);
+    if (stageEl) {
+      stageEl.style.width = mode.stageW + 'px';
+      stageEl.style.height = mode.stageH + 'px';
+    }
+    // Update the stage-info readout so the reviewer sees the active viewBox
+    const vbEl = document.getElementById('stageInfoViewBox');
+    const aspectEl = document.getElementById('stageInfoAspect');
+    const deviceEl = document.getElementById('stageInfoDevice');
+    const modeEl = document.getElementById('stageInfoMode');
+    const dims = mode.viewBox.replace('0 0 ', '').split(' ');
+    if (vbEl) vbEl.textContent = dims[0] + ' × ' + dims[1];
+    if (aspectEl) {
+      const ratio = (parseInt(dims[0]) / parseInt(dims[1])).toFixed(2);
+      aspectEl.textContent = ratio + ' : 1';
+    }
+    if (deviceEl) deviceEl.textContent = mode.liveAspect;
+    if (modeEl) modeEl.textContent = mode.label;
+    document.querySelectorAll('.vp-btn').forEach(b => {
+      const on = b.dataset.viewport === currentViewport;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-checked', String(on));
+    });
+  }
+  document.querySelectorAll('.vp-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      currentViewport = b.dataset.viewport;
+      applyViewport();
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene })); } catch (e) {}
+    });
+  });
+  // Restore from prefs (read here because PREFS_KEY load happens earlier
+  // but VIEWPORT_MODES wasn't declared yet at load-time)
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    if (prefs.currentViewport && VIEWPORT_MODES[prefs.currentViewport]) currentViewport = prefs.currentViewport;
+  } catch (e) {}
+  applyViewport();
+
+  // ---- V3.8.2: sub-scene tab strip ----
+  // Each top-level scene has multiple sub-scene reveal states that drive
+  // which elements appear at each scroll-progress slot on the live page.
+  // Source of truth: SCENE_DEFS in scrollytelling-v3.html. Mirrored here
+  // so the editor knows how many sub-scenes per scene to surface.
+  const SUB_SCENES_PER_SCENE = {
+    '1': ['1A', '1B', '1C', '1D'],
+    '2': ['2A', '2B', '2C'],
+    '3': ['3A', '3B', '3C'],
+    '4': ['4A'],
+    '5': ['5A'],
+    '6': ['6A', '6B', '6C', '6D', '6E', '6F', '6G', '6H'],
+  };
+  // currentSubScene is keyed PER scene so switching scene tabs doesn't lose
+  // the user's place inside the scene they came from.
+  let currentSubScene = { '1': '1A', '2': '2A', '3': '3A', '4': '4A', '5': '5A', '6': '6A' };
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    if (prefs.currentSubScene && typeof prefs.currentSubScene === 'object') {
+      Object.assign(currentSubScene, prefs.currentSubScene);
+    }
+  } catch (e) {}
+  function renderSubSceneBar() {
+    const bar = document.getElementById('subsceneBar');
+    if (!bar) return;
+    const subs = SUB_SCENES_PER_SCENE[currentScene] || [];
+    const active = currentSubScene[currentScene];
+    bar.innerHTML = '';
+    const lbl = document.createElement('span');
+    lbl.className = 'ss-label';
+    lbl.textContent = 'Sub-scene';
+    bar.appendChild(lbl);
+    subs.forEach(id => {
+      const btn = document.createElement('button');
+      btn.className = 'ss-tab' + (id === active ? ' active' : '');
+      btn.dataset.subScene = id;
+      btn.textContent = id.replace(currentScene, '');
+      btn.title = 'Sub-scene ' + id + ' — reveal state at slot ' + subs.indexOf(id);
+      btn.addEventListener('click', () => {
+        currentSubScene[currentScene] = id;
+        renderSubSceneBar();
+        try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene })); } catch (e) {}
+      });
+      bar.appendChild(btn);
+    });
+    if (subs.length === 1) {
+      const note = document.createElement('span');
+      note.className = 'ss-note';
+      note.textContent = 'Single-sub-scene scene — no reveal stages.';
+      bar.appendChild(note);
+    } else {
+      const note = document.createElement('span');
+      note.className = 'ss-note';
+      note.textContent = (subs.indexOf(active) + 1) + ' of ' + subs.length + ' reveal stages';
+      bar.appendChild(note);
+    }
+  }
+  renderSubSceneBar();
+
   // ---- scene tabs ----
   document.querySelectorAll('.scene-tab').forEach(b => {
     b.addEventListener('click', () => {
@@ -1567,10 +1748,11 @@
       currentScene = b.dataset.scene;
       // Persist preference (without bumping changeCount — tab switching
       // isn't an edit).
-      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled })); } catch (e) {}
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene })); } catch (e) {}
       selected = null;
       selectedIds.clear();
       renderScene();
+      renderSubSceneBar();
     });
   });
   // Restore tab on initial load — find the matching button and mark active.
