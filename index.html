@@ -231,11 +231,15 @@ html, body {
   padding: 4px 8px;
   white-space: nowrap;
 }
-.sbs-root .eq-table .tier-label { color: #434343; padding-right: 12px; text-align: right; }
-.sbs-root .eq-table .donor { color: #229500; font-weight: 700; text-align: center; min-width: 70px; }
-.sbs-root .eq-table .match { color: #0027ff; font-weight: 700; text-align: center; min-width: 70px; }
-.sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 80px; }
-.sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; padding: 0 4px; text-align: center; }
+/* Lock column widths via min-width so the table doesn't reflow when the
+   tier-4 row toggles visible/hidden ("NOT MATCHED" is the longest label,
+   ~110px at 1rem; tier-label column min-width ensures it fits without
+   pushing the numeric columns right when crossing $150). */
+.sbs-root .eq-table .tier-label { color: #434343; padding-right: 12px; text-align: right; min-width: 120px; }
+.sbs-root .eq-table .donor { color: #229500; font-weight: 700; text-align: center; min-width: 76px; }
+.sbs-root .eq-table .match { color: #0027ff; font-weight: 700; text-align: center; min-width: 76px; }
+.sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 86px; }
+.sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; text-align: center; min-width: 22px; padding: 0 14px; }
 .sbs-root .eq-table .total-row td { padding-top: 14px; }
 /* Three separate per-column underlines on the Total row — donor (green),
    match (blue), and total (purple). Each column gets its own short bar so
@@ -430,25 +434,26 @@ html, body {
   font-weight: 700;
   line-height: 1;
 }
-/* Compact variant — used when the prohibited list sits under the heading
-   (V2.4 layout) instead of beside the chart. Renders the 5 items as a
-   2-column grid so the block is wide and short instead of tall and narrow.
-   Items are subordinated to feel like an annotation under the main heading
-   rather than a competing visual block. */
+/* Compact variant — sits under the scene-2 heading (which now ends with
+   "...Candidates also can't accept donations of any amount from:"). The
+   list items are sized for emphasis, generously spaced, and rendered as
+   a 2-column grid so the block stays wide-and-short instead of becoming
+   a tall narrow column that crowds the chart below. */
 .sbs-root .prohibited-list-compact {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 32px;
-  row-gap: 2px;
+  column-gap: 40px;
+  row-gap: 12px;
 }
 .sbs-root .prohibited-list-compact li {
-  padding: 3px 0 3px 36px;
-  font-size: 26px;
-  color: #444;
+  padding: 10px 0 10px 56px;
+  font-size: 34px;
+  color: #2a2a2a;
+  line-height: 1.25;
 }
 .sbs-root .prohibited-list-compact li::before {
-  font-size: 32px;
-  left: 4px;
+  font-size: 46px;
+  left: 6px;
 }
 
 /* Scene-2 "Candidates can't accept..." callout — label + list stacked,
@@ -660,11 +665,16 @@ html, body {
   .sbs-root .sticky-stage { height: 72vh; height: 72dvh; }
   .sbs-root .svg-wrapper { width: 100%; height: 100%; }
 
-  /* Bump in-SVG text sizes so they're legible at the small mobile render.
-     foreignObject px units track the viewBox, so doubling the px ≈ doubling
-     the device-pixel rendering. */
-  .sbs-root .heading-overlay .heading-paragraph { font-size: 70px; }
-  .sbs-root .heading-overlay .heading-title { font-size: 70px; }
+  /* Bump in-SVG text sizes so they're legible at the small mobile render
+     (foreignObject px tracks viewBox units; on a 375-wide phone fitting a
+     1920-wide viewBox, 1 SVG unit ≈ 0.195 device pixels). The values here
+     are tuned so scene 1's heading (title + multi-line paragraph) FITS in
+     the 280-tall heading foreignObject without overflowing into the chart
+     below. Scene 1's paragraph is the longest at ~165 chars; at 52px it
+     wraps to 3 lines (~190 SVG units tall) plus the 1-line 56px title (~66
+     SVG units) → total 256, fits in 280 with 24-unit headroom. */
+  .sbs-root .heading-overlay .heading-title { font-size: 56px; }
+  .sbs-root .heading-overlay .heading-paragraph { font-size: 52px; }
   .sbs-root .prohibited-list-svg li { font-size: 42px; }
   .sbs-root .prohibited-list-compact li { font-size: 38px; }
   .sbs-root .prohibited-list-compact li::before { font-size: 44px; }
@@ -691,6 +701,21 @@ html, body {
   .sbs-root .slider-ticks { font-size: 0.7rem; }
   .sbs-root .eq-table { font-size: 0.95rem; }
   .sbs-root .restart-btn { padding: 0.95rem 1rem; font-size: 1rem; }
+}
+
+/* Tablet portrait — between phone and desktop. The 1920×1280 SVG still
+   letterboxes here (a 768-wide tablet fits the SVG to ~512px tall, leaving
+   the rest of a 95vh stage as empty letterbox). Apply a moderate stage-
+   height reduction + small in-SVG font bump so the SVG occupies a healthier
+   share of the visible area. Tablet readers also lose the after-scrolly
+   2-column grid (eq table beside chart) at this width. */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sbs-root .sticky-stage { height: 80vh; height: 80dvh; }
+  .sbs-root .heading-overlay .heading-title { font-size: 60px; }
+  .sbs-root .heading-overlay .heading-paragraph { font-size: 56px; }
+  .sbs-root .prohibited-list-compact li { font-size: 34px; }
+  .sbs-root .eq-overlay { font-size: 36px; }
+  .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
 }
 
 </style>
@@ -806,8 +831,8 @@ receives" transform="translate(230 1500)" fill="#434343" font-size="20" font-fam
         </g>
         <foreignObject x="100" y="907" width="1720" height="200">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The county only matches money given by donors who reside in a candidate’s jurisdiction</div></foreignObject>
-        <foreignObject x="100" y="1042" width="1720" height="80"><div xmlns="http://www.w3.org/1999/xhtml" class="prohibited-label-wrap"><p class="prohibited-label">Candidates can’t accept donations of any amount from:</p></div></foreignObject></g>
-<foreignObject x="100" y="1117" width="1720" height="220"><div xmlns="http://www.w3.org/1999/xhtml" class="prohibited-block"><ul class="prohibited-list-svg prohibited-list-compact"><li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor Unions</li><li>LLCs</li><li>State or local central committees of a political party</li></ul></div></foreignObject>
+        </g>
+<foreignObject x="100" y="1042" width="1720" height="320"><div xmlns="http://www.w3.org/1999/xhtml" class="prohibited-block"><ul class="prohibited-list-svg prohibited-list-compact"><li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor Unions</li><li>LLCs</li><li>State or local central committees of a political party</li></ul></div></foreignObject>
     </g>
     </g>
     <g class="scene" id="scene-3" data-scene="3" transform="translate(0,-1470)" opacity="0">
@@ -1019,20 +1044,20 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
     <g class="scene scene-slidey" id="scene-6" data-scene="6" transform="translate(0,-3146)" opacity="0">
     <g id="Scene_6H" data-name="Scene 6H">
       <rect id="Rectangle_110" data-name="Rectangle 110" width="171" height="136" rx="27" transform="translate(751.5 5428.5)" fill="#fff" stroke="rgba(118,0,255,0.53)" stroke-linejoin="round" stroke-width="15"/>
-      <text id="_650-10" data-name="$650" transform="translate(782 5515)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+      <text id="_650-10" data-name="$650" transform="translate(837 5515)" text-anchor="middle" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
       <text id="One_100_donor-2" data-name="One $100 donor" transform="translate(837 5399)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-108.945" y="0">One </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
       <text id="Ten_10_donors-2" data-name="Ten $10 donors" transform="translate(1368 5399)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-103.65" y="0">Ten </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan><tspan y="0" fill="#0058ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
-      <text id="vs-2" data-name="vs" transform="translate(1057 5527.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+      <text id="vs-2" data-name="vs" transform="translate(1103.5 5527.5)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
       <g id="Scene_6G" data-name="Scene 6G">
-        <rect id="Rectangle_111" data-name="Rectangle 111" width="171" height="136" rx="27" transform="translate(1284.5 5425.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
-        <text id="_800-3" data-name="$800" transform="translate(1311 5512)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+        <rect id="Rectangle_111" data-name="Rectangle 111" width="171" height="136" rx="27" transform="translate(1284.5 5428.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
+        <text id="_800-3" data-name="$800" transform="translate(1370 5515)" text-anchor="middle" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
         <g id="Scene_6F" data-name="Scene 6F">
           <line id="Line_137" data-name="Line 137" x2="451" y2="2" transform="translate(1166.5 5335.5)" fill="none" stroke="#000" stroke-width="10"/>
           <text id="x-2" data-name="x" transform="translate(1127.5 5279.5)" stroke="#000" stroke-width="3" font-size="120" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
           <text id="_10_People-2" data-name="10 People" transform="translate(1392 5273.5)" fill="#434343" font-size="75" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-168.787" y="0">10 People</tspan></text>
           <g id="Scene_6E" data-name="Scene 6E">
-            <text id="until_scene_2H_this_element_is_100_opacity-3" data-name="until scene 2H this element is 100% opacity" transform="translate(769.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
-            <text id="until_scene_2H_this_element_is_100_opacity-4" data-name="until scene 2H this element is 100% opacity" transform="translate(1143.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
+            <text id="until_scene_2H_this_element_is_100_opacity-3" data-name="until scene 2H this element is 100% opacity" transform="translate(809.5 5092.5)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+            <text id="until_scene_2H_this_element_is_100_opacity-4" data-name="until scene 2H this element is 100% opacity" transform="translate(1182.5 5092.5)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
             <rect id="Rectangle_112" data-name="Rectangle 112" width="171" height="136" rx="27" transform="translate(1284.5 4997.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
             <text id="_80-2" data-name="$80" transform="translate(1332 5084)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
             <g id="Scene_6D" data-name="Scene 6D">
@@ -1057,9 +1082,9 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
                   </g>
                   <text id="Already_Seen:-2" data-name="Already Seen:" transform="translate(164 4715)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
                   <rect id="Rectangle_116" data-name="Rectangle 116" width="171" height="136" rx="27" transform="translate(538.5 4640)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
-                  <text id="_100-26" data-name="$100" transform="translate(569 4726.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
-                  <rect id="Rectangle_118" data-name="Rectangle 118" width="171" height="136" rx="27" transform="translate(1284.5 4645)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
-                  <text id="_650-11" data-name="$650" transform="translate(1314 4731.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                  <text id="_100-26" data-name="$100" transform="translate(624 4726.5)" text-anchor="middle" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+                  <rect id="Rectangle_118" data-name="Rectangle 118" width="171" height="136" rx="27" transform="translate(1284.5 4640)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
+                  <text id="_650-11" data-name="$650" transform="translate(1370 4726.5)" text-anchor="middle" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
                 </g>
               </g>
             </g>
@@ -1162,18 +1187,22 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
 
   <div class="slider-wrap">
     <label for="donationSlider" class="slider-label-minimal">Drag to set donation amount<span class="sr-only" id="donationValue">100</span></label>
-    <input type="range" id="donationSlider" min="0" max="500" step="1" value="100">
-    <!-- Tick labels at PROPORTIONAL positions on the slider track. The
-         tier-boundary ticks ($0, $50, $100, $150) cluster at the LEFT side
-         because they're close together on a $0–$500 scale, and the $500 sits
-         alone at the right. Positioning via inline left:N% so the labels
-         actually line up with the slider thumb at those values. -->
+    <!-- Slider min is 1 (not 0) so the chart never shows the empty/blank
+         zero-state — there is always at least a sliver of green donor below
+         the baseline. Default value $100 is meaningful: it crosses two tier
+         boundaries (covers tier 1 fully + half of tier 2) so first-time
+         readers see the encoding immediately without having to slide. -->
+    <input type="range" id="donationSlider" min="1" max="500" step="1" value="100">
+    <!-- Tick labels at the four tier boundaries + the $500 cap. Removed the
+         orphaned $250 tick (not a tier boundary). The tier-boundary ticks
+         cluster at the LEFT because they're close together on a $0–$500
+         scale; $500 sits alone at the right end. Positioned via inline
+         left:N% so labels align with the slider thumb at those values. -->
     <div class="slider-ticks">
       <span style="left:0%">$0</span>
       <span style="left:10%">$50</span>
       <span style="left:20%">$100</span>
       <span style="left:30%">$150</span>
-      <span style="left:50%">$250</span>
       <span style="left:100%">$500</span>
     </div>
   </div>
@@ -1195,8 +1224,22 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
          ($350 for County Executive), so the label and what it labels share a
          visual centerline. -->
     <div class="bar-chart-wrap">
-      <svg viewBox="0 0 740 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- (Bottom siblings live below the tick labels — see below.) -->
+      <svg viewBox="0 0 740 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- ===== TOP-RIGHT bookend totals (per design mockup) =====
+             Both totals live in the unused upper-right white space ABOVE the
+             NOT-MATCHED zone and to the right of the bar columns. Donation
+             amount sits on top in plain green; Candidate gets sits below in
+             a purple-bordered box (signaling the matched-funds total going
+             to the candidate). At all donation levels the columns + red
+             strip stay clear of this region (tier 1/2/3 max widths reach
+             only x=267; the NOT MATCHED red strip lives at y=342-380). -->
+        <!-- Donation amount (top, no box) -->
+        <text x="540" y="90" text-anchor="middle" font-size="22" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
+        <text id="bigDonationValue" x="540" y="155" text-anchor="middle" font-size="56" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
+        <!-- Candidate gets (purple-bordered box) -->
+        <rect x="395" y="190" width="290" height="135" rx="14" ry="14" fill="#fff" stroke="#7600ff" stroke-width="4"/>
+        <text x="540" y="226" text-anchor="middle" font-size="22" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="540" y="290" text-anchor="middle" font-size="56" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
 
         <!-- ===== Y-axis label: "County / matching / funds" stacked vertically =====
              Centroid lands at y=240 — the y-position of the tier-1 match
@@ -1237,21 +1280,6 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
           <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
         </g>
-
-        <!-- ===== BOTTOM siblings, SIDE-BY-SIDE =====
-             "Donation amount $X" on the LEFT, big block-arrow connector in
-             the MIDDLE, "Candidate gets $Y" on the RIGHT. Sits below the
-             tick labels so it doesn't conflict with the chart bar zone or
-             the tier-1 "x7" multiplier label that sits at the top of the
-             column. Visually equates the two amounts as input/output of
-             the matching system. -->
-        <text x="32" y="492" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Donation amount</text>
-        <text id="bigDonationValue" x="32" y="540" font-size="42" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
-        <g transform="translate(385 518) scale(0.55)">
-          <path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#888"/>
-        </g>
-        <text x="440" y="492" font-size="18" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
-        <text id="bigCandidateValue" x="440" y="540" font-size="42" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
       </svg>
     </div>
 
@@ -1618,7 +1646,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       { title: 'Montgomery County Public Campaign Financing Example',
         para:  'Once a publicly financed candidate for County Executive receives a combined $40,000 from at least 500 residents of their jurisdiction, the matching kicks in:' },
       { title: '',
-        para:  'The county only matches money given by donors who reside in a candidate\u2019s jurisdiction' },
+        para:  'The county only matches money given by donors who reside in a candidate\u2019s jurisdiction. Candidates also can\u2019t accept donations of any amount from:' },
       { title: '',
         para:  'The state board keeps a running total of each donor\u2019s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.' },
       { title: '',
@@ -1723,16 +1751,41 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // Heading content
       const head = SCENE_HEADINGS[activeSceneIdx];
       if (head) {
-        if (headingTitleEl.textContent !== head.title) {
-          headingTitleEl.textContent = head.title;
-          headingTitleEl.classList.toggle('has-content', !!head.title);
+        const titleChanged = headingTitleEl.textContent !== (head.title || '');
+        const paraChanged = headingParaEl.textContent !== head.para;
+        if (titleChanged || paraChanged) {
+          // Snap opacity to 0 BEFORE swapping content so the new heading
+          // doesn't flash at the previous scene's lingering opacity. The
+          // CSS transition (0.55s) makes opacity changes ramp smoothly,
+          // which means a synchronous content swap appears at whatever
+          // mid-transition opacity the OLD scene was holding. We disable
+          // the transition for one frame, snap opacity to 0, swap the
+          // text, then restore the transition for the new scene's reveal
+          // ramp. Eliminates the flicker that was most visible at the
+          // 3↔4 boundary (identical text but content "swap" still
+          // triggered an animation tick).
+          headingOverlayG.style.transition = 'none';
+          headingOverlayG.style.opacity = '0';
+          // Force reflow so the opacity-0 + transition-none takes effect
+          // before the next style change in this same frame.
+          void headingOverlayG.offsetHeight;
+          if (titleChanged) {
+            headingTitleEl.textContent = head.title || '';
+            headingTitleEl.classList.toggle('has-content', !!head.title);
+          }
+          if (paraChanged) {
+            headingParaEl.textContent = head.para;
+          }
+          // Restore the CSS opacity transition so subsequent JS opacity
+          // sets (the localSlot * 1.5 ramp below) animate smoothly.
+          headingOverlayG.style.transition = '';
         }
-        if (headingParaEl.textContent !== head.para) {
-          headingParaEl.textContent = head.para;
-        }
-        // Per-scene font-size override (used for scene 6 to keep the
-        // heading on a single line). Falls back to the CSS default.
-        headingParaEl.style.fontSize = head.paraFontSize ? head.paraFontSize + 'px' : '';
+        // Per-scene font-size override (scene 6 sets paraFontSize: 40 to
+        // keep its heading on a single line on desktop). On MOBILE we skip
+        // this override — the mobile media query bumps the paragraph to
+        // 52px for legibility, and the inline 40px would clobber that.
+        const isMobile = window.innerWidth <= 768;
+        headingParaEl.style.fontSize = (head.paraFontSize && !isMobile) ? head.paraFontSize + 'px' : '';
       }
 
       const sd = SCENE_DEFS[activeSceneIdx];
