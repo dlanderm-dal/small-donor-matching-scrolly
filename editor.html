@@ -2072,7 +2072,11 @@
   };
 
   // ---- V3.8.4 Pass 2 — Use live SVG toggle + clone path ----
-  let liveSourceMode = false;
+  // V3.8.5: defaults ON. The hand-coded SCENES are out-of-date relative
+  // to the live page, so leaving the toggle OFF would mean the left
+  // (editor) pane in side-by-side disagrees with the right (live) pane.
+  // Users can still uncheck it to get the legacy hand-coded fallback.
+  let liveSourceMode = true;
   try {
     const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
     if (typeof prefs.liveSourceMode === 'boolean') liveSourceMode = prefs.liveSourceMode;
@@ -2100,6 +2104,33 @@
     return fr.contentDocument.querySelector('.sticky-stage svg');
   }
 
+  // V3.8.5 — clone the iframe's <style> blocks into the editor document
+  // ONCE per iframe load so the live page's CSS rules (scoped under
+  // .sbs-root) apply to the cloned SVG content. Without this the cloned
+  // foreignObjects (heading, prohibited list, eq overlay) and any
+  // CSS-styled text don't render visibly. Also wrap the editor's
+  // groupsLayer in a sbs-root-marked <g> so scoped selectors match.
+  let iframeStylesCloned = false;
+  function cloneIframeStyles() {
+    if (iframeStylesCloned) return;
+    const fr = document.getElementById('liveFrame');
+    if (!fr || !fr.contentDocument) return;
+    const styles = fr.contentDocument.querySelectorAll('style, link[rel="stylesheet"]');
+    styles.forEach(s => {
+      const tag = s.tagName.toLowerCase();
+      const node = document.createElement(tag);
+      node.setAttribute('data-cloned-from-iframe', '1');
+      if (tag === 'style') {
+        node.textContent = s.textContent;
+      } else {
+        node.setAttribute('rel', 'stylesheet');
+        node.setAttribute('href', s.getAttribute('href'));
+      }
+      document.head.appendChild(node);
+    });
+    iframeStylesCloned = true;
+  }
+
   // Clone the iframe's SVG state into the editor canvas. For each group
   // in the registry, find the member elements, compute their collective
   // bbox in viewBox coords, and clone them into a <g> that the editor's
@@ -2119,6 +2150,16 @@
     if (!registry) {
       renderScene();
       return;
+    }
+    // V3.8.5 — clone iframe styles + wrap groupsLayer's content in a
+    // .sbs-root-classed wrapper so the scoped CSS rules apply.
+    cloneIframeStyles();
+    // Mark the editor's stage container with .sbs-root so descendant
+    // CSS selectors match. Also mark the canvas SVG container so SVG-
+    // scoped rules (e.g. text font-size attribute selectors) apply.
+    const stageRoot = document.querySelector('.stage');
+    if (stageRoot && !stageRoot.classList.contains('sbs-root')) {
+      stageRoot.classList.add('sbs-root');
     }
     // Update the editor canvas viewBox to match the iframe's
     const iframeVB = iframeSVG.getAttribute('viewBox') || '0 0 1280 1700';
