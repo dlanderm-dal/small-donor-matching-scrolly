@@ -77,8 +77,11 @@
   }
   .stage {
     width: 562px;
-    /* Aspect = mobile portrait viewBox 1280x2050 → height = 562 * 2050/1280 = 900 */
-    height: 900px;
+    /* V3.8: mobile portrait viewBox shrunk to 1280×1700 (was 1280×2050).
+       The white card on the live page is now this aspect — content past
+       y=1700 would render outside the white frame. Stage height matches:
+       562 * 1700/1280 = 746. */
+    height: 746px;
     background: #fff;
     border: 2px solid var(--ink);
     box-shadow: 0 4px 30px rgba(0,0,0,0.08);
@@ -388,7 +391,7 @@
       <div class="stage-rule h" style="top:66.6%"></div>
       <div class="stage-rule v" style="left:33.3%"></div>
       <div class="stage-rule v" style="left:66.6%"></div>
-      <svg class="canvas" id="canvas" viewBox="0 0 1280 2050" preserveAspectRatio="xMidYMid meet">
+      <svg class="canvas" id="canvas" viewBox="0 0 1280 1700" preserveAspectRatio="xMidYMid meet">
         <defs>
           <!-- Hash patterns currently NOT used (fills remain solid in editor for clarity) -->
         </defs>
@@ -425,9 +428,9 @@
     </div>
     <h2>Stage info</h2>
     <div class="readout">
-      <div><dt>viewBox</dt><dd>1280 × 2050</dd></div>
-      <div><dt>aspect</dt><dd>≈ 9 : 14.4</dd></div>
-      <div><dt>phone</dt><dd>375 × 600 ish</dd></div>
+      <div><dt>viewBox</dt><dd>1280 × 1700</dd></div>
+      <div><dt>aspect</dt><dd>≈ 3 : 4 (V3.8)</dd></div>
+      <div><dt>phone</dt><dd>375 × 500 ish</dd></div>
     </div>
   </aside>
 </main>
@@ -521,7 +524,10 @@
       {
         id: "boxDiagram",
         name: "Boxes diagram ($50 + $350 = $400)",
-        defaultX: 100, defaultY: 600, defaultScale: 1.0,
+        // V3.8: row centered horizontally in 1280 viewBox at x=164..1117
+        // (was left-leaning x=100..1053). defaultY=630 places "Donation"
+        // label baseline near V3.8 y=660 and box top near y=720.
+        defaultX: 164, defaultY: 630, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 953, h: 320 },
         render: function () {
           // $50 (green) + $350 (blue) = $400 (purple) layout — mirrors scene 1
@@ -563,7 +569,12 @@
       {
         id: "barChart",
         name: "Vertical bar chart",
-        defaultX: 200, defaultY: 1000, defaultScale: 1.4,
+        // V3.8: chart band y=850-1410, bar centered at viewBox x=640.
+        // Editor's chart group has y-axis at internal x=50; with scale 1.4,
+        // y-axis viewBox x = defaultX + 50*1.4 = defaultX + 70.
+        // For y-axis at x=560 (V3.8): defaultX = 560 - 70 = 490.
+        // For chart-top at viewBox y=850: defaultY = 850 (group local y=0).
+        defaultX: 490, defaultY: 850, defaultScale: 1.4,
         bbox: { x: 0, y: 0, w: 360, h: 460 },
         render: function () {
           // Match the actual scrollytelling: y-axis at x=50, x-axis line
@@ -596,7 +607,9 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 380, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "prohibitedList", name: "Prohibited donors list", defaultX: 60, defaultY: 460, defaultScale: 1.0,
+      { id: "prohibitedList", name: "Prohibited donors list",
+        // V3.8: scene2ListFo at effective viewBox y=466 (post cascade).
+        defaultX: 60, defaultY: 466, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 1160, h: 460 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 1160, height: 460 });
@@ -615,11 +628,15 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 460, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "barChart", name: "Vertical bar chart (single column)", defaultX: 200, defaultY: 1000, defaultScale: 1.4,
+      { id: "barChart", name: "Vertical bar chart (single column)",
+        // V3.8: single bar at x=560 (centered), chart band y=850-1410.
+        defaultX: 490, defaultY: 850, defaultScale: 1.4,
         bbox: { x: 0, y: 0, w: 360, h: 480 },
         render: function () { return SCENES["1"][2].render(); }  // same shape, purple stroke (overridden)
       },
-      { id: "equation", name: "Tier 1 equation", defaultX: 240, defaultY: 1620, defaultScale: 1.0,
+      { id: "equation", name: "Tier 1 equation",
+        // V3.8: eq overlay mobilePosY=1430.
+        defaultX: 240, defaultY: 1430, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 800, h: 80 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 800, height: 80 });
@@ -646,7 +663,10 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 380, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "barChart", name: "Bar chart (Tier 1 + Tier 2 columns)", defaultX: 200, defaultY: 600, defaultScale: 1.6,
+      { id: "barChart", name: "Bar chart (Tier 1 + Tier 2 columns)",
+        // V3.8: bars at viewBox x=480 and x=640 (Tier 1 + Tier 2 flush).
+        // Y-axis at x=480 → defaultX = 480 - 70 = 410. Chart top y=850.
+        defaultX: 410, defaultY: 850, defaultScale: 1.4,
         bbox: { x: 0, y: 0, w: 360, h: 480 },
         render: function () {
           // Bars FLUSH against each other (no gap between Tier 1 and Tier 2),
@@ -670,7 +690,9 @@
           return g;
         }
       },
-      { id: "equation", name: "Equation (Tier 1 + Tier 2 + Total)", defaultX: 240, defaultY: 1620, defaultScale: 1.0,
+      { id: "equation", name: "Equation (Tier 1 + Tier 2 + Total)",
+        // V3.8: eq overlay mobilePosY=1430.
+        defaultX: 240, defaultY: 1430, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 800, h: 220 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 800, height: 220 });
@@ -692,7 +714,9 @@
         bbox: { x: 0, y: 0, w: 1160, h: 380 },
         render: function () { return SCENES["3"][0].render(); }
       },
-      { id: "barChart", name: "Bar chart (T1 + T2 + T3 columns + green strip)", defaultX: 130, defaultY: 600, defaultScale: 1.5,
+      { id: "barChart", name: "Bar chart (T1 + T2 + T3 columns + green strip)",
+        // V3.8: bars at viewBox x=400, 560, 720. Y-axis at x=400 → defaultX = 400 - 70 = 330.
+        defaultX: 330, defaultY: 850, defaultScale: 1.4,
         bbox: { x: 0, y: 0, w: 410, h: 480 },
         render: function () {
           const g = el('g');
@@ -716,7 +740,9 @@
           return g;
         }
       },
-      { id: "equation", name: "Equation (T1 + T2 + T3 + Total)", defaultX: 240, defaultY: 1500, defaultScale: 1.0,
+      { id: "equation", name: "Equation (T1 + T2 + T3 + Total)",
+        // V3.8: eq overlay mobilePosY=1430.
+        defaultX: 240, defaultY: 1430, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 800, h: 280 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 800, height: 280 });
@@ -747,7 +773,10 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 460, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "barChart", name: "Bar chart (T1+T2+T3 + long $500 green strip)", defaultX: 90, defaultY: 600, defaultScale: 1.0,
+      { id: "barChart", name: "Bar chart (T1+T2+T3 + long $500 green strip)",
+        // V3.8: bars at viewBox x=400, 560, 720; long green strip extends right.
+        // Y-axis at x=400 → defaultX = 400 - 70 = 330. Chart top y=850.
+        defaultX: 330, defaultY: 850, defaultScale: 1.4,
         bbox: { x: 0, y: 0, w: 1100, h: 480 },
         render: function () {
           // Same flush-bars logic as scene 4, plus the long green strip
@@ -770,7 +799,9 @@
           return g;
         }
       },
-      { id: "equation", name: "Equation (5 rows + Total)", defaultX: 200, defaultY: 1450, defaultScale: 1.0,
+      { id: "equation", name: "Equation (5 rows + Total)",
+        // V3.8: eq overlay mobilePosY=1430. 5-row table fits in y=1430..1700.
+        defaultX: 200, defaultY: 1430, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 880, h: 360 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 880, height: 360 });
@@ -787,7 +818,11 @@
           return fo;
         }
       },
-      { id: "maxCountyCallout", name: "Max-county-money callout", defaultX: 60, defaultY: 1850, defaultScale: 1.0,
+      { id: "maxCountyCallout", name: "Max-county-money callout",
+        // V3.8: this callout is HIDDEN on mobile (Group_6 display:none).
+        // Default y kept off-canvas (>1700) so it doesn't crowd the editor;
+        // user can drag it onto the canvas if they want to repurpose it.
+        defaultX: 60, defaultY: 1750, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 700, h: 180 },
         render: function () {
           const fo = el('foreignObject', { x: 0, y: 0, width: 700, height: 180 });
@@ -817,7 +852,11 @@
           return el('g', null, [el('rect', { x: 0, y: 0, width: 1160, height: 200, fill: 'rgba(0,0,0,0.025)' }), fo]);
         }
       },
-      { id: "topRow", name: "Top row — $100 → $650", defaultX: 60, defaultY: 350, defaultScale: 1.0,
+      { id: "topRow", name: "Top row — $100 → $650",
+        // V3.8: $100 box at viewBox x=100, y=490; $650 box at x=900, y=490.
+        // Editor renders $100 box at internal (0, 80). So defaultX=100,
+        // defaultY = 490 - 80 = 410.
+        defaultX: 100, defaultY: 410, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 1160, h: 320 },
         render: function () {
           const g = el('g');
@@ -842,7 +881,11 @@
       // after topRow: per-donor breakdown ($10 + $70 = $80) → multiplication
       // (× 10 People line) → final comparison ($650 vs $800). The change
       // for mobile is RELATIVE size + position only — these are draggable.
-      { id: "perDonorRow", name: "Per-donor: $10 + $70 = $80", defaultX: 60, defaultY: 730, defaultScale: 0.85,
+      { id: "perDonorRow", name: "Per-donor: $10 + $70 = $80",
+        // V3.8: this row is HIDDEN on mobile (3 boxes don't fit). Editor
+        // shows it parked above-canvas (y<0 or off-frame) so it doesn't
+        // crowd; user can drag it onto canvas if/when they want to fit it.
+        defaultX: 60, defaultY: -240, defaultScale: 0.85,
         bbox: { x: 0, y: 0, w: 770, h: 240 },
         render: function () {
           const g = el('g');
@@ -860,7 +903,12 @@
           return g;
         }
       },
-      { id: "multiplication", name: "× 10 People multiplication", defaultX: 280, defaultY: 1020, defaultScale: 1.0,
+      { id: "multiplication", name: "× 10 People multiplication",
+        // V3.8: divider line at viewBox y=750, "x" centered at viewBox x=555,
+        // "10 People" anchored at x=789. Editor renders line at local y=90,
+        // × at local x=0 y=80. For line at viewBox y=750: defaultY = 750-90 = 660.
+        // For × at viewBox x=555: defaultX = 555.
+        defaultX: 555, defaultY: 660, defaultScale: 1.0,
         bbox: { x: 0, y: 0, w: 540, h: 130 },
         render: function () {
           const g = el('g');
@@ -871,7 +919,11 @@
           return g;
         }
       },
-      { id: "finalRow", name: "Final comparison — $650 vs $800", defaultX: 100, defaultY: 1240, defaultScale: 0.95,
+      { id: "finalRow", name: "Final comparison — $650 vs $800",
+        // V3.8: comparison boxes at viewBox y=1300 (Rectangle_110/_111).
+        // Editor renders box top at local y=60 → defaultY = 1300 - 60 = 1240
+        // (matches existing default — same V3.8 position kept).
+        defaultX: 100, defaultY: 1240, defaultScale: 0.95,
         bbox: { x: 0, y: 0, w: 1000, h: 320 },
         render: function () {
           const g = el('g');
@@ -895,13 +947,19 @@
   // All editor state lives in localStorage and is restored on page load —
   // unpushed changes survive reload, navigate-away/back, and accidental
   // tab close. Only exiting via "Reset" (with confirm) clears anything.
-  const STORAGE_KEY     = 'sbs-portrait-editor-v3';
-  const ALIGN_LOG_KEY   = 'sbs-portrait-align-log-v3';
-  const NOTES_KEY       = 'sbs-portrait-notes-v3';
-  const SCREENSHOTS_KEY = 'sbs-portrait-screenshots-v3';
-  const UNDO_KEY        = 'sbs-portrait-undo-v3';
-  const PREFS_KEY       = 'sbs-portrait-prefs-v3';
-  const EXPORT_META_KEY = 'sbs-portrait-export-meta-v3';
+  // V3.8: storage keys bumped from -v3 to -v3-8 because the canvas viewBox
+  // changed (2050→1700) AND scene defaults moved. Old saved layouts would
+  // place elements off the new shorter canvas. Bumping the key resets the
+  // editor to fresh V3.8 defaults; users who want their old layout can
+  // still load the export JSON manually. (Notes/screenshots also bumped
+  // so they cleanly belong to the V3.8 generation of layouts.)
+  const STORAGE_KEY     = 'sbs-portrait-editor-v3-8';
+  const ALIGN_LOG_KEY   = 'sbs-portrait-align-log-v3-8';
+  const NOTES_KEY       = 'sbs-portrait-notes-v3-8';
+  const SCREENSHOTS_KEY = 'sbs-portrait-screenshots-v3-8';
+  const UNDO_KEY        = 'sbs-portrait-undo-v3-8';
+  const PREFS_KEY       = 'sbs-portrait-prefs-v3-8';
+  const EXPORT_META_KEY = 'sbs-portrait-export-meta-v3-8';
   let currentScene = '1';
   let layout = {};
   let selected = null;
