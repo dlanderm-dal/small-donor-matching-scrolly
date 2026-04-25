@@ -28,6 +28,31 @@ html, body {
 }
 .article-body-preview p { margin-bottom: 1.25rem; }
 .article-body-preview p:last-child { margin-bottom: 0; }
+/* Cache-busting version badge — sits at the bottom of the upper lorem-
+   ipsum block so reloading the page makes it obvious which build the
+   browser actually loaded. PREVIEW-ONLY; not part of the WP paste. */
+.article-body-preview .version-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #c9c2b3;
+  background: #fcf9f1;
+  font: 600 11px/1 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.04em;
+  color: #4a4a4a;
+}
+.article-body-preview .version-badge strong {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+.article-body-preview .version-badge .dot {
+  display: inline-block;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #1a5928;
+  margin-right: 0.1rem;
+}
 
 /* ============================================================================
    WORDPRESS-EMBED STYLES — everything below is scoped under `.sbs-root` so
@@ -823,6 +848,9 @@ html, body {
   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
   <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+  <!-- PREVIEW-ONLY version badge — confirms the live build matches the
+       latest commit. NOT part of the WordPress paste. -->
+  <span class="version-badge"><span class="dot"></span> Build <strong>V2.13</strong> · audit v3 · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
