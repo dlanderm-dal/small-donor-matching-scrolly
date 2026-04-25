@@ -139,6 +139,40 @@
   .group-shell .handle.ne, .group-shell .handle.sw { cursor: nesw-resize; }
   .group-shell.selected .handle { display: block; }
 
+  /* Screenshot drag-drop visual states. .drag-over highlights when the
+     user is dragging an image over either the screenshot block (sidebar)
+     or anywhere on the page (full-page drop zone for convenience). */
+  .ss-block.drag-over {
+    background: #fff8e6;
+    border-color: var(--ink);
+    border-style: dashed;
+    border-width: 2px;
+  }
+  .ss-block.drag-over button#screenshotBtn {
+    background: rgba(118,0,255,0.04);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  /* Full-page drop overlay: appears when the user drags a file anywhere
+     on the editor. Click-through pointer-events: none so it doesn't
+     interfere with dragging the file itself. */
+  body.dragging-file::after {
+    content: "Drop the screenshot anywhere — saves to scene " attr(data-current-scene);
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,26,0.55);
+    color: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: 700 18px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 250;
+    border: 4px dashed #fafafa;
+  }
+
   /* alignment toolbar — XD-style. Sits between header and canvas. */
   .align-bar {
     display: flex; align-items: center; gap: 0.6rem;
@@ -340,7 +374,8 @@
   <div class="ab-right">
     <button id="undoBtn" title="Undo last change (Cmd/Ctrl+Z)" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">↶ Undo</button>
     <label class="ab-toggle" title="Snap to other elements' edges and centers while dragging"><input type="checkbox" id="snapToggle" checked> Smart guides</label>
-    <button class="action secondary" id="downloadSvgsBtn" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Backup SVGs ↓</button>
+    <button id="exportSceneSvgBtn" title="Download the current scene's editor layout as one standalone SVG — pair with a screenshot of the live page to flag rendering drift" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Scene SVG ↓</button>
+    <button class="action secondary" id="downloadSvgsBtn" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">All backups ↓</button>
     <span class="sel-count" id="selCount">0 selected</span>
   </div>
 </div>
@@ -379,14 +414,14 @@
     <h2>Notes — selected element</h2>
     <textarea id="elementNotes" placeholder="Anything weird about this element? Type a note here. Saved per element, included in export so the implementer sees it." style="width: 100%; min-height: 80px; border: 1px solid var(--rule-soft); background: #fff; padding: 8px 10px; font: 13px/1.4 'Source Serif 4', serif; resize: vertical;"></textarea>
 
-    <h2>Reference screenshot for Scene <span id="sceneNumLabel2">1</span></h2>
-    <div id="screenshotBlock" style="border: 1px solid var(--rule-soft); background: #fff; padding: 8px;">
-      <input type="file" id="screenshotInput" accept="image/*" style="display: none;">
-      <button id="screenshotBtn" style="width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--rule); cursor: pointer; font: 600 12px/1 'Inter', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);">Upload screenshot ↑</button>
-      <div id="screenshotPreview" style="display: none; margin-top: 8px;">
-        <img id="screenshotImg" style="width: 100%; max-height: 220px; object-fit: contain; background: #f1efe8; border: 1px solid var(--rule-soft);" alt="Reference screenshot">
-        <button id="screenshotClear" style="width: 100%; margin-top: 4px; padding: 4px; background: transparent; border: 1px solid var(--rule-soft); cursor: pointer; font: 500 11px/1 'Inter', sans-serif; color: var(--ink-3);">Remove</button>
-      </div>
+    <h2>Reference screenshots for Scene <span id="sceneNumLabel2">1</span> <span id="ssCount" style="font-weight:500;color:var(--ink-3);"></span></h2>
+    <div id="screenshotBlock" class="ss-block" style="border: 1px solid var(--rule-soft); background: #fff; padding: 8px; transition: background 0.15s, border-color 0.15s;">
+      <input type="file" id="screenshotInput" accept="image/*" multiple style="display: none;">
+      <div id="screenshotList"></div>
+      <button id="screenshotBtn" style="width: 100%; padding: 12px 10px; margin-top: 6px; background: transparent; border: 1px dashed var(--rule); cursor: pointer; font: 600 12px/1.4 'Inter', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);">
+        + Add screenshot
+        <span style="display:block; margin-top: 4px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-3); text-transform: none;">or drag &amp; drop image(s) anywhere</span>
+      </button>
     </div>
     <h2>Stage info</h2>
     <div class="readout">
@@ -857,26 +892,33 @@
   };
 
   // ---- state ----
-  const STORAGE_KEY = 'sbs-portrait-editor-v3';
-  const ALIGN_LOG_KEY = 'sbs-portrait-align-log-v3';
-  const NOTES_KEY = 'sbs-portrait-notes-v3';
+  // All editor state lives in localStorage and is restored on page load —
+  // unpushed changes survive reload, navigate-away/back, and accidental
+  // tab close. Only exiting via "Reset" (with confirm) clears anything.
+  const STORAGE_KEY     = 'sbs-portrait-editor-v3';
+  const ALIGN_LOG_KEY   = 'sbs-portrait-align-log-v3';
+  const NOTES_KEY       = 'sbs-portrait-notes-v3';
   const SCREENSHOTS_KEY = 'sbs-portrait-screenshots-v3';
-  const UNDO_KEY = 'sbs-portrait-undo-v3';
+  const UNDO_KEY        = 'sbs-portrait-undo-v3';
+  const PREFS_KEY       = 'sbs-portrait-prefs-v3';
+  const EXPORT_META_KEY = 'sbs-portrait-export-meta-v3';
   let currentScene = '1';
-  let layout = {};       // { sceneId: { groupId: { x, y, scaleX, scaleY, hidden } } }
+  let layout = {};
   let selected = null;
   let selectedIds = new Set();
   let alignmentLog = [];
   let snapEnabled = true;
-  // Per-element notes: { sceneId: { groupId: "note text" } }
   let elementNotes = {};
-  // Per-scene reference screenshot: { sceneId: { dataUrl, filename, uploadedAt } }
   let sceneScreenshots = {};
-  // Undo stack — keeps the last 50 layout snapshots so the user can step
-  // back through changes. Each entry is a deep clone of `layout`. We also
-  // capture a label describing what the action was.
   let undoStack = [];
   const UNDO_MAX = 50;
+  // Tracks change/export sync — when changeCount > exportedChangeCount the
+  // user has unpushed (unexported) changes; the header tag and the
+  // beforeunload warning use this. exportedChangeCount is bumped to
+  // changeCount whenever the user opens the export modal.
+  let changeCount = 0;
+  let exportedChangeCount = 0;
+  let lastExportedAt = null;
 
   function load() {
     try {
@@ -895,10 +937,39 @@
       const ss = JSON.parse(localStorage.getItem(SCREENSHOTS_KEY) || '{}');
       if (ss && typeof ss === 'object') sceneScreenshots = ss;
     } catch (e) { sceneScreenshots = {}; }
+    // Migrate old single-screenshot format (one object per scene) to the
+    // new array format (multiple screenshots per scene with annotations).
+    Object.keys(sceneScreenshots).forEach(s => {
+      const v = sceneScreenshots[s];
+      if (v && !Array.isArray(v) && typeof v === 'object' && v.dataUrl) {
+        sceneScreenshots[s] = [{
+          dataUrl: v.dataUrl,
+          filename: v.filename || 'screenshot',
+          uploadedAt: v.uploadedAt || new Date().toISOString(),
+          size: v.size || 0,
+          annotation: ''
+        }];
+      } else if (!Array.isArray(v)) {
+        sceneScreenshots[s] = [];
+      }
+    });
     try {
       const u = JSON.parse(localStorage.getItem(UNDO_KEY) || '[]');
       if (Array.isArray(u)) undoStack = u;
     } catch (e) { undoStack = []; }
+    // Per-user preferences (last scene tab, snap toggle).
+    try {
+      const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+      if (prefs.currentScene && SCENES[prefs.currentScene]) currentScene = prefs.currentScene;
+      if (typeof prefs.snapEnabled === 'boolean') snapEnabled = prefs.snapEnabled;
+    } catch (e) {}
+    // Export sync metadata.
+    try {
+      const meta = JSON.parse(localStorage.getItem(EXPORT_META_KEY) || '{}');
+      if (typeof meta.changeCount === 'number') changeCount = meta.changeCount;
+      if (typeof meta.exportedChangeCount === 'number') exportedChangeCount = meta.exportedChangeCount;
+      if (typeof meta.lastExportedAt === 'string') lastExportedAt = meta.lastExportedAt;
+    } catch (e) {}
     Object.keys(SCENES).forEach(s => {
       layout[s] = layout[s] || {};
       SCENES[s].forEach(g => {
@@ -909,15 +980,39 @@
     });
   }
   function save() {
+    changeCount++;
+    let storageOk = true;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
       localStorage.setItem(ALIGN_LOG_KEY, JSON.stringify(alignmentLog));
       localStorage.setItem(NOTES_KEY, JSON.stringify(elementNotes));
-      // Screenshots can get big — try and skip silently if quota exceeded.
-      try { localStorage.setItem(SCREENSHOTS_KEY, JSON.stringify(sceneScreenshots)); } catch (e) {}
+      // Screenshots can get big — try and warn (but not fail) if quota exceeded.
+      try { localStorage.setItem(SCREENSHOTS_KEY, JSON.stringify(sceneScreenshots)); } catch (e) {
+        flashMessage('Storage full — screenshot may not persist past reload');
+      }
       localStorage.setItem(UNDO_KEY, JSON.stringify(undoStack));
-    } catch (e) {}
-    document.getElementById('savedTag').textContent = 'Saved · ' + new Date().toLocaleTimeString();
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled }));
+      localStorage.setItem(EXPORT_META_KEY, JSON.stringify({ changeCount, exportedChangeCount, lastExportedAt }));
+    } catch (e) {
+      storageOk = false;
+      flashMessage('Could not save to localStorage — changes may not persist');
+    }
+    refreshSavedTag(storageOk);
+  }
+  function refreshSavedTag(storageOk) {
+    const tag = document.getElementById('savedTag');
+    if (!tag) return;
+    const unpushed = changeCount - exportedChangeCount;
+    if (unpushed > 0) {
+      tag.innerHTML = '<span style="color:#ffb202">●</span> ' + unpushed + ' unexported change' + (unpushed === 1 ? '' : 's') + ' · saved locally ' + new Date().toLocaleTimeString();
+    } else if (lastExportedAt) {
+      tag.textContent = 'All changes exported · ' + new Date(lastExportedAt).toLocaleTimeString();
+    } else {
+      tag.textContent = 'Saved locally · ' + new Date().toLocaleTimeString();
+    }
+    if (storageOk === false) {
+      tag.innerHTML = '<span style="color:#ff5050">⚠</span> ' + tag.textContent;
+    }
   }
 
   // ---- undo ----
@@ -1314,24 +1409,52 @@
     }
   }
 
-  // Refresh the per-scene screenshot block — show preview if uploaded,
-  // otherwise show the upload button.
+  // Refresh the per-scene screenshot block — render every screenshot in
+  // the current scene's array as a card (thumbnail + annotation + remove).
   function refreshScreenshotUI() {
     const ssLabel = document.getElementById('sceneNumLabel2');
     if (ssLabel) ssLabel.textContent = currentScene;
-    const block = document.getElementById('screenshotBlock');
-    const preview = document.getElementById('screenshotPreview');
-    const img = document.getElementById('screenshotImg');
-    const btn = document.getElementById('screenshotBtn');
-    const ss = sceneScreenshots[currentScene];
-    if (ss && ss.dataUrl) {
-      preview.style.display = 'block';
-      btn.style.display = 'none';
+    const list = document.getElementById('screenshotList');
+    const arr = sceneScreenshots[currentScene] || [];
+    const countEl = document.getElementById('ssCount');
+    if (countEl) countEl.textContent = arr.length === 0 ? '' : '(' + arr.length + ')';
+    list.innerHTML = '';
+    arr.forEach((ss, i) => {
+      const card = document.createElement('div');
+      card.className = 'ss-card';
+      card.style.cssText = 'background:#fafafa;border:1px solid var(--rule-soft);padding:6px;margin-bottom:6px;';
+      const img = document.createElement('img');
       img.src = ss.dataUrl;
-    } else {
-      preview.style.display = 'none';
-      btn.style.display = 'block';
-    }
+      img.alt = ss.filename || 'Screenshot ' + (i+1);
+      img.style.cssText = 'width:100%;max-height:200px;object-fit:contain;background:#f1efe8;border:1px solid var(--rule-soft);display:block;';
+      const meta = document.createElement('div');
+      meta.style.cssText = 'font:500 10px/1.3 "JetBrains Mono",monospace;color:var(--ink-3);margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:6px;';
+      meta.innerHTML = '<span title="' + (ss.filename || '') + '">#' + (i+1) + ' · ' + (ss.filename ? ss.filename.substring(0, 20) : 'screenshot') + '</span>';
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.style.cssText = 'background:transparent;border:1px solid var(--rule-soft);cursor:pointer;font:500 10px/1 "Inter";color:var(--ink-3);padding:3px 6px;letter-spacing:0.04em;text-transform:uppercase;';
+      removeBtn.addEventListener('click', () => {
+        if (!confirm('Remove screenshot ' + (i+1) + ' from scene ' + currentScene + '?')) return;
+        sceneScreenshots[currentScene].splice(i, 1);
+        if (sceneScreenshots[currentScene].length === 0) delete sceneScreenshots[currentScene];
+        save();
+        refreshScreenshotUI();
+        flashMessage('Screenshot removed');
+      });
+      meta.appendChild(removeBtn);
+      const note = document.createElement('textarea');
+      note.placeholder = 'Annotation — what does this screenshot show? Anything specific to flag here.';
+      note.value = ss.annotation || '';
+      note.style.cssText = 'width:100%;min-height:50px;margin-top:4px;border:1px solid var(--rule-soft);background:#fff;padding:6px 8px;font:13px/1.4 "Source Serif 4",serif;resize:vertical;';
+      note.addEventListener('input', () => {
+        sceneScreenshots[currentScene][i].annotation = note.value;
+        save();
+      });
+      card.appendChild(img);
+      card.appendChild(meta);
+      card.appendChild(note);
+      list.appendChild(card);
+    });
   }
 
   function refreshReadout() {
@@ -1356,10 +1479,28 @@
       document.querySelectorAll('.scene-tab').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
       currentScene = b.dataset.scene;
+      // Persist preference (without bumping changeCount — tab switching
+      // isn't an edit).
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled })); } catch (e) {}
       selected = null;
       selectedIds.clear();
       renderScene();
     });
+  });
+  // Restore tab on initial load — find the matching button and mark active.
+  document.querySelectorAll('.scene-tab').forEach(b => {
+    b.classList.toggle('active', b.dataset.scene === currentScene);
+  });
+
+  // beforeunload warning if there are unexported changes. Modern browsers
+  // require a non-empty returnValue; the displayed message is browser-
+  // controlled.
+  window.addEventListener('beforeunload', (e) => {
+    if (changeCount > exportedChangeCount) {
+      e.preventDefault();
+      e.returnValue = 'You have unexported changes. Leaving will keep them in this browser, but you won\'t be able to share them with the implementer until you export.';
+      return e.returnValue;
+    }
   });
 
   // ---- alignment toolbar ----
@@ -1373,8 +1514,11 @@
   });
 
   // ---- snap-toggle ----
+  // Restore initial state from prefs.
+  document.getElementById('snapToggle').checked = snapEnabled;
   document.getElementById('snapToggle').addEventListener('change', (e) => {
     snapEnabled = e.target.checked;
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled })); } catch (e2) {}
   });
 
   // ---- undo ----
@@ -1394,30 +1538,109 @@
 
   // ---- per-scene screenshot upload ----
   const screenshotInput = document.getElementById('screenshotInput');
+  const screenshotBlock = document.getElementById('screenshotBlock');
   document.getElementById('screenshotBtn').addEventListener('click', () => screenshotInput.click());
-  screenshotInput.addEventListener('change', (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+
+  // Shared handler — appends a single File to the current scene's
+  // screenshot ARRAY (was: replaced single screenshot). Each scene can
+  // hold multiple screenshots, each with its own annotation.
+  function ingestScreenshotFile(file) {
+    if (!file) return false;
+    if (!file.type || !file.type.startsWith('image/')) {
+      flashMessage('Not an image file — drop a PNG / JPG / GIF / WebP');
+      return false;
+    }
     const reader = new FileReader();
     reader.onload = (ev) => {
-      sceneScreenshots[currentScene] = {
+      sceneScreenshots[currentScene] = sceneScreenshots[currentScene] || [];
+      sceneScreenshots[currentScene].push({
         dataUrl: ev.target.result,
         filename: file.name,
         uploadedAt: new Date().toISOString(),
-        size: file.size
-      };
+        size: file.size,
+        annotation: ''
+      });
       save();
       refreshScreenshotUI();
-      flashMessage('Screenshot uploaded for scene ' + currentScene);
+      flashMessage('Screenshot added to scene ' + currentScene + ' (' + sceneScreenshots[currentScene].length + ' total)');
     };
+    reader.onerror = () => flashMessage('Could not read that file');
     reader.readAsDataURL(file);
+    return true;
+  }
+  function ingestScreenshotFiles(files) {
+    if (!files || files.length === 0) return;
+    Array.from(files).forEach(f => ingestScreenshotFile(f));
+  }
+
+  screenshotInput.addEventListener('change', (e) => {
+    ingestScreenshotFiles(e.target.files);
     screenshotInput.value = '';
   });
-  document.getElementById('screenshotClear').addEventListener('click', () => {
-    delete sceneScreenshots[currentScene];
-    save();
-    refreshScreenshotUI();
-    flashMessage('Screenshot removed');
+
+  // Drag & drop — both targeted (over the screenshot block) and global
+  // (anywhere on the page). The page-level handler is convenient on
+  // small windows where the sidebar block is off-screen; the block-level
+  // handler gives explicit targeting for users who want to be precise.
+  function isFileDrag(evt) {
+    const t = evt.dataTransfer && evt.dataTransfer.types;
+    if (!t) return false;
+    return Array.from(t).indexOf('Files') !== -1;
+  }
+  // Targeted: drop on the screenshot block.
+  screenshotBlock.addEventListener('dragenter', (e) => {
+    if (!isFileDrag(e)) return;
+    e.preventDefault();
+    screenshotBlock.classList.add('drag-over');
+  });
+  screenshotBlock.addEventListener('dragover', (e) => {
+    if (!isFileDrag(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    screenshotBlock.classList.add('drag-over');
+  });
+  screenshotBlock.addEventListener('dragleave', (e) => {
+    if (e.target === screenshotBlock) screenshotBlock.classList.remove('drag-over');
+  });
+  screenshotBlock.addEventListener('drop', (e) => {
+    if (!isFileDrag(e)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    screenshotBlock.classList.remove('drag-over');
+    document.body.classList.remove('dragging-file');
+    ingestScreenshotFiles(e.dataTransfer.files);
+  });
+
+  // Page-level: dragging anywhere shows the overlay; dropping anywhere
+  // saves the screenshot for the current scene.
+  let dragDepth = 0;
+  document.addEventListener('dragenter', (e) => {
+    if (!isFileDrag(e)) return;
+    dragDepth++;
+    document.body.classList.add('dragging-file');
+    document.body.dataset.currentScene = currentScene;
+  });
+  document.addEventListener('dragover', (e) => {
+    if (!isFileDrag(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  document.addEventListener('dragleave', (e) => {
+    if (!isFileDrag(e)) return;
+    dragDepth--;
+    if (dragDepth <= 0) {
+      dragDepth = 0;
+      document.body.classList.remove('dragging-file');
+    }
+  });
+  document.addEventListener('drop', (e) => {
+    if (!isFileDrag(e)) return;
+    e.preventDefault();
+    dragDepth = 0;
+    document.body.classList.remove('dragging-file');
+    screenshotBlock.classList.remove('drag-over');
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    ingestScreenshotFile(file);
   });
 
   // ---- background click clears selection ----
@@ -1474,23 +1697,82 @@
   });
 
   // ---- export ----
+  // Standalone usage note for a new Claude Code session that's never seen
+  // this editor before. Sits at the top of the export so the next agent
+  // can apply the layout without re-reading the editor source.
+  const NEW_SESSION_PROMPT_PREFIX =
+    "IF THIS IS A NEW CLAUDE CODE SESSION, READ THIS BLOCK FIRST.\n\n" +
+    "Project: small-donor-matching scrollytelling at\n" +
+    "  https://github.com/dlanderm-dal/small-donor-matching-scrolly\n" +
+    "Local working copy:\n" +
+    "  /Users/davidlanderman/UMD Drive/Github/small-donor-matching-scrolly/\n" +
+    "Files of interest:\n" +
+    "  - scrollytelling-v2.html  (the live page, also at index.html)\n" +
+    "  - editor.html             (the layout editor that produced this JSON)\n" +
+    "  - portrait-elements/      (21 standalone SVG backups)\n" +
+    "  - audit.html / mockup.html (review surfaces)\n\n" +
+    "What this JSON describes:\n" +
+    "  Mobile-portrait layout the reviewer arranged element-by-element in\n" +
+    "  the canvas editor. ViewBox is 1280×2050. Each scene contains a\n" +
+    "  `groups` map keyed by group id — each group has x, y, scaleX,\n" +
+    "  scaleY, optional `notes` (free-form reviewer note), and a `bbox`\n" +
+    "  describing the unscaled content size. Each scene also has an\n" +
+    "  optional `referenceScreenshot` (base64 data URL) that the reviewer\n" +
+    "  uploaded to flag where the editor's render diverges from the live\n" +
+    "  page. `alignmentLog` is the chronological list of XD-style align/\n" +
+    "  distribute operations the reviewer ran — apply them in the same\n" +
+    "  order as starting points, then layer the per-group transforms.\n\n" +
+    "How to apply the layout to scrollytelling-v2.html:\n" +
+    "  1. The mobile-portrait viewBox + per-element shifts already live\n" +
+    "     in `applyMobileLayout()` in scrollytelling-v2.html. Find the\n" +
+    "     SCENE_DEFS / SCENE_EQUATIONS sections + the SCENE1_BOX_IDS,\n" +
+    "     SCENE6_RIGHT_IDS, SCENE6_MIDDLE_IDS arrays.\n" +
+    "  2. Each editor group corresponds to a logical block in the live\n" +
+    "     scene SVG (e.g. scene 1's `barChart` group is\n" +
+    "     Rectangle_57/_58 + axis lines + value labels). Use the group\n" +
+    "     name + bbox to find the matching live elements.\n" +
+    "  3. Translate the editor's group transform into a per-element\n" +
+    "     SVG transform applied on mobile only (in applyMobileLayout's\n" +
+    "     mobile branch), via prepending `translate(dx dy) scale(s)`.\n" +
+    "  4. After applying, run a fresh audit at three viewports (375×812\n" +
+    "     mobile, 768×1024 tablet portrait, 1440×900 desktop) and\n" +
+    "     produce a new design review.\n\n" +
+    "Lessons learned from prior sessions:\n" +
+    "  - The Claude Preview MCP iframe throttles requestAnimationFrame\n" +
+    "    when backgrounded. If `boot()` doesn't seem to run, override\n" +
+    "    `window.requestAnimationFrame = cb => setTimeout(cb,16)` and\n" +
+    "    dispatch a load event before assuming there's a code bug.\n" +
+    "  - Don't `find-and-replace` color hex values across the SVG — the\n" +
+    "    palette toggle (`.muted-palette` class on `.sbs-root`) handles\n" +
+    "    color swaps via CSS attribute selectors. Adding a new palette\n" +
+    "    means adding new CSS overrides under that class, not a global\n" +
+    "    replace.\n" +
+    "  - The version badge at the bottom of the upper lorem-ipsum block\n" +
+    "    confirms which build the live page actually loaded — bump it\n" +
+    "    on every meaningful change so cache misses are obvious.\n\n" +
+    "----- BEGIN JSON PAYLOAD -----\n";
   function buildExport() {
     const out = {
       meta: {
         source: 'scrollytelling-portrait-editor',
-        version: '2.0',
+        version: '3.0',
         viewBox: '0 0 1280 2050',
         generated: new Date().toISOString(),
+        changeCount: changeCount,
+        unexportedAtGeneration: changeCount - exportedChangeCount,
+        previousExportAt: lastExportedAt,
         notes: 'alignmentLog records every align/distribute action the user ' +
-               'ran, in order. Each entry tells the implementer the USER\'S ' +
-               'INTENT (e.g. centered to canvas, distributed by gap) — not ' +
-               'just the resulting coordinates. Apply alignment ops in order ' +
-               'on top of the per-group transforms below; the final coords ' +
-               'in scenes[].x/y already reflect the cumulative effect of ' +
-               'these ops + any free-form drag.'
+               'ran, in order. Apply alignment ops in order on top of the ' +
+               'per-group transforms below; the final coords in ' +
+               'scenes[id].groups[].x/y already reflect the cumulative ' +
+               'effect of these ops + any free-form drag. Each scene has ' +
+               'an optional `referenceScreenshot` (base64 data URL) that ' +
+               'the reviewer uploaded — cross-reference it with the live ' +
+               'page to spot rendering drift. Each group has an optional ' +
+               '`notes` field for any reviewer-flagged concerns.'
       },
       scenes: {},
-      alignmentLog: alignmentLog.slice() // append-only history of XD-style ops
+      alignmentLog: alignmentLog.slice()
     };
     Object.keys(SCENES).forEach(s => {
       out.scenes[s] = {
@@ -1605,11 +1887,105 @@
     return lines;
   }
   document.getElementById('downloadSvgsBtn').addEventListener('click', downloadAllSvgs);
+
+  // Export the CURRENT scene as ONE standalone SVG file at viewBox
+  // 1280×2050, with every group rendered at its current x / y / scale
+  // (matches what the canvas shows). Lets the user pair this SVG with a
+  // screenshot of how the live scrollytelling actually renders the same
+  // scene, side-by-side, to flag drift between the editor's mock
+  // geometry and the production rendering.
+  function downloadCurrentSceneSvg() {
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const root = document.createElementNS(svgNS, 'svg');
+    root.setAttribute('xmlns', svgNS);
+    root.setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+    root.setAttribute('viewBox', '0 0 1280 2050');
+    root.setAttribute('width', '1280');
+    root.setAttribute('height', '2050');
+    // White stage background so the file opens cleanly in any viewer.
+    const bg = document.createElementNS(svgNS, 'rect');
+    bg.setAttribute('width', '1280');
+    bg.setAttribute('height', '2050');
+    bg.setAttribute('fill', '#fff');
+    root.appendChild(bg);
+    // Title for clarity in OS preview / Finder.
+    const title = document.createElementNS(svgNS, 'title');
+    title.textContent = 'Scene ' + currentScene + ' — editor layout · ' + new Date().toISOString().slice(0,10);
+    root.appendChild(title);
+    // Render each visible group at its current transform.
+    SCENES[currentScene].forEach(g => {
+      const state = layout[currentScene][g.id];
+      if (state.hidden) return;
+      const wrap = document.createElementNS(svgNS, 'g');
+      wrap.setAttribute('transform',
+        'translate(' + Math.round(state.x) + ' ' + Math.round(state.y) + ') ' +
+        'scale(' + Number(state.scaleX.toFixed(4)) + ' ' + Number(state.scaleY.toFixed(4)) + ')'
+      );
+      const content = g.render();
+      wrap.appendChild(content);
+      root.appendChild(wrap);
+    });
+    // Convert any remaining foreignObject to native <text> for portable SVG
+    // (Adobe XD / Illustrator / Inkscape can all open the result cleanly).
+    Array.from(root.querySelectorAll('foreignObject')).forEach(fo => {
+      const x = parseFloat(fo.getAttribute('x')) || 0;
+      const y = parseFloat(fo.getAttribute('y')) || 0;
+      const fw = parseFloat(fo.getAttribute('width')) || 1000;
+      const div = fo.querySelector('div');
+      if (!div) { fo.remove(); return; }
+      const text = (div.textContent || '').trim();
+      const styleStr = div.getAttribute('style') || '';
+      const fsMatch = styleStr.match(/font-size:\s*(\d+)/);
+      const fwMatch = styleStr.match(/font-weight:\s*(\d+)/);
+      const fontSize = fsMatch ? parseInt(fsMatch[1], 10) : 36;
+      const fontWeight = fwMatch ? parseInt(fwMatch[1], 10) : 400;
+      const charsPerLine = Math.max(8, Math.floor(fw / (fontSize * 0.55)));
+      const lines = wrapText(text, charsPerLine);
+      const lineH = Math.round(fontSize * 1.2);
+      const t = document.createElementNS(svgNS, 'text');
+      t.setAttribute('x', x);
+      t.setAttribute('y', y + fontSize);
+      t.setAttribute('font-family', 'Source Serif 4, Georgia, serif');
+      t.setAttribute('font-size', fontSize);
+      t.setAttribute('font-weight', fontWeight);
+      t.setAttribute('fill', '#1a1a1a');
+      lines.forEach((ln, i) => {
+        const ts = document.createElementNS(svgNS, 'tspan');
+        ts.setAttribute('x', x);
+        if (i > 0) ts.setAttribute('dy', lineH);
+        ts.textContent = ln;
+        t.appendChild(ts);
+      });
+      fo.parentNode.replaceChild(t, fo);
+    });
+    const svgText = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(root);
+    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scene-' + currentScene + '-editor-layout-' + new Date().toISOString().slice(0,10) + '.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+    flashMessage('Scene ' + currentScene + ' SVG downloaded');
+  }
+  document.getElementById('exportSceneSvgBtn').addEventListener('click', downloadCurrentSceneSvg);
   const modal = document.getElementById('modal');
   const exportOut = document.getElementById('exportOut');
+  function markExported() {
+    exportedChangeCount = changeCount;
+    lastExportedAt = new Date().toISOString();
+    try { localStorage.setItem(EXPORT_META_KEY, JSON.stringify({ changeCount, exportedChangeCount, lastExportedAt })); } catch (e) {}
+    refreshSavedTag();
+  }
+  function buildExportText() {
+    return NEW_SESSION_PROMPT_PREFIX + JSON.stringify(buildExport(), null, 2);
+  }
   document.getElementById('exportBtn').addEventListener('click', () => {
-    exportOut.textContent = JSON.stringify(buildExport(), null, 2);
+    exportOut.textContent = buildExportText();
     modal.classList.add('open');
+    // Opening the export modal counts as "synced" — the user can now
+    // copy/download to share with the implementer.
+    markExported();
   });
   document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
@@ -1620,21 +1996,29 @@
       copyBtn.textContent = 'Copied ✓';
       copyBtn.classList.add('copied');
       setTimeout(() => { copyBtn.textContent = 'Copy JSON'; copyBtn.classList.remove('copied'); }, 1800);
+      markExported();
     });
   });
   document.getElementById('downloadBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(buildExport(), null, 2)], { type: 'application/json' });
+    // Download the .txt file with the new-session prefix + JSON so the
+    // recipient can paste it directly into a fresh Claude Code session.
+    const blob = new Blob([buildExportText()], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'portrait-layout-' + new Date().toISOString().slice(0,10) + '.json';
+    a.download = 'portrait-layout-' + new Date().toISOString().slice(0,10) + '.txt';
     a.click();
     URL.revokeObjectURL(url);
+    markExported();
   });
 
   // ---- init ----
   load();
   renderScene();
+  // Show the unexported counter (or "all changes exported") on initial
+  // load, so a returning user can see immediately whether they have
+  // unpushed work.
+  refreshSavedTag();
 })();
 </script>
 
