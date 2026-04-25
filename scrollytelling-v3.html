@@ -1243,7 +1243,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V3.0-wip</strong> · single-layer mobile layout (scene 1 only); scenes 2-6 still legacy · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V3.1-wip</strong> · single-layer mobile layout (scenes 1-5); scene 6 still legacy · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -2236,7 +2236,110 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
         '_400-35':                { hide: true }, // $400 y-axis tick
         'Line_17':                { hide: true }, // small tick mark
       },
-      // TODO scenes 2-6
+
+      // ════════════════════════════════════════════════════════════════
+      // SCENE 2 — Tier 1 full $400 bar with dashed $50 boundary line.
+      // Single bar centered around viewBox x=640. Bar at x=560-720.
+      // Equation row at bottom handled by eqOverlayG (separate overlay).
+      // ════════════════════════════════════════════════════════════════
+      '2': {
+        'Rectangle_61': { x: 560, y: 1000, scale: 1.4 }, // Tier 1 purple bar (114×400 → 160×560)
+        'Line_18':      { x1: 560, y1: 1560, x2: 1064, y2: 1560 }, // x-axis
+        'Line_19':      { x1: 560, y1: 1000, x2: 560,  y2: 1560 }, // y-axis
+        'Line_22':      { x1: 560, y1: 1490, x2: 720,  y2: 1490 }, // dashed $50 boundary line inside bar
+        '_50-48':       { x: 640, y: 1530, textAnchor: 'middle', fontSize: 30 }, // $50 label below dashed
+        '_400-28':      { x: 640, y: 1280, textAnchor: 'middle', fontSize: 30 }, // $400 inside upper bar
+        'Donation-20':  { x: 640, y: 1610, textAnchor: 'middle', fontSize: 30 }, // x-axis label
+        'x7-15':        { x: 640, y: 985,  textAnchor: 'middle', fontSize: 35 }, // x7 above bar
+        // Hidden — small ticks and y-axis labels redundant on narrow mobile.
+        '_400-27':                { hide: true },
+        'Candidate_receives-19':  { hide: true },
+        'Line_20':                { hide: true },
+        'Line_21':                { hide: true },
+      },
+
+      // ════════════════════════════════════════════════════════════════
+      // SCENE 3 — Tier 1 + Tier 2 (x4 multiplier). Two bars FLUSH.
+      // Tier 1 (full $400): x=480-640. Tier 2 (match $200 + $50 strip): x=640-800.
+      // Both bars centered around viewBox x=640.
+      // ════════════════════════════════════════════════════════════════
+      '3': {
+        'Rectangle_103': { x: 480, y: 1000, scale: 1.4 }, // Tier 1 full purple (114×400 → 160×560)
+        'Rectangle_83':  { x: 640, y: 1280, scale: 1.4 }, // Tier 2 match blue (114×200 → 160×280)
+        'Path_29':       { x: 640, y: 1490, scale: 1.4 }, // Tier 2 green strip (114×50 → 160×70)
+        'Line_68':       { x1: 480, y1: 1560, x2: 1064, y2: 1560 }, // x-axis
+        'Line_69':       { x1: 480, y1: 1000, x2: 480,  y2: 1560 }, // y-axis
+        'Line_109':      { x1: 480, y1: 1490, x2: 640,  y2: 1490 }, // dashed $50 boundary in Tier 1
+        'Tier_1-9':      { x: 560, y: 985,  textAnchor: 'middle', fontSize: 30 }, // Tier 1 label above
+        'x4-9':          { x: 720, y: 1265, textAnchor: 'middle', fontSize: 35 }, // x4 above Tier 2
+        '_400-30':       { x: 560, y: 1280, textAnchor: 'middle', fontSize: 30 }, // $400 in Tier 1 upper
+        '_50-50':        { x: 560, y: 1530, textAnchor: 'middle', fontSize: 28 }, // $50 in Tier 1 lower
+        '_200-12':       { x: 720, y: 1420, textAnchor: 'middle', fontSize: 30 }, // $200 in Tier 2 match
+        '_50-51':        { x: 720, y: 1535, textAnchor: 'middle', fontSize: 28 }, // $50 in Tier 2 strip
+        '_100-21':       { x: 720, y: 1610, textAnchor: 'middle', fontSize: 28 }, // $100 axis label below Tier 2
+        'Donation-21':   { x: 640, y: 1655, textAnchor: 'middle', fontSize: 30 }, // x-axis label
+        'Candidate_receives-20': { hide: true },
+      },
+
+      // ════════════════════════════════════════════════════════════════
+      // SCENE 4 — Tier 1 + 2 + 3 (x2 multiplier). Three bars FLUSH.
+      // Three bars × 160 wide = 480 total. Centered: x=400, 560, 720.
+      // ════════════════════════════════════════════════════════════════
+      '4': {
+        'Rectangle_104': { x: 400, y: 1000, scale: 1.4 }, // Tier 1 full purple (114×400 → 160×560)
+        'Rectangle_105': { x: 560, y: 1280, scale: 1.4 }, // Tier 2 match purple (114×200 → 160×280)
+        'Rectangle_106': { x: 720, y: 1420, scale: 1.4 }, // Tier 3 match blue (114×100 → 160×140)
+        'Path_41':       { x: 720, y: 1490, scale: 1.4 }, // Tier 3 green strip
+        'Line_110':      { x1: 400, y1: 1560, x2: 1064, y2: 1560 }, // x-axis
+        'Line_111':      { x1: 400, y1: 1000, x2: 400,  y2: 1560 }, // y-axis
+        'Line_112':      { x1: 400, y1: 1490, x2: 560,  y2: 1490 }, // dashed $50 in Tier 1
+        'Line_113':      { x1: 560, y1: 1490, x2: 720,  y2: 1490 }, // dashed $50 boundary
+        'Line_118':      { hide: true }, // small tick
+        'Tier_1-11':     { x: 480, y: 985,  textAnchor: 'middle', fontSize: 28 },
+        'Tier_2-7':      { x: 640, y: 1265, textAnchor: 'middle', fontSize: 28 },
+        'x2-6':          { x: 800, y: 1405, textAnchor: 'middle', fontSize: 32 },
+        '_400-32':       { x: 480, y: 1280, textAnchor: 'middle', fontSize: 26 },
+        '_250-10':       { x: 640, y: 1420, textAnchor: 'middle', fontSize: 26 },
+        '_100-23':       { x: 800, y: 1480, textAnchor: 'middle', fontSize: 26 },
+        '_50-55':        { x: 480, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_50-54':        { x: 640, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_100-24':       { x: 800, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_150-13':       { x: 800, y: 1610, textAnchor: 'middle', fontSize: 26 },
+        'Donation-22':   { x: 640, y: 1655, textAnchor: 'middle', fontSize: 30 },
+        'Candidate_receives-21': { hide: true },
+      },
+
+      // ════════════════════════════════════════════════════════════════
+      // SCENE 5 — Tier 1 + 2 + 3 + green-strip $500 max indicator.
+      // Three bars + a long green strip showing $500 cap.
+      // ════════════════════════════════════════════════════════════════
+      '5': {
+        'Rectangle_107': { x: 400, y: 1000, scale: 1.4 }, // Tier 1
+        'Rectangle_108': { x: 560, y: 1280, scale: 1.4 }, // Tier 2
+        'Rectangle_109': { x: 720, y: 1420, scale: 1.4 }, // Tier 3
+        'Path_44':       { x: 720, y: 1490, scale: 1.4 }, // green strip (extends right past tier 3)
+        'Line_119':      { x1: 400, y1: 1560, x2: 1064, y2: 1560 },
+        'Line_120':      { x1: 400, y1: 1000, x2: 400,  y2: 1560 },
+        'Line_121':      { x1: 400, y1: 1490, x2: 560,  y2: 1490 }, // dashed $50 in Tier 1
+        'Line_122':      { x1: 560, y1: 1490, x2: 720,  y2: 1490 },
+        'Line_127':      { hide: true },
+        'Line_128':      { hide: true },
+        'Tier_1-7':      { x: 480, y: 985,  textAnchor: 'middle', fontSize: 28 },
+        'Tier_2-5':      { x: 640, y: 1265, textAnchor: 'middle', fontSize: 28 },
+        'Tier_3-5':      { x: 800, y: 1405, textAnchor: 'middle', fontSize: 28 },
+        '_400-25':       { x: 480, y: 1280, textAnchor: 'middle', fontSize: 26 },
+        '_250-7':        { x: 640, y: 1420, textAnchor: 'middle', fontSize: 26 },
+        '_100-18':       { x: 800, y: 1480, textAnchor: 'middle', fontSize: 26 },
+        '_50-44':        { x: 480, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_100-19':       { x: 640, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_150-11':       { x: 800, y: 1530, textAnchor: 'middle', fontSize: 26 },
+        '_350-30':       { hide: true }, // redundant on mobile
+        '_500-11':       { x: 950, y: 1525, textAnchor: 'middle', fontSize: 26 }, // $500 max indicator
+        'Donation-19':   { x: 640, y: 1655, textAnchor: 'middle', fontSize: 30 },
+        'Candidate_receives-18': { hide: true },
+      },
+
+      // Scene 6 deferred — different layout (comparison view, no chart).
     };
 
     /**
@@ -2264,8 +2367,14 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     function applyV3LayoutForScene(sceneIdStr) {
       const layout = MOBILE_LAYOUTS_V3[sceneIdStr];
       if (!layout) return 0;
-      const sceneEl = document.getElementById('scene-' + sceneIdStr);
-      const [baseX, baseY] = sceneEl ? parseTranslateXY(sceneEl.getAttribute('transform')) : [0, 0];
+      // CRITICAL: use ORIGINAL baseTransform from SCENE_DEFS, not the live
+      // element's transform. The scrolly engine MODIFIES scene transforms
+      // at runtime (e.g., scene-5 gets shifted during scene-6's slide-in)
+      // — we don't want V3 layouts to be misaligned by those runtime edits.
+      // Scene-local coords stay fixed; the runtime transform shifts the whole
+      // scene including V3 elements, which is the correct behavior.
+      const sceneDef = SCENE_DEFS.find(d => d.id === 'scene-' + sceneIdStr);
+      const [baseX, baseY] = sceneDef ? parseTranslateXY(sceneDef.baseTransform) : [0, 0];
       const xComp = -baseX;                   // add to absolute_x → scene-local x
       const yComp = -baseY - MOBILE_STACK_DY; // add to absolute_y → scene-local y
       let n = 0;

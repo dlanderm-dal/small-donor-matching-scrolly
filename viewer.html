@@ -349,8 +349,17 @@
 // on a real device.
 // ─────────────────────────────────────────────────────────────────────────
 
+// Calibrated to land at each scene's FINAL sub-scene (not in transition).
+// SCENE_DEFS slot allocation (1-indexed scenes; 4+3+3+1+1+8 = 20 reveals
+// + 5 transitions + 3 final hold = 28 slots total):
+//   Scene 1 reveal slots 0-3,  ends ~slot 4  → frac 0.14
+//   Scene 2 reveal slots 5-7,  ends ~slot 8  → frac 0.28
+//   Scene 3 reveal slots 9-11, ends ~slot 12 → frac 0.42
+//   Scene 4 reveal slot 13,    ends ~slot 14 → frac 0.50
+//   Scene 5 reveal slot 15,    ends ~slot 16 → frac 0.56
+//   Scene 6 reveal slots 17-24, mid ~slot 21 → frac 0.78
 const SCENE_SCROLL_FRACS = {
-  1: 0.14, 2: 0.30, 3: 0.45, 4: 0.58, 5: 0.65, 6: 0.85
+  1: 0.13, 2: 0.27, 3: 0.41, 4: 0.50, 5: 0.56, 6: 0.78
 };
 
 const frame = document.getElementById('liveFrame');
@@ -484,7 +493,17 @@ function takeSnapshot(sceneNum) {
     const r = el.getBoundingClientRect();
     const cs = win.getComputedStyle(el);
     const opacity = parseFloat(cs.opacity);
-    const visible = r.width > 0 && r.height > 0 && opacity > 0 && cs.display !== 'none' && cs.visibility !== 'hidden';
+    // Check ancestor opacity too — opacity doesn't INHERIT but it does CASCADE
+    // visually. An element with opacity:1 inside a group with opacity:0 is
+    // still invisible. We only audit truly-visible elements.
+    let cumOpacity = opacity;
+    let cur = el.parentElement;
+    while (cur && cur.namespaceURI === 'http://www.w3.org/2000/svg') {
+      const o = parseFloat(win.getComputedStyle(cur).opacity);
+      if (!isNaN(o)) cumOpacity *= o;
+      cur = cur.parentElement;
+    }
+    const visible = r.width > 0 && r.height > 0 && cumOpacity > 0.05 && cs.display !== 'none' && cs.visibility !== 'hidden';
     if (!visible) return;
     captured.push({
       id: el.id,
