@@ -710,6 +710,37 @@ const CONCERN_RULES = [
     }
   },
   {
+    id: 'fo-overlaps-named-element',
+    name: 'foreignObject overlaps a named SVG element',
+    severity: 'error',
+    detect(snap) {
+      // The case my V3.4 missed: heading-list FO ends at vb y=N, but a chart
+      // bar (rect) starts at vb y=M < N. The previous foreignobject-overlap
+      // rule only checked FO-vs-FO, missing FO-vs-rect overlaps.
+      const findings = [];
+      const fos = snap.elements.filter(e => e.tag === 'foreignobject');
+      const rects = snap.elements.filter(e =>
+        /^Rectangle_/.test(e.id || '') && e.vb.w > 50 && e.vb.h > 30
+      );
+      for (const fo of fos) {
+        for (const r of rects) {
+          // Check overlap > 30 viewBox units in BOTH x and y.
+          const ovX = Math.max(0, Math.min(fo.vb.x + fo.vb.w, r.vb.x + r.vb.w) - Math.max(fo.vb.x, r.vb.x));
+          const ovY = Math.max(0, Math.min(fo.vb.y + fo.vb.h, r.vb.y + r.vb.h) - Math.max(fo.vb.y, r.vb.y));
+          if (ovX > 30 && ovY > 30) {
+            findings.push({
+              ruleId: this.id, severity: this.severity, name: this.name,
+              elementId: r.id,
+              detail: `${r.id} (rect at vb y=${r.vb.y.toFixed(0)}-${(r.vb.y+r.vb.h).toFixed(0)}) overlaps a foreignObject (vb y=${fo.vb.y.toFixed(0)}-${(fo.vb.y+fo.vb.h).toFixed(0)}) by ${ovX.toFixed(0)}×${ovY.toFixed(0)} units. Likely chart bar overlapping heading or prohibited list FO.`,
+              affectedIds: [r.id, fo.id].filter(Boolean),
+            });
+          }
+        }
+      }
+      return findings;
+    }
+  },
+  {
     id: 'foreignobject-overlap',
     name: 'Two foreignObjects overlap (heading vs list, etc.)',
     severity: 'error',
