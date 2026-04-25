@@ -462,40 +462,61 @@ html, body {
   font-weight: 400;
 }
 
-/* Equation overlay (HTML inside foreignObject). Each .eq-row toggles a
-   .visible class to slide-in/fade-out independently. */
+/* Equation overlay — grid-based rows so hidden rows can collapse
+   completely (max-height + opacity transition) without leaving layout gaps,
+   and labels right-align so "Tier 1" sits flush with $50 instead of being
+   pushed leftward by the wider "NOT MATCHED" label in another row. */
 .sbs-root .eq-overlay {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 30px;
   color: #434343;
   font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.sbs-root .eq-overlay-table {
-  border-collapse: separate;
-  border-spacing: 12px 6px;
-  white-space: nowrap;
-}
-.sbs-root .eq-overlay-table td { padding: 0; vertical-align: middle; }
-.sbs-root .eq-overlay-table .lbl { color: #434343; font-weight: 400; padding-right: 16px; }
-.sbs-root .eq-overlay-table .lbl.not-matched { color: red; font-weight: 700; }
-.sbs-root .eq-overlay-table .d { color: #229500; }
-.sbs-root .eq-overlay-table .m { color: #0027ff; }
-.sbs-root .eq-overlay-table .m.not-matched { color: red; }
-.sbs-root .eq-overlay-table .t { color: #7600ff; }
-.sbs-root .eq-overlay-table .op { color: #4e4e4e; font-weight: 700; padding: 0 4px; }
-.sbs-root .eq-overlay-table .eq-total-row td { padding-top: 12px; border-top: 2px solid #444; }
-.sbs-root .eq-overlay-table .eq-total-row .lbl { font-weight: 700; }
-
-/* Per-row reveal: fade + slide up from below */
 .sbs-root .eq-row {
-  transition: opacity 0.35s ease-out, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  display: grid;
+  /* Label column wide enough for "NOT MATCHED" (~275px at 30px bold) plus
+     a 14px gap before the donor column. */
+  grid-template-columns: 290px 90px 30px 90px 30px 110px;
+  align-items: center;
+  white-space: nowrap;
+  /* Hidden state: collapsed to zero height + opacity 0. transition both
+     so the row slides in from a zero-height state when toggled visible. */
+  max-height: 0;
   opacity: 0;
-  transform: translateY(14px);
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+              opacity 0.35s ease-out;
 }
 .sbs-root .eq-row.visible {
+  max-height: 60px;
   opacity: 1;
-  transform: translateY(0);
 }
+.sbs-root .eq-row .lbl {
+  color: #434343;
+  font-weight: 400;
+  text-align: right;
+  padding-right: 14px;
+}
+.sbs-root .eq-row .lbl.not-matched { color: red; font-weight: 700; }
+.sbs-root .eq-row .d { color: #229500; text-align: left; }
+.sbs-root .eq-row .m { color: #0027ff; text-align: left; }
+.sbs-root .eq-row .m.not-matched { color: red; }
+.sbs-root .eq-row .t { color: #7600ff; text-align: left; }
+.sbs-root .eq-row .op { color: #4e4e4e; font-weight: 700; text-align: center; }
+.sbs-root .eq-row.eq-total-row {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px solid #444;
+  /* Total row layout differs from tier rows: no `+` column, the middle
+     column holds the word "becomes" instead of an operator. Wider middle
+     column so "becomes" fits without truncation. */
+  grid-template-columns: 290px 90px 150px 110px 0 0;
+}
+.sbs-root .eq-row.eq-total-row .lbl { font-weight: 700; }
+.sbs-root .eq-row.eq-total-row .op { text-align: center; }
 
 /* Mobile responsive — pulled from V1's pattern. The SVG fits to width and
    the after-scrolly section reflows to a single column. */
@@ -913,42 +934,40 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
          Position + scale animate via CSS transition; row visibility toggled
          by JS based on the active scene. -->
     <g id="eqOverlayG" style="opacity:0; transform: translate(735px, 632px) scale(1); transform-origin: 0 0; transform-box: fill-box; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease-out;">
-      <foreignObject x="0" y="0" width="800" height="320" style="overflow: visible;">
+      <foreignObject x="0" y="0" width="800" height="360" style="overflow: visible;">
         <div xmlns="http://www.w3.org/1999/xhtml" class="eq-overlay">
-          <table class="eq-overlay-table">
-            <tbody>
-              <tr class="eq-row" id="eqRow_t1">
-                <td class="lbl">Tier 1</td>
-                <td class="d">$50</td><td class="op">+</td>
-                <td class="m">$350</td><td class="op">=</td>
-                <td class="t">$400</td>
-              </tr>
-              <tr class="eq-row" id="eqRow_t2">
-                <td class="lbl">Tier 2</td>
-                <td class="d">$50</td><td class="op">+</td>
-                <td class="m">$200</td><td class="op">=</td>
-                <td class="t">$250</td>
-              </tr>
-              <tr class="eq-row" id="eqRow_t3">
-                <td class="lbl">Tier 3</td>
-                <td class="d">$50</td><td class="op">+</td>
-                <td class="m">$100</td><td class="op">=</td>
-                <td class="t">$150</td>
-              </tr>
-              <tr class="eq-row" id="eqRow_t4">
-                <td class="lbl not-matched">NOT MATCHED</td>
-                <td class="d">$350</td><td class="op">+</td>
-                <td class="m not-matched">$0</td><td class="op">=</td>
-                <td class="t">$350</td>
-              </tr>
-              <tr class="eq-row eq-total-row" id="eqRow_tt">
-                <td class="lbl">Total</td>
-                <td class="d" id="eqTotalDonorO">$100</td>
-                <td class="op">becomes</td>
-                <td class="t" id="eqTotalO">$650</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="eq-row" id="eqRow_t1">
+            <span class="lbl">Tier 1</span>
+            <span class="d">$50</span><span class="op">+</span>
+            <span class="m">$350</span><span class="op">=</span>
+            <span class="t">$400</span>
+          </div>
+          <div class="eq-row" id="eqRow_t2">
+            <span class="lbl">Tier 2</span>
+            <span class="d">$50</span><span class="op">+</span>
+            <span class="m">$200</span><span class="op">=</span>
+            <span class="t">$250</span>
+          </div>
+          <div class="eq-row" id="eqRow_t3">
+            <span class="lbl">Tier 3</span>
+            <span class="d">$50</span><span class="op">+</span>
+            <span class="m">$100</span><span class="op">=</span>
+            <span class="t">$150</span>
+          </div>
+          <div class="eq-row" id="eqRow_t4">
+            <span class="lbl not-matched">NOT MATCHED</span>
+            <span class="d">$350</span><span class="op">+</span>
+            <span class="m not-matched">$0</span><span class="op">=</span>
+            <span class="t">$350</span>
+          </div>
+          <div class="eq-row eq-total-row" id="eqRow_tt">
+            <span class="lbl">Total</span>
+            <span class="d" id="eqTotalDonorO">$100</span>
+            <span class="op">becomes</span>
+            <span class="t" id="eqTotalO">$650</span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </foreignObject>
     </g>
@@ -1016,8 +1035,10 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
         <line x1="80" y1="320" x2="700" y2="320" stroke="#707070" stroke-width="3"/>
         <!-- Y-axis vertical -->
         <line x1="80" y1="320" x2="80" y2="20" stroke="#707070" stroke-width="2"/>
-        <!-- "Candidate receives" axis label (rotated, runs along y-axis) -->
-        <text x="38" y="180" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle" transform="rotate(-90 38 180)">Candidate receives</text>
+        <!-- Y-axis label: non-rotated, shows what the bars represent. The
+             label sits ABOVE the y-axis and reads horizontally so it doesn't
+             require neck-tilt to parse. -->
+        <text x="80" y="14" font-size="14" fill="#0027ff" font-family="HelveticaNeue, Helvetica Neue" text-anchor="start" font-weight="700">County matching funds</text>
         <!-- Donation axis label (under the x-axis ticks) -->
         <text x="390" y="408" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle" font-weight="700">Donation amount</text>
         <!-- Tier groups (rendered by JS) — each holds a green segment below the
@@ -1458,6 +1479,38 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
     const eqTotalDonorEl = document.getElementById('eqTotalDonorO');
     const eqTotalEl = document.getElementById('eqTotalO');
 
+    // Tween a $-formatted number on an element from its current value to a
+    // new target value over ~700 ms (ease-out cubic). If the element is
+    // already showing the target, no-op.
+    const _tweenStates = new WeakMap();
+    function tweenDollar(el, targetText) {
+      if (!el) return;
+      if (el.textContent === targetText) return;
+      const fromN = parseInt((el.textContent || '$0').replace(/[^0-9-]/g, ''), 10) || 0;
+      const toN = parseInt((targetText || '$0').replace(/[^0-9-]/g, ''), 10) || 0;
+      if (fromN === toN) { el.textContent = targetText; return; }
+      // Cancel any in-flight tween on this element
+      const existing = _tweenStates.get(el);
+      if (existing) existing.cancelled = true;
+      const state = { cancelled: false };
+      _tweenStates.set(el, state);
+      const start = performance.now();
+      const dur = 700;
+      const tick = () => {
+        if (state.cancelled) return;
+        const t = Math.min(1, (performance.now() - start) / dur);
+        const e = 1 - Math.pow(1 - t, 3);
+        const v = Math.round(fromN + (toN - fromN) * e);
+        el.textContent = '$' + v.toLocaleString();
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    // Track the previously-active scene so we can detect transitions for
+    // tweens and slide-out animations.
+    let _prevSceneIdx = -1;
+
     function updateOverlay(activeSceneIdx, currentSlot) {
       // Heading content
       const head = SCENE_HEADINGS[activeSceneIdx];
@@ -1474,30 +1527,59 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
         headingParaEl.style.fontSize = head.paraFontSize ? head.paraFontSize + 'px' : '';
       }
       // Heading is visible from slot 0 onward (faded with the active sub-scene).
-      // Determine fade based on whether activeScene's first sub-scene has
-      // started revealing.
       const sd = SCENE_DEFS[activeSceneIdx];
       const localSlot = currentSlot - sd.startSlot;
-      // Fade in over the first 0.5 of the first sub-scene's reveal slot
       const headingOp = Math.max(0, Math.min(1, localSlot * 1.5));
       headingOverlayG.style.opacity = headingOp.toFixed(3);
+
+      // Slide the entire overlay UP during the scene 5 → 6 transition so
+      // the heading + equation leave the viewport in lockstep with scene 5
+      // sliding up out of the way. Once scene 6 is active, the overlay
+      // snaps back to translate(0,0) and shows scene 6's heading.
+      const overlayLayer = document.getElementById('overlayLayer');
+      const s5Sd = SCENE_DEFS[4];
+      const transStart56 = s5Sd.transitionSlot;
+      const transEnd56 = transStart56 + TRANSITION_SLOTS;
+      let overlayY = 0, overlayOpFactor = 1;
+      if (currentSlot < transStart56) {
+        overlayY = 0;
+      } else if (currentSlot < transEnd56) {
+        const t = Math.max(0, Math.min(1, (currentSlot - transStart56) / TRANSITION_SLOTS));
+        const ease = t * t * (3 - 2 * t);
+        overlayY = -1200 * ease;
+        // Fade overlay out as it slides — scene 6 will render its own heading
+        // at the static position when active.
+        overlayOpFactor = 1 - ease;
+      } else {
+        // Scene 6 active: overlay snaps back to baseline (renders scene 6
+        // heading text) but still gates by sub-scene reveal opacity above.
+        overlayY = 0;
+      }
+      overlayLayer.setAttribute('transform', 'translate(0,' + overlayY + ')');
+      overlayLayer.style.opacity = overlayOpFactor.toFixed(3);
 
       // Equation overlay
       const eq = SCENE_EQUATIONS[activeSceneIdx];
       if (eq) {
-        eqOverlayG.style.transform = `translate(${eq.posX}px, ${eq.posY}px) scale(${eq.scale})`;
+        eqOverlayG.style.transform = 'translate(' + eq.posX + 'px, ' + eq.posY + 'px) scale(' + eq.scale + ')';
         eqOverlayG.style.opacity = String(eq.op);
         Object.keys(eqRowEls).forEach(key => {
           const row = eqRowEls[key];
           if (row) row.classList.toggle('visible', eq.rows.includes(key));
         });
-        // Update totals row content
+        // Total row content — TWEEN the dollar amounts so they count up
+        // smoothly between scenes instead of flashing to new values.
         const totals = SCENE_TOTALS[activeSceneIdx];
         if (totals && eqTotalDonorEl && eqTotalEl) {
-          if (eqTotalDonorEl.textContent !== totals.donor) eqTotalDonorEl.textContent = totals.donor;
-          if (eqTotalEl.textContent !== totals.total) eqTotalEl.textContent = totals.total;
+          // Only tween when scene actually changed; on every scroll tick
+          // within the same scene we skip (tweenDollar is no-op when same).
+          if (_prevSceneIdx !== activeSceneIdx) {
+            tweenDollar(eqTotalDonorEl, totals.donor);
+            tweenDollar(eqTotalEl, totals.total);
+          }
         }
       }
+      _prevSceneIdx = activeSceneIdx;
     }
 
     function triggerAfterScrolly() {
@@ -1714,7 +1796,11 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
 
         // Above the baseline: blue match column OR NOT MATCHED region
         if (tier.isNotMatched) {
-          // Translucent red strip at low height to indicate "no match"
+          // The red strip's width grows with the donor amount above $150.
+          // When the donor has barely crossed $150 (segWidth small) there's
+          // no room for the inline "NOT MATCHED" label, so we render the
+          // text OUTSIDE the strip and connect it with a dashed leader
+          // line. Once the strip is wide enough, the label sits inside.
           const stripH = 38;
           tiersG.appendChild(svgEl('rect', {
             x: String(segXStart), y: String(BASELINE_Y - stripH),
@@ -1722,10 +1808,34 @@ the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" fo
             fill: 'rgba(217,43,43,0.10)', stroke: '#d92b2b',
             'stroke-width': '3', 'stroke-dasharray': '8 6'
           }));
-          tiersG.appendChild(svgText(
-            segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
-            'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
-          ));
+          // "NOT MATCHED" rendered at 16px is roughly 145 user units wide.
+          // Pick inline placement only when segWidth has comfortable room.
+          const NOT_MATCHED_W = 150;
+          if (segWidth >= NOT_MATCHED_W + 16) {
+            tiersG.appendChild(svgText(
+              segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
+              'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
+            ));
+          } else {
+            // Draw a dashed leader line from the strip's TOP-RIGHT corner up
+            // to a label parked in the white space above. Place the label
+            // just above the strip and to the right so it doesn't crowd the
+            // top of the chart.
+            const stripTopY = BASELINE_Y - stripH;
+            const labelX = segXStart + segWidth + 60;
+            const labelY = stripTopY - 30;
+            tiersG.appendChild(svgEl('line', {
+              x1: String(segXStart + segWidth),
+              y1: String(stripTopY + stripH / 2),
+              x2: String(labelX - 4),
+              y2: String(labelY + 4),
+              stroke: '#d92b2b', 'stroke-width': '2', 'stroke-dasharray': '4 4'
+            }));
+            tiersG.appendChild(svgText(
+              labelX, labelY,
+              'NOT MATCHED', { anchor: 'start', size: 16, fill: '#d92b2b', weight: 700 }
+            ));
+          }
         } else {
           const colH = tier.match * MATCH_PX_DOLLAR;
           if (colH > 0) {
