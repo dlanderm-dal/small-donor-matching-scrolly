@@ -142,8 +142,8 @@ html, body {
 
 .sbs-root .as-grid {
   display: grid;
-  grid-template-columns: minmax(200px, 1fr) minmax(280px, 1.4fr);
-  gap: 2rem;
+  grid-template-columns: minmax(360px, 1.6fr) minmax(280px, 1fr);
+  gap: 1rem;
   align-items: start;
 }
 @media (max-width: 768px) {
@@ -193,12 +193,19 @@ html, body {
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 .sbs-root .slider-ticks {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 1.2em;
   font-size: 0.75rem;
   color: #888;
   margin-top: 0.25rem;
 }
+.sbs-root .slider-ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.sbs-root .slider-ticks span:last-child { transform: translateX(-100%); }
+.sbs-root .slider-ticks span:first-child { transform: translateX(0); }
 
 /* Equation table */
 .sbs-root .eq-table {
@@ -312,7 +319,7 @@ html, body {
 /* Mobile: stage shrinks but still pins; SVG fills width */
 @media (max-width: 768px) {
   .sbs-root .svg-wrapper { width: 100%; height: 96dvh; }
-  .sbs-root .sticky-stage { align-items: flex-start; }
+  /* (V2.2) sticky stage centers on mobile too — V1 flex-start hack removed */
 }
 
 /* Scene heading text inside SVG foreignObject — the HTML inside an SVG
@@ -325,11 +332,45 @@ html, body {
   letter-spacing: -0.005em;
 }
 
+
+
+/* Scene-2 prohibited list inside SVG foreignObject. Red × markers like V1's
+   .prohibited-list popup recipe. */
+.sbs-root .prohibited-list-svg {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.sbs-root .prohibited-list-svg li {
+  position: relative;
+  padding: 8px 0 8px 56px;
+  font-size: 35px;
+  color: #222;
+  line-height: 1.25;
+}
+.sbs-root .prohibited-list-svg li::before {
+  content: "\00d7";
+  position: absolute;
+  left: 8px; top: 50%;
+  transform: translateY(-52%);
+  color: #d92b2b;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Cap heading text width so long lines don't span the full SVG. The
+   foreignObject sets the available width; max-width clamps the rendered
+   line length for readability. */
+.sbs-root .svg-heading {
+  max-width: 1500px;
+}
+
 /* Mobile responsive — pulled from V1's pattern. The SVG fits to width and
    the after-scrolly section reflows to a single column. */
 @media (max-width: 768px) {
   .sbs-root .svg-wrapper { width: 100%; height: 96%; height: 96dvh; }
-  .sbs-root .sticky-stage { align-items: flex-start; }
+  /* (V2.2) sticky stage centers on mobile too — V1 flex-start hack removed */
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
@@ -371,20 +412,20 @@ html, body {
     <div class="progress-bar" id="progressBar"></div>
     <div class="svg-wrapper" id="svgWrap">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-     viewBox="0 0 1920 1200"
+     viewBox="0 0 1920 1280"
      style="width:100%;height:100%"
      role="img"
      aria-labelledby="sbsSvgTitle sbsSvgDesc"
      preserveAspectRatio="xMidYMid meet">
   <title id="sbsSvgTitle">Montgomery County, Maryland small-donor matching program</title>
   <desc id="sbsSvgDesc">Animated diagram explaining how Montgomery County matches small donations at tiered multiples. The first $50 a donor contributes is matched 7-to-1, the next $50 at 4-to-1, the next $50 at 2-to-1, and contributions above $150 are not matched. The county stops matching once an individual donor has given $150 to a candidate, and individual donors are capped at $500 per candidate per election.</desc>
-  <rect width="1920" height="1200" fill="#fff"/>
+  <rect width="1920" height="1280" fill="#fff"/>
   <g id="sceneStack">
     <!-- ===== SCENES 1-5: cross-fade carousel, all positioned at viewBox top via translate ===== -->
     <g class="scene scene-active" id="scene-1" data-scene="1" transform="translate(0,0)" opacity="1">
     <g id="Scene_1D" data-name="Scene 1D">
-      <text id="_3" data-name="+" transform="translate(796.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-      <text id="_4" data-name="=" transform="translate(1180.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+      <text id="_3" data-name="+" transform="translate(796.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+      <text id="_4" data-name="=" transform="translate(1180.969 592.25)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <rect id="Rectangle_56" data-name="Rectangle 56" width="171" height="136" rx="27" transform="translate(1324.969 488.75)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
       <text id="_400-34" data-name="$400" transform="translate(1354.469 575.25)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
       <text id="Candidate_receives-22" data-name="Candidate receives" transform="translate(1424.469 435.75)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-128.625" y="0">Candidate receives</tspan></text>
@@ -393,7 +434,7 @@ html, body {
 seven times by county" transform="translate(1036.469 420)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-125.61" y="0">First</tspan><tspan y="0" xml:space="preserve" fill="#229500"> $50 </tspan><tspan y="0">matched </tspan><tspan fill="#0027ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-155.85" y="36">seven times</tspan><tspan y="36" xml:space="preserve" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400"> by county</tspan></tspan></text>
         <rect id="Rectangle_55" data-name="Rectangle 55" width="171" height="136" rx="27" transform="translate(949.969 497.25)" fill="#fff" stroke="#0027ff" stroke-linejoin="round" stroke-width="15"/>
         <text id="_350-37" data-name="$350" transform="translate(980.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
-        <g id="Rectangle_58" data-name="Rectangle 58" transform="translate(296 586.5)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="5">
+        <g id="Rectangle_58" data-name="Rectangle 58" transform="translate(296 586.5)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="3">
           <rect width="114" height="350" stroke="none"/>
           <rect x="2.5" y="2.5" width="109" height="345" fill="none"/>
         </g>
@@ -408,7 +449,7 @@ receives" transform="translate(230 827.5)" fill="#434343" font-size="20" font-fa
           <rect id="Rectangle_54" data-name="Rectangle 54" width="171" height="136" rx="27" transform="translate(542.969 497.25)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
           <text id="_50-59" data-name="$50" transform="translate(586.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
           <text id="Donation-24" data-name="Donation" transform="translate(628.469 439.75)" fill="#434343" font-size="35" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-70.665" y="0">Donation</tspan></text>
-          <g id="Rectangle_57" data-name="Rectangle 57" transform="translate(296 936.5)" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="5">
+          <g id="Rectangle_57" data-name="Rectangle 57" transform="translate(296 936.5)" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="3">
             <rect width="114" height="50" stroke="none"/>
             <rect x="2.5" y="2.5" width="109" height="45" fill="none"/>
           </g>
@@ -425,11 +466,11 @@ receives" transform="translate(230 827.5)" fill="#434343" font-size="20" font-fa
       <text id="_400-35" data-name="$400" transform="translate(202.219 595.75)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
     </g>
     </g>
-    <g class="scene" id="scene-2" data-scene="2" transform="translate(0,-776)" opacity="0">
+    <g class="scene" id="scene-2" data-scene="2" transform="translate(0,-727)" opacity="0">
     <g id="Scene_2C" data-name="Scene 2C">
       <g id="Scene_2B_this_appears_at_the_same_time_as_Scene_2A_ensure_that_the_heading_occupies_the_same_space_same_justification_as_the_heading_of_Scene_1_" data-name="Scene 2B (this appears at the same time as Scene 2A, ensure that the heading occupies the same space/same justification as the heading of Scene 1)">
         <g id="Scene_2A_the_graph_in_Scene_1_needs_to_fade_into_this_" data-name="Scene 2A (the graph in Scene 1 needs to fade into this)">
-          <g id="Rectangle_61" data-name="Rectangle 61" transform="translate(296 1312.5)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+          <g id="Rectangle_61" data-name="Rectangle 61" transform="translate(296 1312.5)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
             <rect width="114" height="400" stroke="none"/>
             <rect x="2.5" y="2.5" width="109" height="395" fill="none"/>
           </g>
@@ -448,31 +489,25 @@ receives" transform="translate(230 1508.75)" fill="#434343" font-size="20" font-
           <g id="Group_2" data-name="Group 2" transform="translate(2.719 -4547)">
             <text id="_50-49" data-name="$50" transform="translate(631.781 5899.5)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
             <text id="_350-34" data-name="$350" transform="translate(725.781 5899.5)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
-            <text id="until_scene_1H_this_element_is_100_opacity-57" data-name="until scene 1H this element is 100% opacity" transform="translate(699.281 5897)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-            <text id="until_scene_1H_this_element_is_100_opacity-58" data-name="until scene 1H this element is 100% opacity" transform="translate(801.094 5897)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+            <text id="until_scene_1H_this_element_is_100_opacity-57" data-name="until scene 1H this element is 100% opacity" transform="translate(699.281 5897)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+            <text id="until_scene_1H_this_element_is_100_opacity-58" data-name="until scene 1H this element is 100% opacity" transform="translate(801.094 5897)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
             <text id="_400-29" data-name="$400" transform="translate(834.781 5899.5)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$400</tspan></text>
             <text id="Tier_1-8" data-name="Tier 1" transform="translate(553.281 5895.5)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
           </g>
         </g>
         <foreignObject x="100" y="953" width="1720" height="200">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The county only matches money given by donors who reside in a candidate’s jurisdiction</div></foreignObject>
-        <text id="Candidates_can_t_accept_donations_of_any_amount_from:" data-name="Candidates can’t accept donations
-of any amount from:" transform="translate(965 1303)" fill="#434343" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Candidates can’t accept donations</tspan><tspan x="0" y="48">of any amount from:</tspan></text>
-      </g>
-      <text id="X_Political_Action_Committees_X_Corporations_X_Labor_Unions_X_LLCs_X_State_or_local_central_committees_of_a_political_party" data-name="X Political Action Committees
-X Corporations
-X Labor Unions
-X LLCs
-X State or local central committees of a political party" transform="translate(984 1405)" fill="#434343" font-size="35" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">X Political Action Committees</tspan><tspan x="0" y="41">X Corporations</tspan><tspan x="0" y="82">X Labor Unions</tspan><tspan x="0" y="123">X LLCs</tspan><tspan x="0" y="164">X State or local central committees of a political party</tspan></text>
+        <text id="Candidates_can_t_accept_donations_of_any_amount_from:" data-name="Candidates can’t accept donations of any amount from:" transform="translate(965 1303)" fill="#434343" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Candidates can’t accept donations</tspan><tspan x="0" y="48">of any amount from:</tspan></text></g>
+<foreignObject x="965" y="1395" width="850" height="350"><div xmlns="http://www.w3.org/1999/xhtml" class="svg-prohibited" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 35px; color: #434343;"><ul class="prohibited-list-svg"><li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor Unions</li><li>LLCs</li><li>State or local central committees of a political party</li></ul></div></foreignObject>
     </g>
     </g>
-    <g class="scene" id="scene-3" data-scene="3" transform="translate(0,-1521)" opacity="0">
+    <g class="scene" id="scene-3" data-scene="3" transform="translate(0,-1470)" opacity="0">
     <g id="Scene_3C" data-name="Scene 3C">
       <g id="Path_29" data-name="Path 29" transform="translate(409 2408.5)" fill="rgba(34,149,0,0.15)">
         <path d="M 111.5 47.5 L 2.5 47.5 L 2.5 2.5 L 111.5 2.5 L 111.5 47.5 Z" stroke="none"/>
         <path d="M 5 5 L 5 45 L 109 45 L 109 5 L 5 5 M 0 0 L 114 0 L 114 50 L 0 50 L 0 0 Z" stroke="none" fill="#229500"/>
       </g>
-      <g id="Rectangle_83" data-name="Rectangle 83" transform="translate(409 2208.5)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="5">
+      <g id="Rectangle_83" data-name="Rectangle 83" transform="translate(409 2208.5)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="3">
         <rect width="114" height="200" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="195" fill="none"/>
       </g>
@@ -484,7 +519,7 @@ X State or local central committees of a political party" transform="translate(9
         <foreignObject x="100" y="1663" width="1720" height="240">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The state board keeps a running total of each donor’s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.</div></foreignObject>
         <g id="Scene_3A_the_graph_from_scene_2_needs_to_fade_directly_into_this_notice_x7_disappears_and_Tier_1_replaces_it_" data-name="Scene 3A (the graph from scene 2 needs to fade directly into this, notice x7 disappears and Tier 1 replaces it)">
-          <g id="Rectangle_103" data-name="Rectangle 103" transform="translate(296 2057.5)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+          <g id="Rectangle_103" data-name="Rectangle 103" transform="translate(296 2057.5)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
             <rect width="114" height="400" stroke="none"/>
             <rect x="2.5" y="2.5" width="109" height="395" fill="none"/>
           </g>
@@ -502,13 +537,13 @@ receives" transform="translate(230 2243.5)" fill="#434343" font-size="20" font-f
       <g id="This_is_an_expanded_version_of_the_equation_from_the_last_scene_hereby_known_as_running_equation_have_the_equation_from_the_last_scene_slide_over_to_this_position_dont_just_fade_out_in_one_position_then_fade_in_in_another_" data-name="This is an expanded version of the equation from the last scene (hereby known as running equation) have the equation from the last scene slide over to this position, dont just fade out in one position then fade in in another)">
         <text id="_50-52" data-name="$50" transform="translate(1091.75 2083.5)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
         <text id="_350-35" data-name="$350" transform="translate(1187.75 2083.5)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-59" data-name="until scene 1H this element is 100% opacity" transform="translate(1160.25 2081)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-60" data-name="until scene 1H this element is 100% opacity" transform="translate(1261.25 2081)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-59" data-name="until scene 1H this element is 100% opacity" transform="translate(1160.25 2081)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-60" data-name="until scene 1H this element is 100% opacity" transform="translate(1261.25 2081)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_400-31" data-name="$400" transform="translate(1295.75 2083.5)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$400</tspan></text>
         <text id="_50-53" data-name="$50" transform="translate(1091.75 2131.5)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
         <text id="_200-13" data-name="$200" transform="translate(1187.75 2131.5)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$200</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-61" data-name="until scene 1H this element is 100% opacity" transform="translate(1160.25 2129)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-62" data-name="until scene 1H this element is 100% opacity" transform="translate(1261.25 2129)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-61" data-name="until scene 1H this element is 100% opacity" transform="translate(1160.25 2129)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-62" data-name="until scene 1H this element is 100% opacity" transform="translate(1261.25 2129)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_250-9" data-name="$250" transform="translate(1295.75 2131.5)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$250</tspan></text>
         <text id="Tier_1-10" data-name="Tier 1" transform="translate(1015 2079.5)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
         <text id="Tier_2-6" data-name="Tier 2" transform="translate(1015 2127.5)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 2</tspan></text>
@@ -522,9 +557,9 @@ receives" transform="translate(230 2243.5)" fill="#434343" font-size="20" font-f
       </g>
     </g>
     </g>
-    <g class="scene" id="scene-4" data-scene="4" transform="translate(0,-2485.5)" opacity="0">
+    <g class="scene" id="scene-4" data-scene="4" transform="translate(0,-2435)" opacity="0">
     <g id="Scene_4A_this_occupies_the_same_space_as_scene_3C_have_it_disolve_change_" data-name="Scene 4A (this occupies the same space as scene 3C, have it disolve change)">
-      <g id="Rectangle_104" data-name="Rectangle 104" transform="translate(304.172 3022)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+      <g id="Rectangle_104" data-name="Rectangle 104" transform="translate(304.172 3022)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
         <rect width="114" height="400" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="395" fill="none"/>
       </g>
@@ -536,7 +571,7 @@ receives" transform="translate(230 2243.5)" fill="#434343" font-size="20" font-f
       <text id="Candidate_receives-21" data-name="Candidate 
 receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-48.9" y="0">Candidate </tspan><tspan x="-36.85" y="24">receives</tspan></text>
       <text id="Donation-22" data-name="Donation" transform="translate(460.266 3490)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-40.38" y="0">Donation</tspan></text>
-      <g id="Rectangle_105" data-name="Rectangle 105" transform="translate(417.172 3172)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+      <g id="Rectangle_105" data-name="Rectangle 105" transform="translate(417.172 3172)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
         <rect width="114" height="250" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="245" fill="none"/>
       </g>
@@ -547,7 +582,7 @@ receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" fo
       </g>
       <text id="_150-13" data-name="$150" transform="translate(605.516 3453)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$150</tspan></text>
       <text id="_50-54" data-name="$50" transform="translate(562.641 3406)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
-      <g id="Rectangle_106" data-name="Rectangle 106" transform="translate(527.766 3271)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="5">
+      <g id="Rectangle_106" data-name="Rectangle 106" transform="translate(527.766 3271)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="3">
         <rect width="114" height="100" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="95" fill="none"/>
       </g>
@@ -562,18 +597,18 @@ receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" fo
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The state board keeps a running total of each donor’s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.</div></foreignObject>
       <text id="_50-56" data-name="$50" transform="translate(1076 3119)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
       <text id="_100-25" data-name="$100" transform="translate(1174 3119)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-63" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3116.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-64" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3116.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-63" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3116.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-64" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3116.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <text id="_150-14" data-name="$150" transform="translate(1281 3119)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$150</tspan></text>
       <text id="_50-57" data-name="$50" transform="translate(1076 3023)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
       <text id="_350-36" data-name="$350" transform="translate(1174 3023)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-65" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3020.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-66" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3020.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-65" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3020.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-66" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3020.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <text id="_400-33" data-name="$400" transform="translate(1281 3023)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$400</tspan></text>
       <text id="_50-58" data-name="$50" transform="translate(1076 3071)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
       <text id="_200-14" data-name="$200" transform="translate(1174 3071)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$200</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-67" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3068.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-      <text id="until_scene_1H_this_element_is_100_opacity-68" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3068.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-67" data-name="until scene 1H this element is 100% opacity" transform="translate(1152.391 3068.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+      <text id="until_scene_1H_this_element_is_100_opacity-68" data-name="until scene 1H this element is 100% opacity" transform="translate(1254.203 3068.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <text id="_250-11" data-name="$250" transform="translate(1281 3071)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$250</tspan></text>
       <text id="Tier_1-12" data-name="Tier 1" transform="translate(1015 3019)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
       <text id="Tier_2-8" data-name="Tier 2" transform="translate(1015 3067)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 2</tspan></text>
@@ -587,11 +622,11 @@ receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" fo
       <text id="becomes-4" data-name="becomes" transform="translate(1209 3168)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-51.638" y="0">becomes</tspan></text>
     </g>
     </g>
-    <g class="scene" id="scene-5" data-scene="5" transform="translate(0,-3290.5)" opacity="0">
+    <g class="scene" id="scene-5" data-scene="5" transform="translate(0,-3239.5)" opacity="0">
     <g id="Scene_5A_this_occupies_the_same_space_as_scene_4A_have_it_disolve_change" data-name="Scene 5A this occupies the same space as scene 4A, have it disolve change">
       <foreignObject x="100" y="3467" width="1720" height="240">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">The county stops matching when a donor has given more than $150 to a candidate over the course of an election, and candidates are prohibited from accepting more than $500 from any single donor.</div></foreignObject>
-      <g id="Rectangle_107" data-name="Rectangle 107" transform="translate(305.266 3827)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+      <g id="Rectangle_107" data-name="Rectangle 107" transform="translate(305.266 3827)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
         <rect width="114" height="400" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="395" fill="none"/>
       </g>
@@ -603,7 +638,7 @@ receives" transform="translate(238.172 3206.5)" fill="#434343" font-size="20" fo
       <text id="Candidate_receives-18" data-name="Candidate 
 receives" transform="translate(239.266 4011.5)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-48.9" y="0">Candidate </tspan><tspan x="-36.85" y="24">receives</tspan></text>
       <text id="Donation-19" data-name="Donation" transform="translate(461.359 4295)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-40.38" y="0">Donation</tspan></text>
-      <g id="Rectangle_108" data-name="Rectangle 108" transform="translate(418.266 3977)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+      <g id="Rectangle_108" data-name="Rectangle 108" transform="translate(418.266 3977)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
         <rect width="114" height="250" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="245" fill="none"/>
       </g>
@@ -615,7 +650,7 @@ receives" transform="translate(239.266 4011.5)" fill="#434343" font-size="20" fo
       </g>
       <text id="_500-11" data-name="$500" transform="translate(1383.609 4257.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$500</tspan></text>
       <text id="_350-30" data-name="$350" transform="translate(1004.734 4209.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
-      <g id="Rectangle_109" data-name="Rectangle 109" transform="translate(528.859 4077)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="5">
+      <g id="Rectangle_109" data-name="Rectangle 109" transform="translate(528.859 4077)" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3">
         <rect width="114" height="150" stroke="none"/>
         <rect x="2.5" y="2.5" width="109" height="145" fill="none"/>
       </g>
@@ -625,23 +660,23 @@ receives" transform="translate(239.266 4011.5)" fill="#434343" font-size="20" fo
       <g id="Group_5" data-name="Group 5" transform="translate(41.563 -4554.5)">
         <text id="_50-45" data-name="$50" transform="translate(1033.984 8484)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
         <text id="_100-20" data-name="$100" transform="translate(1127.984 8484)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-47" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8481.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-48" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8481.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-47" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8481.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-48" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8481.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_150-12" data-name="$150" transform="translate(1236.984 8484)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$150</tspan></text>
         <text id="_350-31" data-name="$350" transform="translate(1024.984 8529.5)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
         <text id="_0-5" data-name="$0" transform="translate(1144.984 8532)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$0</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-49" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8529.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-50" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8529.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-49" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8529.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-50" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8529.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_350-32" data-name="$350" transform="translate(1236.984 8532)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
         <text id="_50-46" data-name="$50" transform="translate(1033.984 8388)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
         <text id="_350-33" data-name="$350" transform="translate(1127.984 8388)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$350</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-51" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8385.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-52" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8385.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-51" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8385.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-52" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8385.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_400-26" data-name="$400" transform="translate(1236.984 8388)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$400</tspan></text>
         <text id="_50-47" data-name="$50" transform="translate(1033.984 8436)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$50</tspan></text>
         <text id="_200-11" data-name="$200" transform="translate(1127.984 8436)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$200</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-53" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8433.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-54" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8433.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-53" data-name="until scene 1H this element is 100% opacity" transform="translate(1101.484 8433.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-54" data-name="until scene 1H this element is 100% opacity" transform="translate(1203.297 8433.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_250-8" data-name="$250" transform="translate(1236.984 8436)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$250</tspan></text>
         <line id="Line_123" data-name="Line 123" x2="84.844" transform="translate(1016.484 8546)" fill="none" stroke="#000" stroke-width="3"/>
         <line id="Line_124" data-name="Line 124" x2="84.844" transform="translate(1016.484 8546)" fill="none" stroke="#000" stroke-width="3"/>
@@ -649,8 +684,8 @@ receives" transform="translate(239.266 4011.5)" fill="#434343" font-size="20" fo
         <line id="Line_126" data-name="Line 126" x2="84.844" transform="translate(1228.484 8546)" fill="none" stroke="#000" stroke-width="3"/>
         <text id="_500-12" data-name="$500" transform="translate(1025.984 8584.5)" fill="#229500" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$500</tspan></text>
         <text id="_650-8" data-name="$650" transform="translate(1127.984 8587)" fill="#0027ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-55" data-name="until scene 1H this element is 100% opacity" transform="translate(1102.484 8584.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">+</tspan></text>
-        <text id="until_scene_1H_this_element_is_100_opacity-56" data-name="until scene 1H this element is 100% opacity" transform="translate(1204.297 8584.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.35"><tspan x="0" y="0">=</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-55" data-name="until scene 1H this element is 100% opacity" transform="translate(1102.484 8584.5)" fill="#4e4e4e" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+        <text id="until_scene_1H_this_element_is_100_opacity-56" data-name="until scene 1H this element is 100% opacity" transform="translate(1204.297 8584.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="30" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
         <text id="_1150-5" data-name="$1150" transform="translate(1228.984 8587)" fill="#7600ff" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">$1150</tspan></text>
         <text id="Tier_1-6" data-name="Tier 1" transform="translate(973 8384)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 1</tspan></text>
         <text id="Tier_2-4" data-name="Tier 2" transform="translate(973 8432)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-31.25" y="0">Tier 2</tspan></text>
@@ -672,7 +707,7 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
     </g>
     </g>
     <!-- ===== SCENE 6: lives BELOW the viewBox initially, slides up into view when scene 5 leaves ===== -->
-    <g class="scene scene-slidey" id="scene-6" data-scene="6" transform="translate(0,-3069)" opacity="0">
+    <g class="scene scene-slidey" id="scene-6" data-scene="6" transform="translate(0,-3146)" opacity="0">
     <g id="Scene_6H" data-name="Scene 6H">
       <rect id="Rectangle_110" data-name="Rectangle 110" width="171" height="136" rx="27" transform="translate(751.5 5428.5)" fill="#fff" stroke="rgba(118,0,255,0.53)" stroke-linejoin="round" stroke-width="15"/>
       <text id="_650-10" data-name="$650" transform="translate(782 5515)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
@@ -687,8 +722,8 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
           <text id="x-2" data-name="x" transform="translate(1127.5 5279.5)" stroke="#000" stroke-width="3" font-size="120" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
           <text id="_10_People-2" data-name="10 People" transform="translate(1392 5273.5)" fill="#434343" font-size="75" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-168.787" y="0">10 People</tspan></text>
           <g id="Scene_6E" data-name="Scene 6E">
-            <text id="until_scene_2H_this_element_is_100_opacity-3" data-name="until scene 2H this element is 100% opacity" transform="translate(769.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
-            <text id="until_scene_2H_this_element_is_100_opacity-4" data-name="until scene 2H this element is 100% opacity" transform="translate(1143.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+            <text id="until_scene_2H_this_element_is_100_opacity-3" data-name="until scene 2H this element is 100% opacity" transform="translate(769.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
+            <text id="until_scene_2H_this_element_is_100_opacity-4" data-name="until scene 2H this element is 100% opacity" transform="translate(1143.5 5092.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
             <rect id="Rectangle_112" data-name="Rectangle 112" width="171" height="136" rx="27" transform="translate(1284.5 4997.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
             <text id="_80-2" data-name="$80" transform="translate(1332 5084)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
             <g id="Scene_6D" data-name="Scene 6D">
@@ -702,20 +737,20 @@ County Executive" transform="translate(1202.977 7568.5)" fill="#434343" font-siz
                 <text id="Donation_to_publicly_funded_candidate-2" data-name="Donation to publicly 
 funded candidate" transform="translate(624 4927)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-138.09" y="0">Donation to publicly </tspan><tspan x="-117.54" y="36">funded candidate</tspan></text>
                 <g id="Scene_6B" data-name="Scene 6B">
-                  <text id="_-_3" data-name="-&gt;" transform="translate(932.5 4761)" stroke="#000" stroke-width="3" font-size="130" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">-&gt;</tspan></text>
+                  <g transform="translate(962.5 4726.0) scale(1.2)"><path d="M -50 -12 H 10 V -30 L 50 0 L 10 30 V 12 H -50 Z" fill="#434343"/></g>
                   <text id="Becomes-5" data-name="Becomes" transform="translate(995 4653)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-63.345" y="0">Becomes</tspan></text>
                   <text id="In_total_for_the_candidate-2" data-name="In total for 
-the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
-                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(624 4600)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
+the candidate" transform="translate(1360 4582)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-72.225" y="0">In total for </tspan><tspan x="-91.695" y="36">the candidate</tspan></text>
+                  <text id="One_person_giving-2" data-name="One person giving" transform="translate(611 4600)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-122.25" y="0">One person giving</tspan></text>
                   <g id="Scene_6A_this_exists_BELOW_Scene_5A_in_the_y_direction_move_scene_5A_out_of_view_upwards_and_down_onto_this_" data-name="Scene 6A (this exists BELOW Scene 5A in the y direction, move scene 5A out of view upwards and down onto this)">
                     <foreignObject x="100" y="4446" width="1720" height="140">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">What’s better: one person giving $100 or 10 people giving $10 each?</div></foreignObject>
                   </g>
                   <text id="Already_Seen:-2" data-name="Already Seen:" transform="translate(164 4715)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
-                  <rect id="Rectangle_116" data-name="Rectangle 116" width="171" height="136" rx="27" transform="translate(551.5 4640)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
-                  <text id="_100-26" data-name="$100" transform="translate(582 4726.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
-                  <rect id="Rectangle_118" data-name="Rectangle 118" width="171" height="136" rx="27" transform="translate(1297.5 4645)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
-                  <text id="_650-11" data-name="$650" transform="translate(1327 4731.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                  <rect id="Rectangle_116" data-name="Rectangle 116" width="171" height="136" rx="27" transform="translate(538.5 4640)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
+                  <text id="_100-26" data-name="$100" transform="translate(569 4726.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+                  <rect id="Rectangle_118" data-name="Rectangle 118" width="171" height="136" rx="27" transform="translate(1284.5 4645)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
+                  <text id="_650-11" data-name="$650" transform="translate(1314 4731.5)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
                 </g>
               </g>
             </g>
@@ -762,27 +797,47 @@ the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" fo
       <span class="slider-value">$<span id="donationValue">100</span></span>
     </label>
     <input type="range" id="donationSlider" min="0" max="500" step="1" value="100">
+    <!-- Tick labels at PROPORTIONAL positions on the slider track. The
+         tier-boundary ticks ($0, $50, $100, $150) cluster at the LEFT side
+         because they're close together on a $0–$500 scale, and the $500 sits
+         alone at the right. Positioning via inline left:N% so the labels
+         actually line up with the slider thumb at those values. -->
     <div class="slider-ticks">
-      <span>$0</span><span>$50</span><span>$100</span><span>$150</span><span>$250</span><span>$500</span>
+      <span style="left:0%">$0</span>
+      <span style="left:10%">$50</span>
+      <span style="left:20%">$100</span>
+      <span style="left:30%">$150</span>
+      <span style="left:50%">$250</span>
+      <span style="left:100%">$500</span>
     </div>
   </div>
 
   <div class="as-grid">
-    <!-- Left: bar chart (SVG) -->
+    <!-- Left: SIDEWAYS bar chart, mirrors the scrolly chart's layout. Green
+         donor segments run left-to-right along the donation axis ($0 → $500),
+         blue/purple match columns rise UP above each tier's segment, with
+         column heights scaled by tier multiplier × $50. -->
     <div class="bar-chart-wrap">
-      <svg viewBox="0 0 380 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- Match column (blue/purple stack), grows upward from y=400 -->
-        <g id="chartMatchStack" transform="translate(60, 0)"></g>
-        <!-- Donation column (green stack), grows upward from y=400 -->
-        <g id="chartDonationStack" transform="translate(220, 0)"></g>
-        <!-- Baseline -->
-        <line x1="20" y1="400" x2="360" y2="400" stroke="#707070" stroke-width="3"/>
-        <!-- Column labels -->
-        <text x="116" y="430" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue">Candidate receives</text>
-        <text x="276" y="430" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue">Donation</text>
-        <!-- Total / donation amount labels at top of stacks (filled by JS) -->
-        <text id="chartMatchLabel" x="116" y="0" text-anchor="middle" font-size="16" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="700"></text>
-        <text id="chartDonationLabel" x="276" y="0" text-anchor="middle" font-size="16" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="700"></text>
+      <svg viewBox="0 0 720 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- Y-axis baseline -->
+        <line x1="80" y1="320" x2="700" y2="320" stroke="#707070" stroke-width="3"/>
+        <!-- Y-axis vertical -->
+        <line x1="80" y1="320" x2="80" y2="20" stroke="#707070" stroke-width="2"/>
+        <!-- "Candidate receives" axis label (rotated, runs along y-axis) -->
+        <text x="38" y="180" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle" transform="rotate(-90 38 180)">Candidate receives</text>
+        <!-- Donation axis label (under the x-axis ticks) -->
+        <text x="390" y="408" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" text-anchor="middle" font-weight="700">Donation amount</text>
+        <!-- Tier groups (rendered by JS) — each holds a green segment below the
+             baseline + a blue/purple match column above. -->
+        <g id="chartTiers"></g>
+        <!-- Tick labels at $0 / $50 / $100 / $150 / $500 -->
+        <g id="chartTicks">
+          <text x="80" y="380" text-anchor="middle" font-size="12" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
+          <text x="142" y="380" text-anchor="middle" font-size="12" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
+          <text x="204" y="380" text-anchor="middle" font-size="12" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
+          <text x="266" y="380" text-anchor="middle" font-size="12" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
+          <text x="700" y="380" text-anchor="end" font-size="12" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
+        </g>
       </svg>
     </div>
 
@@ -897,11 +952,11 @@ the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" fo
     // ========================================================================
     const SCENE_DEFS = [
       { num: 1, id: 'scene-1', subScenePrefixes: ['Scene_1A', 'Scene_1B', 'Scene_1C', 'Scene_1D'], baseTransform: 'translate(0,0)' },
-      { num: 2, id: 'scene-2', subScenePrefixes: ['Scene_2A', 'Scene_2B', 'Scene_2C'], baseTransform: 'translate(0,-776)' },
-      { num: 3, id: 'scene-3', subScenePrefixes: ['Scene_3A', 'Scene_3B', 'Scene_3C'], baseTransform: 'translate(0,-1521)' },
-      { num: 4, id: 'scene-4', subScenePrefixes: ['Scene_4A'], baseTransform: 'translate(0,-2485.5)' },
-      { num: 5, id: 'scene-5', subScenePrefixes: ['Scene_5A'], baseTransform: 'translate(0,-3290.5)' },
-      { num: 6, id: 'scene-6', subScenePrefixes: ['Scene_6A', 'Scene_6B', 'Scene_6C', 'Scene_6D', 'Scene_6E', 'Scene_6F', 'Scene_6G', 'Scene_6H'], baseTransform: 'translate(0,-4269)', slideOffset: 1200 },
+      { num: 2, id: 'scene-2', subScenePrefixes: ['Scene_2A', 'Scene_2B', 'Scene_2C'], baseTransform: 'translate(0,-727)' },
+      { num: 3, id: 'scene-3', subScenePrefixes: ['Scene_3A', 'Scene_3B', 'Scene_3C'], baseTransform: 'translate(0,-1470)' },
+      { num: 4, id: 'scene-4', subScenePrefixes: ['Scene_4A'], baseTransform: 'translate(0,-2435)' },
+      { num: 5, id: 'scene-5', subScenePrefixes: ['Scene_5A'], baseTransform: 'translate(0,-3239.5)' },
+      { num: 6, id: 'scene-6', subScenePrefixes: ['Scene_6A', 'Scene_6B', 'Scene_6C', 'Scene_6D', 'Scene_6E', 'Scene_6F', 'Scene_6G', 'Scene_6H'], baseTransform: 'translate(0,-4346)', slideOffset: 1200 },
     ];
 
     function parseTranslateY(s) {
@@ -963,7 +1018,7 @@ the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" fo
     });
     const totalSlots = cumulative + FINAL_HOLD_SLOTS;
 
-    const REVEAL_VH = 50;
+    const REVEAL_VH = 60;
     const TRANSITION_VH = 60;
 
     function computeScrollyHeightPx() {
@@ -1225,90 +1280,125 @@ the candidate" transform="translate(1373 4582)" fill="#434343" font-size="30" fo
       }
       setRow('eqTier1'); setRow('eqTier2'); setRow('eqTier3'); setRow('eqTier4'); setRow('eqTotal');
 
-      // Bar chart
-      const matchStack = document.getElementById('chartMatchStack');
-      const donStack = document.getElementById('chartDonationStack');
-      matchStack.innerHTML = '';
-      donStack.innerHTML = '';
+      // ----- Sideways bar chart -----
+      // Layout (chart viewBox 720 × 440):
+      //   x-axis baseline at y=320
+      //   donation runs left-to-right: $0 at x=80, $500 at x=700 (so 620 px
+      //     covers $500 → 1.24 px/$)
+      //   match columns rise UP from the baseline; max possible match $350
+      //     (Exec tier 1) maps to 280 px at the top of the bar zone (y=40)
+      //   green donor segments sit BELOW the baseline (y=320 → y=350)
+      //
+      // Each tier renders one green segment on the donation axis plus one
+      // blue match column rising above it. Tier 4 (donations above $150)
+      // gets a wider light-red NOT MATCHED region with no blue column.
+      const tiersG = document.getElementById('chartTiers');
+      tiersG.innerHTML = '';
 
-      const tiers = [tb.t1, tb.t2, tb.t3, tb.t4];
+      const X_START = 80;
+      const X_DOLLAR = 620 / 500; // 1.24 px per dollar
+      const BASELINE_Y = 320;
+      const SEG_HEIGHT = 30;     // green strip below baseline
+      const MAX_BAR_PX = 280;
+      // Scale match column heights by Exec tier 1 max ($350) so all offices
+      // share a consistent vertical scale; smaller tiers and smaller-multiplier
+      // offices end up with shorter columns.
+      const MATCH_PX_DOLLAR = MAX_BAR_PX / 350;
 
-      // Match column: stacked tier-totals (donor+match per tier).
-      let yCursor = CHART_BASELINE;
-      tiers.forEach((tier, i) => {
-        if (tier.donor <= 0) return;
-        const segH = tier.total * PX_PER_DOLLAR;
-        if (segH <= 0) return;
-        const yTop = yCursor - segH;
-        const isNotMatched = (i === 3);
-        const fill = isNotMatched ? 'rgba(255,0,0,0.15)' : 'rgba(0,39,255,0.15)';
-        const stroke = isNotMatched ? 'red' : '#0027ff';
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', '0');
-        rect.setAttribute('y', String(yTop));
-        rect.setAttribute('width', String(COL_WIDTH));
-        rect.setAttribute('height', String(segH));
-        rect.setAttribute('fill', fill);
-        rect.setAttribute('stroke', stroke);
-        rect.setAttribute('stroke-width', '3');
-        matchStack.appendChild(rect);
-        if (segH > 14) {
-          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          txt.setAttribute('x', String(COL_WIDTH / 2));
-          txt.setAttribute('y', String(yTop + segH / 2 + 4));
-          txt.setAttribute('text-anchor', 'middle');
-          txt.setAttribute('font-size', '13');
-          txt.setAttribute('fill', '#464546');
-          txt.setAttribute('font-family', 'HelveticaNeue, Helvetica Neue');
-          txt.textContent = isNotMatched ? 'NOT MATCHED' : fmt$(tier.total);
-          matchStack.appendChild(txt);
-        }
-        yCursor = yTop;
-      });
-      const matchLabel = document.getElementById('chartMatchLabel');
-      const matchStackTopY = CHART_BASELINE - tiers.reduce((sum, t) => sum + (t.total * PX_PER_DOLLAR), 0);
-      if (donation > 0) {
-        matchLabel.setAttribute('y', String(Math.max(20, matchStackTopY - 8)));
-        matchLabel.textContent = fmt$(tb.totalTotal);
-      } else {
-        matchLabel.textContent = '';
+      function svgEl(tag, attrs) {
+        const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        Object.keys(attrs).forEach(k => el.setAttribute(k, attrs[k]));
+        return el;
+      }
+      function svgText(x, y, text, opts) {
+        opts = opts || {};
+        const t = svgEl('text', {
+          x: String(x), y: String(y),
+          'text-anchor': opts.anchor || 'middle',
+          'font-size': String(opts.size || 13),
+          fill: opts.fill || '#464546',
+          'font-family': 'HelveticaNeue, Helvetica Neue',
+          'font-weight': String(opts.weight || 400),
+        });
+        t.textContent = text;
+        return t;
       }
 
-      // Donation column: stacked donor amounts per tier
-      let donCursor = CHART_BASELINE;
-      tiers.forEach(tier => {
+      // Tier configs — tier 4 covers $150 .. min($500, donation).
+      const tierConfigs = [
+        { donor: tb.t1.donor, match: tb.t1.match, mult: office.t1, dollarStart: 0,   dollarEnd: 50  },
+        { donor: tb.t2.donor, match: tb.t2.match, mult: office.t2, dollarStart: 50,  dollarEnd: 100 },
+        { donor: tb.t3.donor, match: tb.t3.match, mult: office.t3, dollarStart: 100, dollarEnd: 150 },
+        { donor: tb.t4.donor, match: 0,           mult: 0,         dollarStart: 150, dollarEnd: 500, isNotMatched: true },
+      ];
+
+      tierConfigs.forEach(tier => {
         if (tier.donor <= 0) return;
-        const segH = tier.donor * PX_PER_DOLLAR;
-        const yTop = donCursor - segH;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', '0');
-        rect.setAttribute('y', String(yTop));
-        rect.setAttribute('width', String(COL_WIDTH));
-        rect.setAttribute('height', String(segH));
-        rect.setAttribute('fill', 'rgba(34,149,0,0.15)');
-        rect.setAttribute('stroke', '#229500');
-        rect.setAttribute('stroke-width', '3');
-        donStack.appendChild(rect);
-        if (segH > 14) {
-          const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          txt.setAttribute('x', String(COL_WIDTH / 2));
-          txt.setAttribute('y', String(yTop + segH / 2 + 4));
-          txt.setAttribute('text-anchor', 'middle');
-          txt.setAttribute('font-size', '13');
-          txt.setAttribute('fill', '#464546');
-          txt.setAttribute('font-family', 'HelveticaNeue, Helvetica Neue');
-          txt.textContent = fmt$(tier.donor);
-          donStack.appendChild(txt);
+        const segXStart = X_START + tier.dollarStart * X_DOLLAR;
+        const segXEnd = X_START + (tier.dollarStart + tier.donor) * X_DOLLAR;
+        const segWidth = segXEnd - segXStart;
+
+        // Green donor segment below baseline
+        tiersG.appendChild(svgEl('rect', {
+          x: String(segXStart), y: String(BASELINE_Y),
+          width: String(segWidth), height: String(SEG_HEIGHT),
+          fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': '3'
+        }));
+        if (segWidth > 30) {
+          tiersG.appendChild(svgText(
+            segXStart + segWidth / 2,
+            BASELINE_Y + SEG_HEIGHT / 2 + 5,
+            fmt$(tier.donor),
+            { size: 13, fill: '#229500', weight: 700 }
+          ));
         }
-        donCursor = yTop;
+
+        // Above the baseline: blue match column OR NOT MATCHED region
+        if (tier.isNotMatched) {
+          // Translucent red strip at low height to indicate "no match"
+          const stripH = 38;
+          tiersG.appendChild(svgEl('rect', {
+            x: String(segXStart), y: String(BASELINE_Y - stripH),
+            width: String(segWidth), height: String(stripH),
+            fill: 'rgba(217,43,43,0.10)', stroke: '#d92b2b',
+            'stroke-width': '3', 'stroke-dasharray': '8 6'
+          }));
+          tiersG.appendChild(svgText(
+            segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
+            'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
+          ));
+        } else {
+          const colH = tier.match * MATCH_PX_DOLLAR;
+          if (colH > 0) {
+            tiersG.appendChild(svgEl('rect', {
+              x: String(segXStart), y: String(BASELINE_Y - colH),
+              width: String(segWidth), height: String(colH),
+              fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': '3'
+            }));
+            // Match dollar label inside column
+            if (colH > 20) {
+              tiersG.appendChild(svgText(
+                segXStart + segWidth / 2, BASELINE_Y - colH / 2 + 5,
+                fmt$(tier.match), { size: 14, fill: '#0027ff', weight: 700 }
+              ));
+            }
+            // Multiplier label above column
+            tiersG.appendChild(svgText(
+              segXStart + segWidth / 2, BASELINE_Y - colH - 8,
+              'x' + tier.mult, { size: 14, fill: '#434343', weight: 700 }
+            ));
+          }
+        }
       });
-      const donLabel = document.getElementById('chartDonationLabel');
-      const donStackTopY = CHART_BASELINE - donation * PX_PER_DOLLAR;
+
+      // Total label at far right of the donor axis (above baseline) — shows
+      // candidate total in purple when the donor crosses $0.
       if (donation > 0) {
-        donLabel.setAttribute('y', String(Math.max(20, donStackTopY - 8)));
-        donLabel.textContent = fmt$(donation);
-      } else {
-        donLabel.textContent = '';
+        tiersG.appendChild(svgText(
+          700, 50,
+          'Candidate gets: ' + fmt$(tb.totalTotal),
+          { anchor: 'end', size: 18, fill: '#7600ff', weight: 700 }
+        ));
       }
     }
     renderAfterScrolly();
