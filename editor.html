@@ -524,43 +524,53 @@
       {
         id: "boxDiagram",
         name: "Boxes diagram ($50 + $350 = $400)",
-        // V3.8: row centered horizontally in 1280 viewBox at x=164..1117
-        // (was left-leaning x=100..1053). defaultY=630 places "Donation"
-        // label baseline near V3.8 y=660 and box top near y=720.
-        defaultX: 164, defaultY: 630, defaultScale: 1.0,
-        bbox: { x: 0, y: 0, w: 953, h: 320 },
+        // V3.8.1: per reviewer's exported layout, the box equation sits
+        // BELOW the bar chart on this scene (chart on top reads as the
+        // primary visual; equation reinforces it underneath). x=116, y=1276.
+        defaultX: 116, defaultY: 1276, defaultScale: 1.0,
+        bbox: { x: 0, y: 0, w: 953, h: 340 },
         render: function () {
-          // $50 (green) + $350 (blue) = $400 (purple) layout — mirrors scene 1
-          // boxes diagram, normalized to start at (0,0).
-          // Original X positions: $50 at 542, $350 at 949, $400 at 1324.
-          // Normalized:           $50 at   0, $350 at 407, $400 at 782.
-          // + symbol at orig 832 → 290, = at orig 1223 → 681.
+          // V3.8.1 — faithful render. Three boxes ($50 green, $350 blue, $400 purple)
+          // with native 171×136 dims at scale 1.0, +/= operators between, AND the
+          // "First $50 matched / seven times by county" two-line caption above the
+          // $350 box (id First_50_matched_seven_times_by_county-4 in the live SVG;
+          // hidden on mobile in V3.7 but the reviewer wants it back).
           const g = el('g');
-          // labels above each box
-          g.appendChild(el('text', { x: 86, y: 30, 'text-anchor': 'middle', 'font-size': 35, 'font-family': 'Source Serif 4, Georgia, serif', fill: '#434343' }, [
+          // "Donation" label above $50 box
+          g.appendChild(el('text', { x: 86, y: 60, 'text-anchor': 'middle', 'font-size': 35, 'font-family': 'Source Serif 4, Georgia, serif', fill: '#434343' }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()
           ]));
-          // $50 green box
-          g.appendChild(el('rect', { x: 0, y: 90, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#229500', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
-          g.appendChild(el('text', { x: 86, y: 178, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
+          // "First $50 matched / seven times by county" caption above $350 box
+          g.appendChild(el('text', { x: 493, y: 30, 'text-anchor': 'middle', 'font-size': 30, 'font-family': 'Source Serif 4, Georgia, serif', fill: '#434343' }, [
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('x','493'); t.setAttribute('dy','0'); t.innerHTML='First <tspan fill="#229500" font-weight="700">$50</tspan> matched';return t;})(),
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('x','493'); t.setAttribute('dy','36'); t.setAttribute('fill','#0027ff'); t.setAttribute('font-weight','700'); t.textContent='seven times'; return t;})(),
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('dy','0'); t.setAttribute('fill','#434343'); t.setAttribute('font-weight','400'); t.textContent=' by county'; return t;})()
+          ]));
+          // "Candidate receives" label above $400 box
+          g.appendChild(el('text', { x: 868, y: 60, 'text-anchor': 'middle', 'font-size': 30, 'font-family': 'Source Serif 4, Georgia, serif', fill: '#434343' }, [
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.textContent='Candidate receives'; return t;})()
+          ]));
+          // $50 green box — boxes aligned at y=110 (V3.8.1 reviewer note: align centroids)
+          g.appendChild(el('rect', { x: 0, y: 110, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#229500', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 86, y: 198, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$50';return t;})()
           ]));
-          // + sign
-          g.appendChild(el('text', { x: 290, y: 187, 'text-anchor': 'middle', 'font-size': 110, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0', stroke: '#000', 'stroke-width': 3 }, [
+          // + sign (math symbol slightly higher per reviewer note: "their y centroid is a little higher right now and thats ok")
+          g.appendChild(el('text', { x: 290, y: 195, 'text-anchor': 'middle', 'font-size': 110, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0', stroke: '#000', 'stroke-width': 3 }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='+';return t;})()
           ]));
-          // $350 blue box
-          g.appendChild(el('rect', { x: 407, y: 90, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#0027ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
-          g.appendChild(el('text', { x: 493, y: 178, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
+          // $350 blue box (aligned with $50 box)
+          g.appendChild(el('rect', { x: 407, y: 110, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#0027ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 493, y: 198, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()
           ]));
-          // = sign
-          g.appendChild(el('text', { x: 681, y: 187, 'text-anchor': 'middle', 'font-size': 110, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0', stroke: '#000', 'stroke-width': 3 }, [
+          // = sign (math symbol slightly higher)
+          g.appendChild(el('text', { x: 681, y: 195, 'text-anchor': 'middle', 'font-size': 110, 'font-family': 'Helvetica Neue, sans-serif', 'font-weight': 700, fill: '#a0a0a0', stroke: '#000', 'stroke-width': 3 }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='=';return t;})()
           ]));
-          // $400 purple box
-          g.appendChild(el('rect', { x: 782, y: 80, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#7600ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
-          g.appendChild(el('text', { x: 868, y: 168, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
+          // $400 purple box (aligned with others)
+          g.appendChild(el('rect', { x: 782, y: 110, width: 171, height: 136, rx: 27, fill: '#fff', stroke: '#7600ff', 'stroke-linejoin': 'round', 'stroke-width': 15 }));
+          g.appendChild(el('text', { x: 868, y: 198, 'text-anchor': 'middle', 'font-size': 50, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [
             (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$400';return t;})()
           ]));
           return g;
@@ -569,26 +579,44 @@
       {
         id: "barChart",
         name: "Vertical bar chart",
-        // V3.8: chart band y=850-1410, bar centered at viewBox x=640.
-        // Editor's chart group has y-axis at internal x=50; with scale 1.4,
-        // y-axis viewBox x = defaultX + 50*1.4 = defaultX + 70.
-        // For y-axis at x=560 (V3.8): defaultX = 560 - 70 = 490.
-        // For chart-top at viewBox y=850: defaultY = 850 (group local y=0).
-        defaultX: 490, defaultY: 850, defaultScale: 1.4,
-        bbox: { x: 0, y: 0, w: 360, h: 460 },
+        // V3.8.1: chart-on-top on this scene (defaultY=579).
+        // bbox EXPANDED — y starts at -55 to include the × 7 multiplier above
+        // the bar (was being squeezed against the bbox top); x starts at -100
+        // to include the "Donation" / "County matching funds" side labels that
+        // sit LEFT of the bar (x=-100..42 in the render). Without this the
+        // selection rect lies about where the element actually is and pushes
+        // text into overlap.
+        defaultX: 468, defaultY: 579, defaultScale: 1.4,
+        bbox: { x: -100, y: -55, w: 365, h: 470 },
         render: function () {
-          // Match the actual scrollytelling: y-axis at x=50, x-axis line
-          // is the SAME as the bottom edge of the green donor strip
-          // (no gap). Blue match column flush against green strip below.
+          // V3.8.1 — faithful chart render per reviewer notes:
+          //  • NO x-axis line at the bottom (reviewer: "for this scene git rid of the x axis")
+          //  • Y-axis vertical line stays
+          //  • "Donation" label (green) sits LEFT of the green donor bar
+          //  • "County matching funds" label (blue) sits LEFT of the blue match bar
+          //  • x7 multiplier sits ABOVE the blue bar (was overlapping the top)
+          //  • Single bar centered within the group (114 wide, blue 350 tall + green 50 tall)
           const g = el('g');
+          // y-axis only (no x-axis line per reviewer)
           g.appendChild(el('line', { x1: 50, y1: 0, x2: 50, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
-          g.appendChild(el('line', { x1: 50, y1: 400, x2: 360, y2: 400, stroke: '#707070', 'stroke-width': 4 }));
+          // x7 multiplier ABOVE the blue bar (negative internal y)
+          g.appendChild(el('text', { x: 107, y: -12, 'text-anchor': 'middle', 'font-size': 35, 'font-family': 'Source Serif 4, serif', 'font-weight': 700, fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='× 7';return t;})()]));
+          // Blue match bar ($350 tall) on top
           g.appendChild(el('rect', { x: 50, y: 0, width: 114, height: 350, fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': 3 }));
+          // Green donor strip ($50 tall) flush below
           g.appendChild(el('rect', { x: 50, y: 350, width: 114, height: 50, fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': 3 }));
-          g.appendChild(el('text', { x: 107, y: 12, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='x7';return t;})()]));
-          g.appendChild(el('text', { x: 107, y: 270, 'text-anchor': 'middle', 'font-size': 25, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()]));
-          g.appendChild(el('text', { x: 107, y: 380, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'JetBrains Mono, monospace', fill: '#464546' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$50';return t;})()]));
-          g.appendChild(el('text', { x: 107, y: 440, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'Source Serif 4, serif', fill: '#434343' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()]));
+          // "$350" inside the blue bar
+          g.appendChild(el('text', { x: 107, y: 190, 'text-anchor': 'middle', 'font-size': 28, 'font-family': 'JetBrains Mono, monospace', 'font-weight': 700, fill: '#0027ff' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$350';return t;})()]));
+          // "$50" inside the green strip
+          g.appendChild(el('text', { x: 107, y: 383, 'text-anchor': 'middle', 'font-size': 22, 'font-family': 'JetBrains Mono, monospace', 'font-weight': 700, fill: '#229500' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='$50';return t;})()]));
+          // "County matching funds" label LEFT of the blue bar (right-aligned, blue)
+          g.appendChild(el('text', { x: 42, y: 175, 'text-anchor': 'end', 'font-size': 22, 'font-family': 'Source Serif 4, serif', 'font-weight': 700, fill: '#0027ff' }, [
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('x','42'); t.setAttribute('dy','0'); t.textContent='County'; return t;})(),
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('x','42'); t.setAttribute('dy','24'); t.textContent='matching'; return t;})(),
+            (function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan'); t.setAttribute('x','42'); t.setAttribute('dy','24'); t.textContent='funds'; return t;})()
+          ]));
+          // "Donation" label LEFT of the green strip (right-aligned, green)
+          g.appendChild(el('text', { x: 42, y: 380, 'text-anchor': 'end', 'font-size': 22, 'font-family': 'Source Serif 4, serif', 'font-weight': 700, fill: '#229500' }, [(function(){const t=document.createElementNS('http://www.w3.org/2000/svg','tspan');t.textContent='Donation';return t;})()]));
           return g;
         }
       }

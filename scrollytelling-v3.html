@@ -1027,9 +1027,11 @@ html, body {
      labels render close enough to the chart bars that they read as
      overlapping the bars themselves. The numeric labels inside each bar
      ($350, $250, $400) carry the same information. */
+  /* V3.8.1: removed #scene-1 #_350-38 from this hide-list — the $350 label
+     is now shown INSIDE the blue match bar (positioned by V3 dict at
+     viewBox y=870). */
   .sbs-root #scene-1 #Candidate_receives-23,
   .sbs-root #scene-1 #_400-35,
-  .sbs-root #scene-1 #_350-38,
   .sbs-root #scene-2 #Candidate_receives-19,
   .sbs-root #scene-2 #_400-27,
   .sbs-root #scene-2 #_400-28,
@@ -1041,13 +1043,13 @@ html, body {
   .sbs-root #scene-5 #_400-25 {
     display: none;
   }
-  /* Scene-1 boxes diagram label "First $50 matched seven times by county"
-     is wider than the gap between adjacent labels on mobile and overlaps
-     with "Candidate receives". The "x7" multiplier on the bar chart below
-     conveys the same information, so drop the wide label on mobile. */
-  .sbs-root #scene-1 #First_50_matched_seven_times_by_county-4 {
-    display: none;
-  }
+  /* V3.8.1: Scene-1 "First $50 matched seven times by county" caption is
+     RESTORED on mobile (positioned above the $350 blue box in the lower
+     box-equation row by the V3 dict). Reviewer wanted this label back
+     ("you did get rid of an element at one point that I wanted to stay").
+     The chart is now on top so there's no longer a "Candidate receives"
+     label adjacency conflict — the caption can sit at viewBox y=1250 above
+     the $350 box without overlapping anything. */
   /* Scene-6 mobile — partial restoration (V2.16). The DESKTOP scene-6
      narrative has 4 horizontal rows (top boxes / per-donor breakdown /
      × 10 multiplication / final comparison) that would massively overlap
@@ -2214,47 +2216,53 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
 
     const MOBILE_LAYOUTS_V3 = {
       '1': {
-        // Heading band (foreignObject lives in headingOverlayG, positioned via x/y attrs not transform)
-        // Handled separately by headingFo block, not in this dict.
+        // V3.8.1 — chart-on-top layout per reviewer feedback.
+        // Bar chart sits in the upper half of the card (the dominant visual);
+        // the $50+$350=$400 box equation moves to the lower half as a reinforcing
+        // recap. The chart band is now y=580..1120 and the box equation is
+        // anchored at y=1280 (label baseline).
 
-        // Box-equation diagram — y-band 600..830, centered horizontally in 1280 viewBox.
-        // Native box 171 wide; row spans 3 boxes + 2 operators.
-        // V3.8: shifted right 64u to balance margins (was 100..1053 leaving 100/227
-        // L/R; now 164..1117 leaves 164/163 L/R, perfectly centered).
-        'Donation-24':                              { x: 249, y: 660, textAnchor: 'middle' }, // label above $50 box
-        'Rectangle_54':                             { x: 164, y: 690 }, // $50 green box
-        '_50-59':                                   { x: 249, y: 778, textAnchor: 'middle' }, // $50 text centered
-        '_3':                                       { x: 454, y: 787, textAnchor: 'middle' }, // + sign between boxes
-        'Rectangle_55':                             { x: 571, y: 690 }, // $350 blue box
-        '_350-37':                                  { x: 656, y: 778, textAnchor: 'middle' }, // $350 text centered
-        '_4':                                       { x: 845, y: 787, textAnchor: 'middle' }, // = sign
-        'Rectangle_56':                             { x: 946, y: 680 }, // $400 purple box (10 above to match desktop visual)
-        '_400-34':                                  { x: 1031, y: 770, textAnchor: 'middle' }, // $400 text centered
-        // Candidate_receives-22 omitted — its bbox at font-size 30 + the wide
-        // "=" glyph (font-size 110) overlap by ~78 units on mobile. The $400
-        // purple-bordered box already conveys "candidate receives" by color.
+        // Box-equation diagram — y-band 1280..1500 (moved DOWN from 660..820).
+        'Donation-24':                              { x: 200, y: 1280, textAnchor: 'middle' }, // label above $50 box
+        'Rectangle_54':                             { x: 116, y: 1310 }, // $50 green box
+        '_50-59':                                   { x: 200, y: 1398, textAnchor: 'middle' }, // $50 text centered
+        '_3':                                       { x: 405, y: 1407, textAnchor: 'middle' }, // + sign between boxes
+        'Rectangle_55':                             { x: 522, y: 1310 }, // $350 blue box
+        '_350-37':                                  { x: 607, y: 1398, textAnchor: 'middle' }, // $350 text centered
+        '_4':                                       { x: 796, y: 1407, textAnchor: 'middle' }, // = sign
+        'Rectangle_56':                             { x: 897, y: 1300 }, // $400 purple box
+        '_400-34':                                  { x: 982, y: 1390, textAnchor: 'middle' }, // $400 text centered
+        // V3.8.1: First_50_matched_seven_times caption RESTORED above $350 box
+        // per reviewer note ("you did get rid of an element at one point that
+        // I wanted to stay. Its a heading above the $350 box").
+        // NO textAnchor override — the element's original tspan layout (with
+        // x=-125.61 for "First" and x=-155.85 for "seven times" line break)
+        // already handles centering relative to the text origin. Forcing
+        // text-anchor=middle would double-shift the tspans and break
+        // alignment between the two lines.
+        'First_50_matched_seven_times_by_county-4': { x: 730, y: 1240, fontSize: 30 },
+        // Candidate receives still omitted — overlaps the wide "=" glyph at
+        // mobile font sizes.
         'Candidate_receives-22':                    { hide: true },
-        'First_50_matched_seven_times_by_county-4': { hide: true }, // already hidden via CSS, reaffirm
 
-        // Bar chart band — y-band 850..1410.
-        // Bar group native 114×350 → with scale 1.4 → 160×490 visual.
+        // Bar chart band — y=580..1120 (moved UP from 850..1410 per reviewer).
         // Bar at x=560..720, centered horizontally near viewBox x=640.
-        'Rectangle_58':           { x: 560, y: 850, scale: 1.4 },
-        'Rectangle_57':           { x: 560, y: 1340, scale: 1.4 },
-        // V3.8: x-axis line trimmed to bar width on single-bar scene
-        // (was extending to x=1064, which left ~340u of axis line dangling
-        // past the only bar with no labels under it).
-        'Line_15':                { x1: 560, y1: 1410, x2: 720, y2: 1410 },
-        'Line_16':                { x1: 560, y1: 850, x2: 560,  y2: 1410 },
-        'x7-16':                  { x: 640, y: 835, textAnchor: 'middle', fontSize: 35 },
-        '_50-60':                 { x: 640, y: 1382,textAnchor: 'middle', fontSize: 30 },
-        // V3.8: Donation-23 hidden on mobile — duplicates the "Donation" label
-        // already above the $50 box in the box-equation diagram (Donation-24).
-        // Removing it tightens the chart band's bottom and gives eq overlay
-        // (scenes 2-5) more room.
+        // Bar group native 114×400 (50 donor + 350 match) → scale 1.4 → 160×560.
+        'Rectangle_58':           { x: 560, y: 580, scale: 1.4 },  // blue $350 match (top of bar)
+        'Rectangle_57':           { x: 560, y: 1070, scale: 1.4 }, // green $50 donor (bottom)
+        // V3.8.1: x-axis line HIDDEN per reviewer ("git rid of the x axis").
+        'Line_15':                { hide: true },
+        'Line_16':                { x1: 560, y1: 580, x2: 560, y2: 1140 }, // y-axis only
+        // x7 multiplier ABOVE the bar (was at y=835, now at y=560 above the bar top).
+        'x7-16':                  { x: 640, y: 555, textAnchor: 'middle', fontSize: 40 },
+        // $50 label inside the green donor strip
+        '_50-60':                 { x: 640, y: 1110, textAnchor: 'middle', fontSize: 30 },
+        // Donation-23 (label below the bar) stays hidden — replaced by side
+        // labels handled by the new caption logic in CSS overrides if added later.
         'Donation-23':            { hide: true },
-        // Hidden on mobile (already CSS-hidden but reaffirm in dict for clarity):
-        '_350-38':                { hide: true }, // $350 inside blue bar
+        // V3.8.1: $350 label INSIDE the blue match bar is now SHOWN on mobile
+        // (was hidden in V3.8). Reviewer's editor render shows it.
+        '_350-38':                { x: 640, y: 870, textAnchor: 'middle', fontSize: 28 },
         'Candidate_receives-23':  { hide: true }, // y-axis label
         '_400-35':                { hide: true }, // $400 y-axis tick
         'Line_17':                { hide: true }, // small tick mark
