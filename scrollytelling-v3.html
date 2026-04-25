@@ -1243,7 +1243,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V3.1-wip</strong> · single-layer mobile layout (scenes 1-5); scene 6 still legacy · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V3.2-wip</strong> · scenes 1-5 V3 + eqOverlay moved below chart band · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -2799,24 +2799,23 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // appears at sub-scene 2 (Scene_3C, where the chart's tier-2 bar appears),
     // matching the visual rhythm of scenes 1 & 2.
     const SCENE_EQUATIONS = [
-      // mobilePosX/mobilePosY/mobileScale apply when the SVG is in mobile-
-      // portrait viewBox mode (1280×2050). With sceneStack shift +400, the
-      // bar chart sits at viewBox y≈990-1390. The equation overlay stacks
-      // below the chart in the y=1450-1980 band, so the page reads
-      // heading → aux content → chart → equation top-to-bottom in portrait.
+      // mobilePosX/mobilePosY/mobileScale apply in V3 mobile-portrait mode.
+      // V3 chart band ends at viewBox y≈1660 (Donation x-axis label bottom).
+      // eqOverlay sits BELOW that, starting at y=1720 (60-unit gap).
+      // Tallest scene (5: 5 rows × 50px = ~250 tall) fits at y=1720..1970, OK.
       // mobilePosX=240 centers the 800-wide foreignObject in 1280 viewBox.
       { rows: [],                                  rowSubScene: {},                                              posX: 700,  posY: 460, scale: 1.6, op: 0,
-        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 1 (eq hidden but staged here)
+        mobilePosX: 240, mobilePosY: 1720, mobileScale: 1.0 },  // scene 1 (eq hidden)
       { rows: ['t1'],                              rowSubScene: { t1: 0 },                                       posX: 735,  posY: 615, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 2
+        mobilePosX: 240, mobilePosY: 1720, mobileScale: 1.0 },  // scene 2 (1 row)
       { rows: ['t1','t2','tt'],                    rowSubScene: { t1: 0, t2: 2, tt: 2 },                         posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1520, mobileScale: 1.0 },  // scene 3
+        mobilePosX: 240, mobilePosY: 1700, mobileScale: 1.0 },  // scene 3 (3 rows)
       { rows: ['t1','t2','t3','tt'],               rowSubScene: { t1: 0, t2: 0, t3: 0, tt: 0 },                  posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1500, mobileScale: 1.0 },  // scene 4 (taller, more rows)
+        mobilePosX: 240, mobilePosY: 1700, mobileScale: 1.0 },  // scene 4 (4 rows)
       { rows: ['t1','t2','t3','t4','tt'],          rowSubScene: { t1: 0, t2: 0, t3: 0, t4: 0, tt: 0 },           posX: 1066, posY: 510, scale: 1.0, op: 1,
-        mobilePosX: 240, mobilePosY: 1480, mobileScale: 1.0 },  // scene 5 (tallest stack — 5 rows + total)
+        mobilePosX: 240, mobilePosY: 1700, mobileScale: 1.0 },  // scene 5 (5 rows)
       { rows: [],                                  rowSubScene: {},                                              posX: 1066, posY: 510, scale: 1.0, op: 0,
-        mobilePosX: 240, mobilePosY: 1530, mobileScale: 1.0 },  // scene 6
+        mobilePosX: 240, mobilePosY: 1720, mobileScale: 1.0 },  // scene 6
     ];
 
     // Scene-2..5 totals for the running-equation Total row (donor → candidate).
