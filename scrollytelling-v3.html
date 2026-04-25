@@ -1243,7 +1243,7 @@ html, body {
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
   <!-- PREVIEW-ONLY version badge — confirms the live build matches the
        latest commit. NOT part of the WordPress paste. -->
-  <span class="version-badge"><span class="dot"></span> Build <strong>V3.2-wip</strong> · scenes 1-5 V3 + eqOverlay moved below chart band · 2026-04-25</span>
+  <span class="version-badge"><span class="dot"></span> Build <strong>V3.3-wip</strong> · scenes 1-5 V3 + scene 2 prohibited list y fixed (Phase 2) · 2026-04-25</span>
 </section>
 
 <!-- =========================================================================
@@ -2526,12 +2526,15 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
         // (Applies in BOTH V2 and V3.)
         if (group6) group6.style.display = 'none';
         // Scene 2 prohibited list — width clamped to 1160 to fit 1280 viewBox.
-        // V3: scene-2 baseTransform is zeroed, sceneStack shift is zeroed,
-        // so set y directly to target viewBox y.
-        // V2: y=793 in scene-2 local coords → effective 793 - 727 + 400 = 466.
+        // y=793 is in scene-2 local coords → effective viewBox y = 793 + (-727) + 400 = 466.
+        // Same value for V2 and V3: V3 didn't zero the cascade after all (kept it for
+        // non-V3-scene compatibility), so the list still needs to compensate for
+        // scene-2's baseTransform AND sceneStack mobile shift.
+        // FIX (Phase 2): previously V3 had y=550 from when V3 zeroed the cascade —
+        // incorrect after V3 was changed to keep cascade.
         if (scene2ListFo) {
           scene2ListFo.setAttribute('x', '60');
-          scene2ListFo.setAttribute('y', V3_LAYOUT_ENABLED ? '550' : '793');
+          scene2ListFo.setAttribute('y', '793');
           scene2ListFo.setAttribute('width', '1160');
           scene2ListFo.setAttribute('height', '420');
         }

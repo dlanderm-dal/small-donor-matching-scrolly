@@ -710,6 +710,65 @@ const CONCERN_RULES = [
     }
   },
   {
+    id: 'foreignobject-overlap',
+    name: 'Two foreignObjects overlap (heading vs list, etc.)',
+    severity: 'error',
+    detect(snap) {
+      const findings = [];
+      const fos = snap.elements.filter(e => e.tag === 'foreignobject');
+      for (let i = 0; i < fos.length; i++) {
+        for (let j = i + 1; j < fos.length; j++) {
+          const a = fos[i], b = fos[j];
+          // Compute overlap rectangle.
+          const ovX = Math.max(0, Math.min(a.vb.x + a.vb.w, b.vb.x + b.vb.w) - Math.max(a.vb.x, b.vb.x));
+          const ovY = Math.max(0, Math.min(a.vb.y + a.vb.h, b.vb.y + b.vb.h) - Math.max(a.vb.y, b.vb.y));
+          if (ovX > 50 && ovY > 50) {
+            findings.push({
+              ruleId: this.id, severity: this.severity, name: this.name,
+              elementId: a.id || '?',
+              detail: `foreignObject ${a.id || a.tag} (${a.vb.x.toFixed(0)},${a.vb.y.toFixed(0)} ${a.vb.w.toFixed(0)}×${a.vb.h.toFixed(0)}) overlaps foreignObject ${b.id || b.tag} (${b.vb.x.toFixed(0)},${b.vb.y.toFixed(0)} ${b.vb.w.toFixed(0)}×${b.vb.h.toFixed(0)}) by ${ovX.toFixed(0)}×${ovY.toFixed(0)} units. Heading text and other content shouldn't overlap.`,
+              affectedIds: [a.id, b.id].filter(Boolean),
+            });
+          }
+        }
+      }
+      return findings;
+    }
+  },
+  {
+    id: 'heading-overlaps-content',
+    name: 'Heading text overlaps non-heading content',
+    severity: 'error',
+    detect(snap) {
+      // Find the heading foreignObject (under headingOverlayG), then check
+      // if any visible NAMED element (rect/text/path with id) overlaps the
+      // heading's bbox.
+      const findings = [];
+      const headingFo = snap.elements.find(e => {
+        if (e.tag !== 'foreignobject') return false;
+        // Identify by parent id or by being above other content
+        return e.vb.y < 600 && e.vb.h > 100;
+      });
+      if (!headingFo) return findings;
+      for (const e of snap.elements) {
+        if (e === headingFo) continue;
+        if (!e.id || /^Scene_|^scene-|OverlayG$|^sceneStack$/.test(e.id)) continue;
+        if (e.tag === 'g') continue; // skip groups (their bbox includes children)
+        const ovX = Math.max(0, Math.min(headingFo.vb.x + headingFo.vb.w, e.vb.x + e.vb.w) - Math.max(headingFo.vb.x, e.vb.x));
+        const ovY = Math.max(0, Math.min(headingFo.vb.y + headingFo.vb.h, e.vb.y + e.vb.h) - Math.max(headingFo.vb.y, e.vb.y));
+        if (ovX > 30 && ovY > 30) {
+          findings.push({
+            ruleId: this.id, severity: this.severity, name: this.name,
+            elementId: e.id,
+            detail: `Element ${e.id} (${e.tag}) at viewBox (${e.vb.x.toFixed(0)},${e.vb.y.toFixed(0)}) overlaps heading band (${headingFo.vb.y.toFixed(0)}..${(headingFo.vb.y+headingFo.vb.h).toFixed(0)}) by ${ovX.toFixed(0)}×${ovY.toFixed(0)} units.`,
+            affectedIds: [e.id],
+          });
+        }
+      }
+      return findings;
+    }
+  },
+  {
     id: 'cropped-by-screen',
     name: 'Element extends past visible screen edge',
     severity: 'error',
