@@ -166,6 +166,292 @@
   .mock-grid-proposed { font: 12px/1.3 'Inter', sans-serif; color: var(--ink-2); padding: 8px 0; background-image: linear-gradient(to bottom, transparent 0 24px, var(--rule-soft) 24px 25px); background-size: 100% 25px; }
   .mock-stage-vs { font: 13px/1.3 'Inter', sans-serif; color: var(--ink-2); }
   .mock-stage-vs strong { color: var(--ink); }
+  /* ---------- new mock styles for upgraded cards ---------- */
+
+  /* phone outline — a chrome-less device frame ~9:19 aspect */
+  .mock-phone {
+    width: 130px;
+    height: 260px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+    padding: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font: 9px/1.2 'Inter', sans-serif;
+    color: var(--ink-2);
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .mock-phone::before {
+    content: "";
+    position: absolute;
+    top: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 30px; height: 3px;
+    background: var(--ink-3);
+    border-radius: 2px;
+  }
+  .mock-phone .ph-section {
+    border: 1px solid var(--rule-soft);
+    background: #fff;
+    padding: 4px 5px;
+    border-radius: 2px;
+    flex: 0 0 auto;
+  }
+  .mock-phone .ph-section.heading { border-color: var(--ink); font-weight: 600; }
+  .mock-phone .ph-section.chart   { background: rgba(17,40,62,0.08); border-color: var(--blue); color: var(--blue); }
+  .mock-phone .ph-section.list    { color: var(--ink-2); }
+  .mock-phone .ph-section.empty   { background: repeating-linear-gradient(45deg, transparent 0 4px, var(--rule-soft) 4px 5px); color: var(--ink-3); font-style: italic; text-align: center; padding: 2px; }
+  .mock-phone .ph-section.sticky-tag { position: absolute; top: 16px; right: 4px; background: var(--purple); color: #fff; padding: 2px 4px; font: 700 7px/1 'Inter'; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 0; border: 0; }
+  .mock-phone .ph-section.flow-tag   { position: absolute; bottom: 6px; right: 4px; background: var(--green); color: #fff; padding: 2px 4px; font: 700 7px/1 'Inter'; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 0; border: 0; }
+  .mock-phone .ph-grow { flex: 1 1 auto; }
+  .mock-phone .ph-arrow { text-align: center; font-size: 11px; color: var(--ink-3); flex: 0 0 auto; }
+
+  /* tablet outline — landscape-ish 4:3 portrait of an iPad */
+  .mock-tablet {
+    width: 220px;
+    height: 280px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    background: var(--paper);
+    padding: 12px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font: 10px/1.3 'Inter', sans-serif;
+    color: var(--ink-2);
+    flex: 0 0 auto;
+  }
+  .mock-tablet .stage-block {
+    background: rgba(17,40,62,0.08);
+    border: 1px solid var(--blue);
+    height: 100px;
+    margin: 0 auto;
+    color: var(--blue);
+    text-align: center;
+    padding-top: 38px;
+    width: 100%;
+  }
+  .mock-tablet .stage-block.constrained { width: 70%; }
+  .mock-tablet .padding-tag { font: 600 8px/1 'JetBrains Mono', monospace; color: var(--ink-3); margin-bottom: 2px; }
+  .mock-tablet .col-block { flex: 1; background: #fff; border: 1px solid var(--rule-soft); padding: 4px 6px; }
+  .mock-tablet .col-block.constrained { width: 70%; margin: 0 auto; }
+  .mock-tablet .margin-marker { position: absolute; top: 50%; transform: translateY(-50%); font: 700 8px/1 'Inter'; color: var(--red); }
+  .mock-tablet .margin-marker.left  { left: 2px; }
+  .mock-tablet .margin-marker.right { right: 2px; }
+
+  /* chart-mock SVGs — for ch17, ch19 */
+  .mock-chart-svg { width: 100%; max-width: 280px; height: auto; }
+
+  /* slider-thumb hit-area visualization (ch23) */
+  .mock-thumb-row {
+    position: relative;
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+  }
+  .mock-thumb-row .track {
+    position: absolute;
+    left: 10px; right: 10px;
+    height: 3px;
+    background: var(--ink);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .mock-thumb-row .thumb-22 {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--c-green);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .mock-thumb-row .thumb-14 {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: var(--green);
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .mock-thumb-row .hit-44 {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border: 1.5px dashed var(--red);
+    background: rgba(138,31,31,0.08);
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .mock-thumb-row .label-tag {
+    position: absolute;
+    font: 600 9px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+    bottom: 4px;
+  }
+  .mock-thumb-row .label-tag.left  { left: 8px; }
+  .mock-thumb-row .label-tag.right { right: 8px; color: var(--red); }
+
+  /* padding/spacing demo (ch25) — sections with measured gaps */
+  .mock-pad-stack {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--rule-soft);
+    padding: 0;
+  }
+  .mock-pad-stack .pad-section {
+    background: rgba(26,89,40,0.08);
+    border-bottom: 1px dashed var(--rule-soft);
+    color: var(--ink-2);
+    font: 10px/1 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 8px;
+  }
+  .mock-pad-stack .pad-section:last-child { border-bottom: none; }
+  .mock-pad-stack.tight .pad-gap     { height: 10px; background: repeating-linear-gradient(45deg, transparent 0 3px, var(--rule-soft) 3px 4px); }
+  .mock-pad-stack.loose .pad-gap     { height: 32px; background: repeating-linear-gradient(45deg, transparent 0 3px, var(--rule-soft) 3px 4px); }
+  .mock-pad-stack .pad-gap-tag       { font: 700 9px/1 'JetBrains Mono', monospace; color: var(--ink-3); padding: 2px 8px; background: #fff; }
+
+  /* heading-to-chart gap demo (ch26) — single column with measured gap */
+  .gap-col {
+    width: 130px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+    padding: 8px 6px;
+  }
+  .gap-col .gc-head {
+    background: #fff;
+    border: 1px solid var(--ink);
+    padding: 4px 6px;
+    font: 9px/1.15 'Inter', sans-serif;
+    color: var(--ink);
+    text-align: center;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gap-col .gc-gap {
+    background: repeating-linear-gradient(45deg, transparent 0 4px, var(--rule-soft) 4px 5px);
+    color: var(--red);
+    font: 700 9px/1 'JetBrains Mono', monospace;
+    text-align: center;
+    padding-top: 6px;
+  }
+  .gap-col .gc-gap.big   { height: 90px; }
+  .gap-col .gc-gap.small { height: 18px; }
+  .gap-col .gc-chart {
+    background: rgba(17,40,62,0.08);
+    border: 1px solid var(--blue);
+    padding: 4px;
+    color: var(--blue);
+    font: 9px/1.1 'JetBrains Mono', monospace;
+    text-align: center;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gap-col .gc-eq {
+    background: #fff;
+    border: 1px solid var(--rule-soft);
+    padding: 4px;
+    margin-top: 6px;
+    font: 9px/1.1 'JetBrains Mono', monospace;
+    color: var(--ink-2);
+    text-align: center;
+  }
+
+  /* methodology block visualization (ch15) */
+  .meth-page {
+    background: #fff;
+    border: 1px solid var(--rule-soft);
+    padding: 12px;
+    width: 100%;
+  }
+  .meth-page .restart {
+    font: 600 13px/1.4 'Inter', sans-serif;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    margin-bottom: 16px;
+  }
+  .meth-page .meth-empty {
+    color: var(--ink-3);
+    font-style: italic;
+    font-size: 12px;
+    padding: 16px 0;
+    border-top: 1px dashed var(--rule-soft);
+  }
+  .meth-page .meth-block { border-top: 2px solid var(--ink); padding-top: 8px; margin-top: 4px; }
+  .meth-page .meth-block h6 {
+    font: 700 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .meth-page .meth-block p { font: 12px/1.4 'Source Serif 4', serif; color: var(--ink-2); }
+
+  /* scene-6 vertical comparison stack (ch22) */
+  .s6-stack {
+    width: 130px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+    padding: 8px 6px;
+  }
+  .s6-stack .s6-head { background: #fff; border: 1px solid var(--ink); padding: 4px 5px; font: 700 8px/1.2 'Inter', sans-serif; color: var(--ink); margin-bottom: 6px; }
+  .s6-stack .s6-row {
+    display: flex; align-items: center; gap: 4px;
+    margin-bottom: 4px;
+    font: 700 9px/1 'JetBrains Mono', monospace;
+  }
+  .s6-stack .s6-box {
+    border: 1.5px solid;
+    padding: 3px 4px;
+    flex: 1;
+    text-align: center;
+    background: #fff;
+  }
+  .s6-stack .s6-box.donor { border-color: var(--green); color: var(--green); }
+  .s6-stack .s6-box.cand  { border-color: var(--purple); color: var(--purple); }
+  .s6-stack .s6-arrow { color: var(--ink-3); font: 600 9px/1 'Inter', sans-serif; }
+  .s6-stack .s6-divider {
+    border-top: 1px dashed var(--rule-soft);
+    margin: 6px 0 4px;
+    text-align: center;
+    font: 700 7px/1 'Inter', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 4px;
+  }
+  .s6-stack .s6-empty {
+    flex: 1; padding: 16px 0; text-align: center;
+    background: repeating-linear-gradient(45deg, transparent 0 3px, var(--rule-soft) 3px 4px);
+    color: var(--ink-3); font-style: italic; font-size: 9px;
+  }
+
   /* ---------- decision component ---------- */
   .decision { border: 1px solid var(--rule); background: #fff; padding: 1rem 1.1rem 1.1rem; margin-top: 0.5rem; }
   .decision legend { font: 700 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; padding: 0 6px; color: var(--ink-3); }
@@ -624,8 +910,14 @@
   <p class="why">Right now the piece ends with the restart button. Real journalism almost always ends with a small block disclosing sources, methodology, and limitations. Even seventy words signals "we know what we're doing".</p>
   <div class="where">Affects: the area immediately after the restart link / button at the very bottom of the after-scrolly section.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-meth-current">(no methodology block)</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-meth-proposed" style="width: 100%;"><h6>About this data</h6>Match-multiplier and qualification figures from the Montgomery County Public Election Fund (Bill 16-14, as amended). Maximum-per-election figures are county-published caps in effect for the 2026 cycle. Figures assume the donor lives in the candidate's jurisdiction.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width:100%;"><div class="meth-page">
+      <div class="restart">← Replay from the top</div>
+      <div class="meth-empty">[ piece ends here — nothing follows the restart link ]</div>
+    </div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width:100%;"><div class="meth-page">
+      <div class="restart">← Replay from the top</div>
+      <div class="meth-block"><h6>About this data</h6><p>Match-multiplier and qualification figures from the Montgomery County Public Election Fund (Bill 16-14, as amended). Maximum-per-election figures are county-published caps in effect for the 2026 cycle. Figures assume the donor lives in the candidate's jurisdiction.</p></div>
+    </div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -675,8 +967,27 @@
   <p class="why">When the slider crosses $50, a small annotation should fly in: <em>"Tier 1 fills first — it's matched 7-to-1, so $50 of donor money pulls $350 of county money."</em> Connected to the bar with a thin leader line. Single highest-leverage change to make the piece actually <em>teach</em>.</p>
   <div class="where">Affects: the bar chart in the after-scrolly slider section AND the bar chart inside scenes 1–5 of the scrollytelling.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-anno-current">x7 / Tier 1 / $350 — three labels floating around the bar with no explanation.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-anno-proposed">Tier 1 fills first. The first $50 a donor gives is matched seven-to-one — that $50 pulls $350 of county money.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width:100%;"><svg class="mock-chart-svg" viewBox="0 0 280 160">
+      <!-- Three floating labels, no leader lines -->
+      <rect x="50" y="30" width="40" height="100" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="2"/>
+      <rect x="50" y="130" width="40" height="14" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="2"/>
+      <text x="70" y="22" text-anchor="middle" font-family="Helvetica" font-size="11" fill="#434343" font-weight="700">x7</text>
+      <text x="70" y="84" text-anchor="middle" font-family="Helvetica" font-size="10" fill="#0027ff" font-weight="700">$350</text>
+      <text x="70" y="142" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#229500" font-weight="700">$50</text>
+      <text x="14" y="84" text-anchor="middle" font-family="Helvetica" font-size="9" fill="#888">Tier 1</text>
+    </svg></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width:100%;"><svg class="mock-chart-svg" viewBox="0 0 280 160">
+      <!-- Bar + dashed leader line + side annotation -->
+      <rect x="20" y="30" width="40" height="100" fill="rgba(17,40,62,0.10)" stroke="#11283e" stroke-width="2"/>
+      <rect x="20" y="130" width="40" height="14" fill="rgba(26,89,40,0.10)" stroke="#1a5928" stroke-width="2"/>
+      <text x="40" y="84" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#11283e" font-weight="700">$350</text>
+      <text x="40" y="142" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#1a5928" font-weight="700">$50</text>
+      <line x1="62" y1="60" x2="98" y2="48" stroke="#7a7a7a" stroke-width="0.8" stroke-dasharray="2 2"/>
+      <text x="105" y="42" font-family="Source Serif 4, serif" font-style="italic" font-size="9" fill="#1a1a1a" font-weight="600">Tier 1 fills first.</text>
+      <text x="105" y="56" font-family="Source Serif 4, serif" font-style="italic" font-size="9" fill="#4a4a4a">$50 of donor money</text>
+      <text x="105" y="68" font-family="Source Serif 4, serif" font-style="italic" font-size="9" fill="#4a4a4a">pulls $350 of county</text>
+      <text x="105" y="80" font-family="Source Serif 4, serif" font-style="italic" font-size="9" fill="#4a4a4a">match — seven-to-one.</text>
+    </svg></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -719,8 +1030,43 @@
   <p class="why">A 2-pixel solid black axis line under the bars looks like a frame. Light grey horizontal gridlines at $0 / $200 / $400 / $600 / $800 (the y-axis values) read as a measuring grid — what the chart actually <em>is</em>.</p>
   <div class="where">Affects: the bar chart x- and y-axes in scenes 1–5 AND the after-scrolly slider chart.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock"><div class="mock-grid-current" style="width: 100%;">Bottom axis: solid 2 px black bar<br>Y-axis: short tick marks only</div></div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock"><div class="mock-grid-proposed" style="width: 100%; height: 100px;">Light grey gridlines at $0 / $200 / $400 / $600<br>Bars float over the gridlines</div></div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width:100%;"><svg class="mock-chart-svg" viewBox="0 0 280 160">
+      <!-- Bordered axis style -->
+      <rect x="40" y="60" width="32" height="80" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="2"/>
+      <rect x="84" y="100" width="32" height="40" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="2"/>
+      <rect x="128" y="120" width="32" height="20" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="2"/>
+      <line x1="40" y1="142" x2="200" y2="142" stroke="#000" stroke-width="2"/>
+      <line x1="40" y1="60" x2="40" y2="142" stroke="#000" stroke-width="2"/>
+      <line x1="38" y1="60"  x2="42" y2="60"  stroke="#000" stroke-width="2"/>
+      <line x1="38" y1="100" x2="42" y2="100" stroke="#000" stroke-width="2"/>
+      <text x="56" y="155" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica">$50</text>
+      <text x="100" y="155" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica">$100</text>
+      <text x="144" y="155" text-anchor="middle" font-size="9" fill="#888" font-family="Helvetica">$150</text>
+    </svg></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width:100%;"><svg class="mock-chart-svg" viewBox="0 0 280 160">
+      <!-- Gridline style: dashed grey horizontal lines, no bordered axis -->
+      <line x1="20" y1="60"  x2="200" y2="60"  stroke="#c9c2b3" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="20" y1="80"  x2="200" y2="80"  stroke="#c9c2b3" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="20" y1="100" x2="200" y2="100" stroke="#c9c2b3" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="20" y1="120" x2="200" y2="120" stroke="#c9c2b3" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <line x1="20" y1="140" x2="200" y2="140" stroke="#c9c2b3" stroke-width="0.8" stroke-dasharray="2 4"/>
+      <text x="14" y="64"  text-anchor="end" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$400</text>
+      <text x="14" y="84"  text-anchor="end" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$300</text>
+      <text x="14" y="104" text-anchor="end" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$200</text>
+      <text x="14" y="124" text-anchor="end" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$100</text>
+      <text x="14" y="144" text-anchor="end" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$0</text>
+      <rect x="40" y="60" width="32" height="80" fill="url(#hatchA)" stroke="#11283e" stroke-width="1.5"/>
+      <rect x="84" y="100" width="32" height="40" fill="url(#hatchA)" stroke="#11283e" stroke-width="1.5"/>
+      <rect x="128" y="120" width="32" height="20" fill="url(#hatchA)" stroke="#11283e" stroke-width="1.5"/>
+      <text x="56" y="155" text-anchor="middle" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$50</text>
+      <text x="100" y="155" text-anchor="middle" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$100</text>
+      <text x="144" y="155" text-anchor="middle" font-size="8" fill="#7a7a7a" font-family="JetBrains Mono">$150</text>
+      <defs>
+        <pattern id="hatchA" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#11283e" stroke-width="1"/>
+        </pattern>
+      </defs>
+    </svg></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -770,8 +1116,19 @@
   <p class="why">Sticky stages on phones are awkward — the address bar steals viewport, the user can't see what's coming, the scroll feels stuck. Editorial mobile scrollytellings often skip stickiness on phones and let scenes flow as full-screen sections that fade in as the reader enters them.</p>
   <div class="where">Affects: the entire scrollytelling section on phones — every scene becomes a discrete vertical section instead of being painted over a single sticky stage.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-flow-current">Sticky 80vh stage on mobile. Reveals trigger via scroll. The reader's thumb scrolls over a "stuck" graphic for the entire scrolly.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-flow-proposed">On phones only: each scene is its own <strong>full-viewport section</strong>. As the reader scrolls into it, the scene fades in and the next one fades out below it. Page scrolls naturally.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width:100%; flex-direction: row; gap: 10px; align-items: flex-start;"><div class="mock-phone">
+      <div class="ph-section heading">Heading</div>
+      <div class="ph-section sticky-tag">Stuck</div>
+      <div class="ph-section chart" style="flex: 1; padding-top: 24px; text-align: center;">Chart<br>(stays here)</div>
+      <div class="ph-section empty">Reader scrolls →</div>
+    </div><div style="font: 11px/1.4 'Inter'; color: var(--ink-2); flex: 1; min-width: 110px;">The graphic <strong>stays stuck</strong> at the top while the reader scrolls. Address bar steals viewport. Feels stuck.</div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width:100%; flex-direction: row; gap: 10px; align-items: flex-start;"><div class="mock-phone">
+      <div class="ph-section heading">Scene 1</div>
+      <div class="ph-section chart" style="flex: 1; padding-top: 12px; text-align: center;">Full screen</div>
+      <div class="ph-arrow">↓</div>
+      <div class="ph-section heading" style="opacity: 0.45;">Scene 2 (next)</div>
+      <div class="ph-section flow-tag">Flow</div>
+    </div><div style="font: 11px/1.4 'Inter'; color: var(--ink-2); flex: 1; min-width: 110px;">Each scene is its <strong>own full-viewport section</strong>. Scrolls naturally. Fades in/out as the reader enters.</div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -792,8 +1149,17 @@
   <p class="why">The latest fix simplified scene 6 on mobile by hiding the bottom row (the "ten $10 donors → $1,150" half of the comparison). The reader now only sees one half of the "what's better" question. Better fix: keep both halves but redraw the comparison as a vertical stack — one $100 donor at top, ten $10 donors at bottom, both flowing right into "becomes $X to the candidate".</p>
   <div class="where">Affects: scene 6 layout on phones only.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-cmp6-current">On mobile, scene 6 shows only <strong>one</strong> half: $100 donor → $650. The "ten $10 donors → $1,150" comparison is hidden.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-cmp6-proposed"><strong>Both halves</strong>, stacked vertically. Top: <strong>$100</strong> donor → <strong>$650</strong> candidate. Bottom: <strong>10 × $10</strong> donors → <strong>$1,150</strong> candidate. Reader can compare directly.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width:100%;"><div class="s6-stack">
+      <div class="s6-head">What's better: $100 from one, or $10 from ten?</div>
+      <div class="s6-row"><div class="s6-box donor">$100</div><span class="s6-arrow">→</span><div class="s6-box cand">$650</div></div>
+      <div class="s6-empty">other half<br>not shown</div>
+    </div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width:100%;"><div class="s6-stack">
+      <div class="s6-head">What's better: $100 from one, or $10 from ten?</div>
+      <div class="s6-row"><div class="s6-box donor">$100</div><span class="s6-arrow">→</span><div class="s6-box cand">$650</div></div>
+      <div class="s6-divider">VS</div>
+      <div class="s6-row"><div class="s6-box donor">10×$10</div><span class="s6-arrow">→</span><div class="s6-box cand">$1,150</div></div>
+    </div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -814,8 +1180,18 @@
   <p class="why">The current slider thumb is 22 pixels — fine on a desktop trackpad, hard for a thumb on a phone. The visible thumb can stay small, but the actual hit-target should be at least 44 pixels (Apple HIG / Google Material guidance).</p>
   <div class="where">Affects: the donation slider in the after-scrolly section, on phones only.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-flow-current">22-pixel circular thumb. Fine on desktop. On a phone, finger slides past it constantly.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-flow-proposed">Visible thumb stays the slim square (per item 9), but its <strong>hit area</strong> on phones is 44×44 — meets accessibility guidelines and feels solid under a thumb.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width: 100%;"><div class="mock-thumb-row">
+      <div class="track"></div>
+      <div class="thumb-22"></div>
+      <span class="label-tag left">Hit area: 22×22</span>
+    </div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width: 100%;"><div class="mock-thumb-row">
+      <div class="track"></div>
+      <div class="hit-44"></div>
+      <div class="thumb-14"></div>
+      <span class="label-tag left">Visible thumb: 14×14</span>
+      <span class="label-tag right">Hit area: 44×44</span>
+    </div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -836,8 +1212,20 @@
   <p class="why">In between the desktop landscape layout and the phone portrait layout, the tablet (roughly 769–1024 px wide) inherits desktop spacing — which leaves a lot of side margin and a too-tall sticky stage. A dedicated tablet pass with a slightly narrower content column and 80vh stage uses the screen better.</p>
   <div class="where">Affects: the entire piece at tablet-portrait width (iPad Mini portrait, iPad portrait).</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-flow-current">Tablet inherits desktop layout. Sticky stage is 80vh = ~820 px on a 1024-tall tablet. Lots of empty side margins.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-flow-proposed">Dedicated tablet rules: <strong>max 720-px content column</strong>, 75vh stage, tighter heading paddings, single-column equation table.</div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width: 100%;"><div class="mock-tablet">
+      <span class="margin-marker left">┃</span><span class="margin-marker right">┃</span>
+      <div class="padding-tag">Stage: 80vh ≈ 820 px</div>
+      <div class="stage-block">Chart fills wide</div>
+      <div class="col-block">Section content stretches edge to edge</div>
+      <div class="col-block">Two-column equation crammed in</div>
+    </div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width: 100%;"><div class="mock-tablet">
+      <span class="margin-marker left">┃</span><span class="margin-marker right">┃</span>
+      <div class="padding-tag" style="text-align:center;">Stage: 75vh · Column: 720 px</div>
+      <div class="stage-block constrained">Chart sized to column</div>
+      <div class="col-block constrained">Content in centered column, breathable margins</div>
+      <div class="col-block constrained">Single-column equation</div>
+    </div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -865,8 +1253,30 @@
   <p class="why">The after-scrolly section currently has 2.5 rem top, 3 rem bottom, with 1.75 rem on the office selector and 1.5 rem on the slider wrap. CNS Maryland and Pudding both run tighter — about 1 rem section padding, smaller gaps. Information density is a journalism virtue, not a bug.</p>
   <div class="where">Affects: vertical padding on the after-scrolly container, the office selector wrapper, the slider wrapper, the "info row" cards block, and the gap between section breaks.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock"><div class="mock-density-current" style="width:100%;">Section A<br>Section B<br>Section C</div></div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock"><div class="mock-density-proposed" style="width:100%;">Section A<br>Section B<br>Section C</div></div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width: 100%;"><div class="mock-pad-stack loose">
+      <div class="pad-section">Office tabs</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 28 px</div>
+      <div class="pad-section">Heading paragraph</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 24 px</div>
+      <div class="pad-section">Slider + chart</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 36 px</div>
+      <div class="pad-section">Info row (cards)</div>
+    </div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width: 100%;"><div class="mock-pad-stack tight">
+      <div class="pad-section">Office tabs</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 12 px</div>
+      <div class="pad-section">Heading paragraph</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 10 px</div>
+      <div class="pad-section">Slider + chart</div>
+      <div class="pad-gap"></div>
+      <div class="pad-gap-tag">↕ 16 px</div>
+      <div class="pad-section">Info row</div>
+    </div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
@@ -887,8 +1297,18 @@
   <p class="why">Even after the latest tightening, scenes 2–5 on mobile still leave roughly a third of the screen blank between the heading and the chart. Either pull the chart up by another 100 pixels of viewBox space, or add a short caption / annotation in that empty band.</p>
   <div class="where">Affects: the empty space below the heading and above the chart on phones, in scenes 2 (without the prohibited list visible), 3, 4, and 5.</div>
   <div class="ba">
-    <div class="ba-cell before"><span class="label">Now</span><div class="mock-flow-current">~190 device px of empty space between heading and chart on mobile, scenes 3-5.</div></div>
-    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock-flow-proposed">Either: pull chart up ~100 px, OR fill the space with a one-line annotation like <em>"Donor money in green, county match in blue, total candidate gets in purple."</em></div></div>
+    <div class="ba-cell before"><span class="label">Now</span><div class="mock" style="width: 100%; flex-direction: row; gap: 12px; align-items: flex-start;"><div class="gap-col">
+      <div class="gc-head">Heading paragraph (4 lines)</div>
+      <div class="gc-gap big">↕ ~190 px<br>EMPTY</div>
+      <div class="gc-chart">Bar chart</div>
+      <div class="gc-eq">Equation</div>
+    </div><div style="font: 11px/1.4 'Inter'; color: var(--ink-2); flex: 1; min-width: 100px;">A third of the screen is blank between heading and chart on scenes 3–5.</div></div></div>
+    <div class="ba-cell after"><span class="label">Proposed</span><div class="mock" style="width: 100%; flex-direction: row; gap: 12px; align-items: flex-start;"><div class="gap-col">
+      <div class="gc-head">Heading paragraph (4 lines)</div>
+      <div class="gc-gap small">↕ 30 px</div>
+      <div class="gc-chart">Bar chart pulled up</div>
+      <div class="gc-eq">Equation</div>
+    </div><div style="font: 11px/1.4 'Inter'; color: var(--ink-2); flex: 1; min-width: 100px;">Chart pulled up ~160 px so heading and chart sit next to each other; equation drops by the same amount to keep clear of the chart.</div></div></div>
   </div>
   <fieldset class="decision"><legend>Apply this change?</legend>
     <div class="row">
