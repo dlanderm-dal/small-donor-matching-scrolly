@@ -123,18 +123,88 @@
       linear-gradient(to bottom, var(--rule-soft) 1px, transparent 1px) 0 0 / 80px 80px,
       var(--bg);
   }
+  /* V3.8.3 Step 1 — resizable stage frame.
+     The .stage's width/height are CSS-set per viewport (applyViewport),
+     but the user can scale ALL viewports up/down via the zoom slider in
+     the canvas-area header. Wrapping the stage in a transform-origin
+     scaler keeps the inner pixel grid clean. */
+  .stage-frame {
+    display: flex; align-items: flex-start; justify-content: center;
+    transform-origin: top center;
+    transition: transform 0.15s ease-out;
+  }
   .stage {
     width: 562px;
-    /* V3.8: mobile portrait viewBox shrunk to 1280×1700 (was 1280×2050).
-       The white card on the live page is now this aspect — content past
-       y=1700 would render outside the white frame. Stage height matches:
-       562 * 1700/1280 = 746. */
     height: 746px;
     background: #fff;
     border: 2px solid var(--ink);
     box-shadow: 0 4px 30px rgba(0,0,0,0.08);
     position: relative;
     flex: 0 0 auto;
+  }
+  /* V3.8.3 — Live preview panel (iframe of scrollytelling-v3.html). */
+  .live-preview {
+    flex: 0 0 auto;
+    margin-left: 1.5rem;
+    border: 2px dashed var(--ink-3);
+    background: #fff;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .live-preview iframe {
+    border: 0;
+    display: block;
+  }
+  .live-preview .lp-tag {
+    position: absolute; top: -22px; left: 0;
+    font: 700 10px/1 'Inter'; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .canvas-area-header {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    padding: 0.6rem 1rem;
+    background: rgba(0,0,0,0.04);
+    border-bottom: 1px solid var(--rule-soft);
+    font: 600 11px/1 'Inter';
+  }
+  .canvas-area-header .ca-group { display: flex; align-items: center; gap: 0.4rem; }
+  .canvas-area-header label { color: var(--ink-2); }
+  .canvas-area-header .layout-mode {
+    display: inline-flex; gap: 0; border: 1px solid var(--ink);
+  }
+  .canvas-area-header .layout-mode button {
+    background: transparent; color: var(--ink); border: 0;
+    border-right: 1px solid var(--ink);
+    padding: 4px 10px;
+    font: 600 11px/1 'Inter'; letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .canvas-area-header .layout-mode button:last-child { border-right: 0; }
+  .canvas-area-header .layout-mode button.active {
+    background: var(--ink); color: var(--bg);
+  }
+  .canvas-area-header input[type="range"] {
+    width: 140px; cursor: pointer;
+  }
+  .canvas-area-header .ca-zoom-readout {
+    font: 600 11px/1 'JetBrains Mono', monospace;
+    color: var(--ink-2);
+    min-width: 44px; text-align: right;
+  }
+  .canvas-area-stack {
+    display: flex; flex-direction: column;
+    flex: 1; min-width: 0;
+  }
+  .canvas-area-body {
+    flex: 1; min-width: 0;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 1.5rem;
+    overflow: auto;
+    background:
+      linear-gradient(to right, var(--rule-soft) 1px, transparent 1px) 0 0 / 80px 80px,
+      linear-gradient(to bottom, var(--rule-soft) 1px, transparent 1px) 0 0 / 80px 80px,
+      var(--bg);
   }
   .stage .stage-rule {
     position: absolute;
@@ -450,20 +520,55 @@
 </div>
 
 <main>
-  <div class="canvas-area">
-    <div class="stage">
-      <!-- Faint thirds-grid rules to help with alignment -->
-      <div class="stage-rule h" style="top:33.3%"></div>
-      <div class="stage-rule h" style="top:66.6%"></div>
-      <div class="stage-rule v" style="left:33.3%"></div>
-      <div class="stage-rule v" style="left:66.6%"></div>
-      <svg class="canvas" id="canvas" viewBox="0 0 1280 1700" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <!-- Hash patterns currently NOT used (fills remain solid in editor for clarity) -->
-        </defs>
-        <!-- Group containers populated by JS per scene -->
-        <g id="groupsLayer"></g>
-      </svg>
+  <!-- V3.8.3 Step 2 — canvas-area-stack:
+       Top: canvas-area-header (zoom slider + layout-mode toggle).
+       Bottom: canvas-area-body (resizable stage + live-preview iframe). -->
+  <div class="canvas-area-stack">
+    <div class="canvas-area-header">
+      <div class="ca-group">
+        <label for="zoomRange">Zoom</label>
+        <input type="range" id="zoomRange" min="40" max="200" step="5" value="100">
+        <span class="ca-zoom-readout" id="zoomReadout">100%</span>
+      </div>
+      <div class="ca-group">
+        <label>View</label>
+        <div class="layout-mode" id="layoutMode" role="radiogroup" aria-label="Layout mode">
+          <button data-mode="editor" class="active" role="radio" aria-checked="true">Editor</button>
+          <button data-mode="side-by-side" role="radio" aria-checked="false">Side-by-side</button>
+          <button data-mode="preview" role="radio" aria-checked="false">Live preview</button>
+        </div>
+      </div>
+      <div class="ca-group" style="margin-left:auto; color: var(--ink-3);">
+        <span id="livePreviewStatus" style="font-style:italic;">Live preview ready</span>
+      </div>
+    </div>
+    <div class="canvas-area-body" id="canvasAreaBody">
+      <!-- Editor stage (the hand-coded renderers + drag/resize). -->
+      <div class="stage-frame" id="stageFrame">
+        <div class="stage">
+          <!-- Faint thirds-grid rules to help with alignment -->
+          <div class="stage-rule h" style="top:33.3%"></div>
+          <div class="stage-rule h" style="top:66.6%"></div>
+          <div class="stage-rule v" style="left:33.3%"></div>
+          <div class="stage-rule v" style="left:66.6%"></div>
+          <svg class="canvas" id="canvas" viewBox="0 0 1280 1700" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <!-- Hash patterns currently NOT used (fills remain solid in editor for clarity) -->
+            </defs>
+            <!-- Group containers populated by JS per scene -->
+            <g id="groupsLayer"></g>
+          </svg>
+        </div>
+      </div>
+      <!-- Live preview iframe — scrollytelling-v3.html driven to the
+           scrollY corresponding to the active scene + sub-scene + viewport.
+           This is the SOURCE OF TRUTH for what ships. The editor canvas
+           on the left is for now a hand-coded approximation; pass 2 will
+           replace it by reading SVG state out of this iframe. -->
+      <div class="live-preview" id="livePreview" style="display:none;">
+        <span class="lp-tag">Live preview · scrollytelling-v3.html</span>
+        <iframe id="liveFrame" title="Live page preview" src="about:blank"></iframe>
+      </div>
     </div>
   </div>
 
@@ -1627,15 +1732,14 @@
   }
 
   // ---- V3.8.2: viewport-mode toggle ----
-  // Each mode has its own canvas viewBox + stage aspect. Layout state is
-  // namespaced per viewport so adjustments in mobile portrait don't bleed
-  // into the desktop arrangement (and vice versa).
+  // V3.8.3 — extended with `liveDevice` (the actual viewport dims to set the
+  // iframe to) and `liveAspectArr` (numeric for slot scrollY math).
   const VIEWPORT_MODES = {
-    mobile_portrait:  { viewBox: '0 0 1280 1700', stageW: 562, stageH: 746,  label: 'Mobile portrait',  liveAspect: '393×852' },
-    mobile_landscape: { viewBox: '0 0 1700 1280', stageW: 836, stageH: 629,  label: 'Mobile landscape', liveAspect: '852×393' },
-    tablet_portrait:  { viewBox: '0 0 1280 1700', stageW: 700, stageH: 930,  label: 'Tablet portrait',  liveAspect: '768×1024' },
-    tablet_landscape: { viewBox: '0 0 1920 1280', stageW: 880, stageH: 587,  label: 'Tablet landscape', liveAspect: '1024×768' },
-    desktop:          { viewBox: '0 0 1920 1280', stageW: 980, stageH: 653,  label: 'Desktop',          liveAspect: '1280×800' },
+    mobile_portrait:  { viewBox: '0 0 1280 1700', stageW: 562, stageH: 746,  label: 'Mobile portrait',  liveAspect: '393×852',  liveDevice: [393, 852] },
+    mobile_landscape: { viewBox: '0 0 1700 1280', stageW: 836, stageH: 629,  label: 'Mobile landscape', liveAspect: '852×393',  liveDevice: [852, 393] },
+    tablet_portrait:  { viewBox: '0 0 1280 1700', stageW: 700, stageH: 930,  label: 'Tablet portrait',  liveAspect: '768×1024', liveDevice: [768, 1024] },
+    tablet_landscape: { viewBox: '0 0 1920 1280', stageW: 880, stageH: 587,  label: 'Tablet landscape', liveAspect: '1024×768', liveDevice: [1024, 768] },
+    desktop:          { viewBox: '0 0 1920 1280', stageW: 980, stageH: 653,  label: 'Desktop',          liveAspect: '1280×800', liveDevice: [1280, 800] },
   };
   let currentViewport = 'mobile_portrait';
   function applyViewport() {
@@ -1681,6 +1785,192 @@
   } catch (e) {}
   applyViewport();
 
+  // ---- V3.8.3 Step 1: zoom slider (scale the stage-frame) ----
+  let stageZoom = 100;
+  function applyZoom() {
+    const sf = document.getElementById('stageFrame');
+    if (sf) sf.style.transform = 'scale(' + (stageZoom / 100) + ')';
+    const ro = document.getElementById('zoomReadout');
+    if (ro) ro.textContent = stageZoom + '%';
+    // Also rescale the live preview to match so the side-by-side view
+    // shows comparable physical size.
+    const lp = document.getElementById('livePreview');
+    if (lp) lp.style.transform = 'scale(' + (stageZoom / 100) + ')';
+    if (lp) lp.style.transformOrigin = 'top left';
+  }
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    if (typeof prefs.stageZoom === 'number' && prefs.stageZoom >= 40 && prefs.stageZoom <= 200) {
+      stageZoom = prefs.stageZoom;
+    }
+  } catch (e) {}
+  const zoomRange = document.getElementById('zoomRange');
+  if (zoomRange) {
+    zoomRange.value = stageZoom;
+    zoomRange.addEventListener('input', () => {
+      stageZoom = parseInt(zoomRange.value, 10) || 100;
+      applyZoom();
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode })); } catch (e) {}
+    });
+  }
+  applyZoom();
+
+  // ---- V3.8.3 Step 4: layout-mode toggle (Editor / Side-by-side / Preview) ----
+  let layoutMode = 'editor';
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    if (['editor','side-by-side','preview'].includes(prefs.layoutMode)) layoutMode = prefs.layoutMode;
+  } catch (e) {}
+  function applyLayoutMode() {
+    const sf = document.getElementById('stageFrame');
+    const lp = document.getElementById('livePreview');
+    if (!sf || !lp) return;
+    if (layoutMode === 'editor') {
+      sf.style.display = '';
+      lp.style.display = 'none';
+    } else if (layoutMode === 'preview') {
+      sf.style.display = 'none';
+      lp.style.display = '';
+    } else { // side-by-side
+      sf.style.display = '';
+      lp.style.display = '';
+    }
+    document.querySelectorAll('.layout-mode button').forEach(b => {
+      const on = b.dataset.mode === layoutMode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-checked', String(on));
+    });
+    // When switching INTO a mode that needs the preview, drive the iframe.
+    if (layoutMode !== 'editor') driveLivePreview();
+  }
+  document.querySelectorAll('.layout-mode button').forEach(b => {
+    b.addEventListener('click', () => {
+      layoutMode = b.dataset.mode;
+      applyLayoutMode();
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode })); } catch (e) {}
+    });
+  });
+
+  // ---- V3.8.3 Step 3: iframe driver ----
+  // Compute the scrollY on the live page that maps to the active
+  // (viewport, scene, sub-scene). Uses the same slot math as scrollytelling-v3.html:
+  //   total slots = sum(subScenes per scene) + (sceneCount-1) transitions + 3 final hold
+  //   relScroll = currentSlot / totalSlots * (revealRangePx + transitionPx)
+  //   scrollY   = scrollyTop + relScroll
+  // We pick currentSlot = startSlot[scene] + subSceneIndex + 0.5 (mid-stage) so
+  // we land in the steady-state of the sub-scene rather than mid-fade.
+  const SCENE_DEFS_LITE = [
+    { num: 1, subScenes: 4 },
+    { num: 2, subScenes: 3 },
+    { num: 3, subScenes: 3 },
+    { num: 4, subScenes: 1 },
+    { num: 5, subScenes: 1 },
+    { num: 6, subScenes: 8 },
+  ];
+  function computeSceneSlotInfo() {
+    const TRANSITION_SLOTS = 1, FINAL_HOLD_SLOTS = 3;
+    let cum = 0;
+    const out = {};
+    SCENE_DEFS_LITE.forEach((sd, i) => {
+      out[sd.num] = { startSlot: cum, subScenes: sd.subScenes };
+      cum += sd.subScenes;
+      if (i < SCENE_DEFS_LITE.length - 1) cum += TRANSITION_SLOTS;
+    });
+    out._totalSlots = cum + FINAL_HOLD_SLOTS;
+    return out;
+  }
+  function computeScrollYForActive() {
+    const info = computeSceneSlotInfo();
+    const sceneInfo = info[parseInt(currentScene, 10)];
+    if (!sceneInfo) return 0;
+    const subId = currentSubScene[currentScene] || (currentScene + 'A');
+    const subIdx = subId.charCodeAt(subId.length - 1) - 65; // 'A' → 0
+    const slot = sceneInfo.startSlot + Math.max(0, Math.min(sceneInfo.subScenes - 1, subIdx)) + 0.5;
+    const mode = VIEWPORT_MODES[currentViewport];
+    const vh = mode.liveDevice[1];
+    const REVEAL_VH = 60, TRANSITION_VH = 60;
+    const revealRangePx = info._totalSlots * REVEAL_VH * (vh / 100);
+    const transitionPx = TRANSITION_VH * (vh / 100);
+    const totalRange = revealRangePx + transitionPx;
+    const relScroll = (slot / info._totalSlots) * totalRange;
+    // The live page's #scrolly element offsetTop varies based on the
+    // article-body-preview height before it. Approximation: 740 px on
+    // mobile (matches what we saw in the parent preview). The iframe
+    // exposes its real scrollyEl.offsetTop once loaded; we read that
+    // dynamically inside driveLivePreview().
+    return relScroll;
+  }
+  let iframeLoadedFor = null;
+  function driveLivePreview() {
+    const lp = document.getElementById('livePreview');
+    const fr = document.getElementById('liveFrame');
+    const status = document.getElementById('livePreviewStatus');
+    if (!lp || !fr) return;
+    if (layoutMode === 'editor') return; // not visible, skip
+    const mode = VIEWPORT_MODES[currentViewport];
+    const [w, h] = mode.liveDevice;
+    // Size the iframe to match the live device.
+    fr.style.width = w + 'px';
+    fr.style.height = h + 'px';
+    lp.style.width = w + 'px';
+    lp.style.height = h + 'px';
+    const targetSrc = 'scrollytelling-v3.html?embed=1&v=' + Date.now().toString(36).slice(-5);
+    // Only reload if viewport-changed or first load.
+    const cacheKey = w + 'x' + h;
+    if (iframeLoadedFor !== cacheKey) {
+      iframeLoadedFor = cacheKey;
+      if (status) status.textContent = 'Loading live page at ' + w + '×' + h + '…';
+      fr.src = targetSrc;
+      fr.addEventListener('load', () => {
+        if (status) status.textContent = 'Driving to ' + currentScene + currentSubScene[currentScene].slice(1) + ' at ' + w + '×' + h;
+        // Wait for the live page's init to finish, then drive scrollY.
+        try {
+          const win = fr.contentWindow;
+          // The live page's update() function handles scrollY-driven scenes.
+          // We compute the relative scroll position and fire scrollTo.
+          setTimeout(() => {
+            try {
+              // Find scrolly offsetTop INSIDE the iframe so we don't have
+              // to guess. If unavailable, fall back to relScroll alone.
+              const doc = win.document;
+              const scrolly = doc.getElementById('scrolly');
+              const scrollyTop = scrolly ? scrolly.offsetTop : 740;
+              const targetY = scrollyTop + computeScrollYForActive();
+              win.scrollTo(0, targetY);
+              if (status) status.textContent = '✓ ' + currentScene + currentSubScene[currentScene].slice(1) + ' at ' + w + '×' + h + ' (scrollY=' + Math.round(targetY) + ')';
+            } catch (e) {
+              if (status) status.textContent = '⚠ scroll failed: ' + e.message;
+            }
+          }, 800);
+        } catch (e) {
+          if (status) status.textContent = '⚠ load failed: ' + e.message;
+        }
+      }, { once: true });
+    } else {
+      // Just drive scrollY — already loaded.
+      try {
+        const win = fr.contentWindow;
+        const doc = win.document;
+        const scrolly = doc.getElementById('scrolly');
+        const scrollyTop = scrolly ? scrolly.offsetTop : 740;
+        const targetY = scrollyTop + computeScrollYForActive();
+        win.scrollTo(0, targetY);
+        if (status) status.textContent = '✓ ' + currentScene + currentSubScene[currentScene].slice(1) + ' at ' + w + '×' + h + ' (scrollY=' + Math.round(targetY) + ')';
+      } catch (e) {
+        if (status) status.textContent = '⚠ drive failed: ' + e.message;
+      }
+    }
+  }
+  // Re-drive when viewport / scene / sub-scene changes.
+  // (applyViewport, scene-tab click, sub-scene tab click all fire below;
+  // we hook into them by patching applyViewport + adding to existing handlers.)
+  const _origApplyViewport = applyViewport;
+  applyViewport = function () {
+    _origApplyViewport();
+    driveLivePreview();
+  };
+  applyLayoutMode();
+
   // ---- V3.8.2: sub-scene tab strip ----
   // Each top-level scene has multiple sub-scene reveal states that drive
   // which elements appear at each scroll-progress slot on the live page.
@@ -1722,7 +2012,8 @@
       btn.addEventListener('click', () => {
         currentSubScene[currentScene] = id;
         renderSubSceneBar();
-        try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene })); } catch (e) {}
+        try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode })); } catch (e) {}
+        if (typeof driveLivePreview === 'function') driveLivePreview();
       });
       bar.appendChild(btn);
     });
@@ -1748,11 +2039,12 @@
       currentScene = b.dataset.scene;
       // Persist preference (without bumping changeCount — tab switching
       // isn't an edit).
-      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene })); } catch (e) {}
+      try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode })); } catch (e) {}
       selected = null;
       selectedIds.clear();
       renderScene();
       renderSubSceneBar();
+      if (typeof driveLivePreview === 'function') driveLivePreview();
     });
   });
   // Restore tab on initial load — find the matching button and mark active.
