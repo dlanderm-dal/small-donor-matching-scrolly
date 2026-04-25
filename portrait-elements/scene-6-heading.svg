@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 200" width="1160" height="200">
+  <title>Scene 6 — heading</title>
+  <text font-family="'Source Serif 4', Georgia, serif" font-weight="700" fill="#1a1a1a" font-size="60">
+    <tspan x="0" y="68">What's better: one person giving $100</tspan>
+    <tspan x="0" y="148">or 10 people giving $10 each?</tspan>
+  </text>
+</svg>

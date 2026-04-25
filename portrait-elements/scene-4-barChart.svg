@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 510" width="600" height="510">
+  <title>Scene 4 — Tier 1 + Tier 2 + Tier 3 bar chart</title>
+  <line x1="50" y1="0" x2="50" y2="410" stroke="#707070" stroke-width="4"/>
+  <line x1="50" y1="410" x2="600" y2="410" stroke="#707070" stroke-width="4"/>
+  <!-- Three tier columns -->
+  <rect x="50" y="10" width="114" height="400" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3"/>
+  <rect x="175" y="160" width="114" height="250" fill="rgba(118,0,255,0.15)" stroke="#7600ff" stroke-width="3"/>
+  <rect x="300" y="260" width="114" height="150" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="3"/>
+  <!-- Green donor strips -->
+  <rect x="50" y="410" width="114" height="50" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="3"/>
+  <rect x="175" y="410" width="114" height="50" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="3"/>
+  <rect x="300" y="410" width="114" height="50" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="3"/>
+  <!-- Tier labels -->
+  <text x="107" y="-8" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="25" fill="#434343">Tier 1</text>
+  <text x="232" y="142" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="25" fill="#434343">Tier 2</text>
+  <text x="357" y="242" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="25" fill="#434343">Tier 3</text>
+  <!-- Inside-column dollar amounts -->
+  <text x="107" y="215" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="25" fill="#464546">$400</text>
+  <text x="232" y="295" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="25" fill="#464546">$250</text>
+  <text x="357" y="345" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="25" fill="#464546">$100</text>
+  <text x="232" y="478" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="22" fill="#434343">Donation</text>
+</svg>

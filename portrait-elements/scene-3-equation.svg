@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="800" height="220">
+  <title>Scene 3 — Tier 1 / Tier 2 / Total equation</title>
+  <g font-family="'Source Serif 4', Georgia, serif" font-size="36">
+    <!-- Tier 1 -->
+    <text x="0" y="40" fill="#434343">Tier 1</text>
+    <text x="180" y="40" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#229500">$50</text>
+    <text x="290" y="40" fill="#4e4e4e">+</text>
+    <text x="340" y="40" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#0027ff">$350</text>
+    <text x="475" y="40" fill="#4e4e4e">=</text>
+    <text x="525" y="40" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#7600ff">$400</text>
+    <!-- Tier 2 -->
+    <text x="0" y="100" fill="#434343">Tier 2</text>
+    <text x="180" y="100" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#229500">$50</text>
+    <text x="290" y="100" fill="#4e4e4e">+</text>
+    <text x="340" y="100" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#0027ff">$200</text>
+    <text x="475" y="100" fill="#4e4e4e">=</text>
+    <text x="525" y="100" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#7600ff">$250</text>
+    <!-- Total row -->
+    <line x1="180" y1="125" x2="262" y2="125" stroke="#444" stroke-width="2"/>
+    <line x1="525" y1="125" x2="650" y2="125" stroke="#444" stroke-width="2"/>
+    <text x="0" y="180" font-weight="700" fill="#434343">Total</text>
+    <text x="180" y="180" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#229500">$100</text>
+    <text x="290" y="180" font-style="italic" fill="#555" font-size="26">becomes</text>
+    <text x="525" y="180" font-family="'JetBrains Mono', monospace" font-weight="700" fill="#7600ff">$650</text>
+  </g>
+</svg>

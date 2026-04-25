@@ -139,6 +139,55 @@
   .group-shell .handle.ne, .group-shell .handle.sw { cursor: nesw-resize; }
   .group-shell.selected .handle { display: block; }
 
+  /* alignment toolbar — XD-style. Sits between header and canvas. */
+  .align-bar {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.4rem 1rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule-soft);
+    font: 500 12px/1 'Inter', sans-serif;
+    color: var(--ink-2);
+  }
+  .align-bar .ab-label {
+    font: 700 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .align-bar .ab-group {
+    display: flex; align-items: stretch; gap: 2px;
+    border: 1px solid var(--rule-soft);
+    padding: 2px;
+    background: #fff;
+  }
+  .align-bar .ab-group button {
+    background: transparent;
+    border: 0;
+    width: 32px; height: 28px;
+    cursor: pointer;
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .align-bar .ab-group button svg { width: 18px; height: 18px; display: block; }
+  .align-bar .ab-group button:hover { background: var(--rule-soft); }
+  .align-bar .ab-group button:disabled {
+    color: var(--ink-3); opacity: 0.4; cursor: not-allowed;
+  }
+  .align-bar .ab-group button:disabled:hover { background: transparent; }
+  .align-bar .ab-divider { display: inline-block; width: 1px; background: var(--rule-soft); margin: 2px 4px; }
+  .align-bar .ab-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+  .align-bar .ab-toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .align-bar .ab-toggle input { accent-color: var(--ink); }
+  .align-bar .sel-count {
+    font: 600 11px/1 'JetBrains Mono', monospace;
+    color: var(--ink-3);
+    padding: 4px 8px;
+    border: 1px solid var(--rule-soft);
+    background: #fff;
+  }
+  .align-bar .sel-count.has { color: var(--select); border-color: var(--select); }
+
   /* sidebar */
   aside.sidebar {
     width: 320px; flex: 0 0 auto;
@@ -267,6 +316,33 @@
     <button class="action" id="exportBtn">Export ↗</button>
   </div>
 </header>
+
+<!-- Adobe-XD-style alignment toolbar. With ONE element selected, alignment
+     buttons align that element to the CANVAS (artboard). With multiple
+     selected (Cmd/Shift-click to add), alignment is to the SELECTION's
+     bounding box. Distribute requires 3+ selected. Every alignment action
+     is recorded in the export JSON's alignmentLog so the implementer
+     knows the user's intent (e.g. "centered to canvas" vs "moved by hand"). -->
+<div class="align-bar" id="alignBar">
+  <span class="ab-label" id="abLabel">No selection</span>
+  <div class="ab-group" role="toolbar" aria-label="Alignment">
+    <button data-align="alignLeft"   title="Align Left (Cmd/Ctrl+Shift+L)" aria-label="Align Left"><svg viewBox="0 0 18 18"><line x1="2" y1="2" x2="2" y2="16" stroke="currentColor" stroke-width="2"/><rect x="3.5" y="4" width="9" height="3" fill="currentColor"/><rect x="3.5" y="11" width="13" height="3" fill="currentColor"/></svg></button>
+    <button data-align="alignCenter" title="Align Center horizontally" aria-label="Align Center"><svg viewBox="0 0 18 18"><line x1="9" y1="2" x2="9" y2="16" stroke="currentColor" stroke-width="2"/><rect x="4.5" y="4" width="9" height="3" fill="currentColor"/><rect x="2.5" y="11" width="13" height="3" fill="currentColor"/></svg></button>
+    <button data-align="alignRight"  title="Align Right (Cmd/Ctrl+Shift+R)" aria-label="Align Right"><svg viewBox="0 0 18 18"><line x1="16" y1="2" x2="16" y2="16" stroke="currentColor" stroke-width="2"/><rect x="5.5" y="4" width="9" height="3" fill="currentColor"/><rect x="1.5" y="11" width="13" height="3" fill="currentColor"/></svg></button>
+    <span class="ab-divider"></span>
+    <button data-align="alignTop"    title="Align Top (Cmd/Ctrl+Shift+T)" aria-label="Align Top"><svg viewBox="0 0 18 18"><line x1="2" y1="2" x2="16" y2="2" stroke="currentColor" stroke-width="2"/><rect x="4" y="3.5" width="3" height="9" fill="currentColor"/><rect x="11" y="3.5" width="3" height="13" fill="currentColor"/></svg></button>
+    <button data-align="alignMiddle" title="Align Middle vertically" aria-label="Align Middle"><svg viewBox="0 0 18 18"><line x1="2" y1="9" x2="16" y2="9" stroke="currentColor" stroke-width="2"/><rect x="4" y="4.5" width="3" height="9" fill="currentColor"/><rect x="11" y="2.5" width="3" height="13" fill="currentColor"/></svg></button>
+    <button data-align="alignBottom" title="Align Bottom (Cmd/Ctrl+Shift+B)" aria-label="Align Bottom"><svg viewBox="0 0 18 18"><line x1="2" y1="16" x2="16" y2="16" stroke="currentColor" stroke-width="2"/><rect x="4" y="5.5" width="3" height="9" fill="currentColor"/><rect x="11" y="1.5" width="3" height="13" fill="currentColor"/></svg></button>
+    <span class="ab-divider"></span>
+    <button data-align="distributeH" title="Distribute Horizontally (3+ selected)" aria-label="Distribute Horizontal"><svg viewBox="0 0 18 18"><rect x="0.5" y="4" width="3" height="10" fill="currentColor"/><rect x="7.5" y="4" width="3" height="10" fill="currentColor"/><rect x="14.5" y="4" width="3" height="10" fill="currentColor"/></svg></button>
+    <button data-align="distributeV" title="Distribute Vertically (3+ selected)" aria-label="Distribute Vertical"><svg viewBox="0 0 18 18"><rect x="4" y="0.5" width="10" height="3" fill="currentColor"/><rect x="4" y="7.5" width="10" height="3" fill="currentColor"/><rect x="4" y="14.5" width="10" height="3" fill="currentColor"/></svg></button>
+  </div>
+  <div class="ab-right">
+    <label class="ab-toggle" title="Snap to other elements' edges and centers while dragging"><input type="checkbox" id="snapToggle" checked> Smart guides</label>
+    <button class="action secondary" id="downloadSvgsBtn" style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Backup SVGs ↓</button>
+    <span class="sel-count" id="selCount">0 selected</span>
+  </div>
+</div>
 
 <main>
   <div class="canvas-area">
@@ -760,16 +836,24 @@
   };
 
   // ---- state ----
-  const STORAGE_KEY = 'sbs-portrait-editor-v1';
+  const STORAGE_KEY = 'sbs-portrait-editor-v2';
+  const ALIGN_LOG_KEY = 'sbs-portrait-align-log-v2';
   let currentScene = '1';
   let layout = {};       // { sceneId: { groupId: { x, y, scaleX, scaleY, hidden } } }
-  let selected = null;   // { sceneId, groupId }
+  let selected = null;   // single-element handle for backward compat with the readout
+  let selectedIds = new Set();  // multi-selection set (group ids in current scene)
+  let alignmentLog = []; // every alignment/distribute op the user runs (recorded in export)
+  let snapEnabled = true;  // smart guides on by default
 
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
       if (saved && typeof saved === 'object') layout = saved;
     } catch (e) { layout = {}; }
+    try {
+      const lg = JSON.parse(localStorage.getItem(ALIGN_LOG_KEY) || '[]');
+      if (Array.isArray(lg)) alignmentLog = lg;
+    } catch (e) { alignmentLog = []; }
     // Seed missing groups with defaults
     Object.keys(SCENES).forEach(s => {
       layout[s] = layout[s] || {};
@@ -781,8 +865,146 @@
     });
   }
   function save() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(layout)); } catch (e) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
+      localStorage.setItem(ALIGN_LOG_KEY, JSON.stringify(alignmentLog));
+    } catch (e) {}
     document.getElementById('savedTag').textContent = 'Saved · ' + new Date().toLocaleTimeString();
+  }
+
+  // ---- alignment math ----
+  // Returns the bounding box of a list of group ids in canvas (viewBox)
+  // coords. Each group's bbox in canvas coords = (state.x, state.y) to
+  // (state.x + bbox.w * scaleX, state.y + bbox.h * scaleY).
+  function groupBounds(id) {
+    const def = SCENES[currentScene].find(g => g.id === id);
+    const state = layout[currentScene][id];
+    return {
+      x: state.x, y: state.y,
+      w: def.bbox.w * state.scaleX,
+      h: def.bbox.h * state.scaleY,
+      cx: state.x + def.bbox.w * state.scaleX / 2,
+      cy: state.y + def.bbox.h * state.scaleY / 2
+    };
+  }
+  function unionBounds(ids) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ids.forEach(id => {
+      const b = groupBounds(id);
+      minX = Math.min(minX, b.x); minY = Math.min(minY, b.y);
+      maxX = Math.max(maxX, b.x + b.w); maxY = Math.max(maxY, b.y + b.h);
+    });
+    return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
+  }
+  function canvasBounds() { return { x: 0, y: 0, w: 1280, h: 2050 }; }
+
+  // Adobe XD behavior: 1 selected → align to artboard (canvas);
+  // 2+ selected → align to selection's bounding box.
+  function alignSelected(action) {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const mode = ids.length === 1 ? 'canvas' : 'selection';
+    const target = mode === 'canvas' ? canvasBounds() : unionBounds(ids);
+
+    // Distribute is gap-based per XD. Requires 3+ selected.
+    if (action === 'distributeH' || action === 'distributeV') {
+      if (ids.length < 3) {
+        flashMessage('Distribute needs 3+ elements selected');
+        return;
+      }
+      distributeGaps(ids, action === 'distributeH' ? 'h' : 'v');
+    } else {
+      ids.forEach(id => {
+        const def = SCENES[currentScene].find(g => g.id === id);
+        const state = layout[currentScene][id];
+        const w = def.bbox.w * state.scaleX;
+        const h = def.bbox.h * state.scaleY;
+        if (action === 'alignLeft')   state.x = target.x;
+        if (action === 'alignCenter') state.x = target.x + (target.w - w) / 2;
+        if (action === 'alignRight')  state.x = target.x + target.w - w;
+        if (action === 'alignTop')    state.y = target.y;
+        if (action === 'alignMiddle') state.y = target.y + (target.h - h) / 2;
+        if (action === 'alignBottom') state.y = target.y + target.h - h;
+      });
+    }
+
+    alignmentLog.push({
+      action, mode, scene: currentScene,
+      targets: ids.slice(),
+      timestamp: new Date().toISOString()
+    });
+    save();
+    renderScene();
+    flashMessage(action.replace(/([A-Z])/g, ' $1').toLowerCase() + (mode === 'canvas' ? ' to canvas' : ' to selection'));
+  }
+  // Distribute by EDGE GAP (XD's behavior, not center-based like Illustrator).
+  // Sort by axis position, keep first/last fixed, normalize the gap between
+  // adjacent edges so all gaps are equal.
+  function distributeGaps(ids, axis) {
+    const items = ids.map(id => ({ id, b: groupBounds(id) }));
+    items.sort((a, b) => axis === 'h' ? a.b.x - b.b.x : a.b.y - b.b.y);
+    const first = items[0].b;
+    const last = items[items.length - 1].b;
+    const totalSpan = axis === 'h'
+      ? (last.x - (first.x + first.w))
+      : (last.y - (first.y + first.h));
+    const innerSum = items.slice(1, -1).reduce((s, it) => s + (axis === 'h' ? it.b.w : it.b.h), 0);
+    const gapCount = items.length - 1;
+    const gap = (totalSpan - innerSum) / gapCount;
+    let cursor = axis === 'h' ? (first.x + first.w + gap) : (first.y + first.h + gap);
+    for (let i = 1; i < items.length - 1; i++) {
+      const it = items[i];
+      const state = layout[currentScene][it.id];
+      if (axis === 'h') { state.x = cursor; cursor += it.b.w + gap; }
+      else              { state.y = cursor; cursor += it.b.h + gap; }
+    }
+  }
+
+  // Smart-guides snap: while dragging, if the moving group's edges or
+  // center come within SNAP_TOL of another group's edges/center, snap.
+  const SNAP_TOL = 8; // viewBox units
+  function snapToGuides(id, x, y) {
+    if (!snapEnabled) return { x, y };
+    const def = SCENES[currentScene].find(g => g.id === id);
+    const state = layout[currentScene][id];
+    const w = def.bbox.w * state.scaleX;
+    const h = def.bbox.h * state.scaleY;
+    const cands = SCENES[currentScene]
+      .filter(g => g.id !== id && !layout[currentScene][g.id].hidden)
+      .map(g => groupBounds(g.id));
+    cands.push(canvasBounds()); // also snap to canvas edges + center
+    cands.push({ x: 1280/2 - 0.5, y: 0, w: 1, h: 2050, cx: 640, cy: 1025 }); // canvas vertical centerline
+    const myCx = x + w/2, myCy = y + h/2;
+    const myEdges = { x: x, mid: myCx, end: x + w, y: y, midY: myCy, endY: y + h };
+    let snapX = x, snapY = y, sxd = SNAP_TOL+1, syd = SNAP_TOL+1;
+    cands.forEach(c => {
+      // x snaps: my-left↔c-left, my-mid↔c-mid, my-right↔c-right, my-left↔c-right, my-right↔c-left
+      [{a:myEdges.x, b:c.x},{a:myEdges.mid, b:c.cx ?? c.x + c.w/2},{a:myEdges.end, b:c.x + c.w},{a:myEdges.x, b:c.x + c.w},{a:myEdges.end, b:c.x}].forEach(p => {
+        const d = Math.abs(p.a - p.b);
+        if (d < sxd) { sxd = d; snapX = x + (p.b - p.a); }
+      });
+      [{a:myEdges.y, b:c.y},{a:myEdges.midY, b:c.cy ?? c.y + c.h/2},{a:myEdges.endY, b:c.y + c.h},{a:myEdges.y, b:c.y + c.h},{a:myEdges.endY, b:c.y}].forEach(p => {
+        const d = Math.abs(p.a - p.b);
+        if (d < syd) { syd = d; snapY = y + (p.b - p.a); }
+      });
+    });
+    return { x: sxd <= SNAP_TOL ? snapX : x, y: syd <= SNAP_TOL ? snapY : y };
+  }
+
+  // tiny toast
+  let _toastT = 0;
+  function flashMessage(msg) {
+    let t = document.getElementById('_editorToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = '_editorToast';
+      t.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fafafa;padding:8px 14px;font:600 12px/1 Inter,sans-serif;letter-spacing:0.08em;text-transform:uppercase;z-index:300;pointer-events:none;opacity:0;transition:opacity 0.18s;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    clearTimeout(_toastT);
+    _toastT = setTimeout(() => { t.style.opacity = '0'; }, 1300);
   }
 
   // ---- rendering ----
@@ -845,12 +1067,14 @@
       });
       li.appendChild(name);
       li.appendChild(vis);
-      li.addEventListener('click', () => { selectGroup(g.id); });
-      if (selected && selected.sceneId === currentScene && selected.groupId === g.id) li.classList.add('selected');
+      li.addEventListener('click', (e) => {
+        selectGroup(g.id, e.shiftKey || e.metaKey || e.ctrlKey);
+      });
+      if (selectedIds.has(g.id)) li.classList.add('selected');
       groupListEl.appendChild(li);
     });
 
-    refreshReadout();
+    refreshSelectionUI();
   }
 
   function attachInteractions(shell, g) {
@@ -859,6 +1083,7 @@
     let pointerStart = null;
     let stateStart = null;
     let bboxStart = null;
+    let groupStarts = null; // for multi-drag: { id: { x, y } }
 
     function getSvgPoint(evt) {
       const svg = document.getElementById('canvas');
@@ -872,13 +1097,37 @@
       evt.stopPropagation();
       const target = evt.target;
       const isHandle = target.classList && target.classList.contains('handle');
-      mode = isHandle ? 'resize' : 'drag';
+      const additive = evt.shiftKey || evt.metaKey || evt.ctrlKey;
+      // Selection logic — XD-like:
+      //   - clicking an unselected element with no modifier replaces selection
+      //   - shift/cmd-click toggles inclusion
+      //   - clicking an already-selected element with no modifier keeps the
+      //     multi-selection (so user can drag the whole group)
+      if (!additive) {
+        if (!selectedIds.has(g.id)) selectedIds = new Set([g.id]);
+      } else {
+        if (selectedIds.has(g.id)) selectedIds.delete(g.id);
+        else selectedIds.add(g.id);
+      }
+      // Resize handles only valid when single-selected
+      if (isHandle && selectedIds.size > 1) {
+        // Convert resize on multi-selection to drag
+        mode = 'drag';
+      } else {
+        mode = isHandle ? 'resize' : 'drag';
+      }
       corner = isHandle ? target.dataset.corner : null;
       pointerStart = getSvgPoint(evt);
       stateStart = Object.assign({}, layout[currentScene][g.id]);
       bboxStart = Object.assign({}, g.bbox);
+      // Cache start positions for ALL selected groups for multi-drag
+      groupStarts = {};
+      selectedIds.forEach(id => {
+        groupStarts[id] = { x: layout[currentScene][id].x, y: layout[currentScene][id].y };
+      });
       shell.classList.add('dragging');
-      selectGroup(g.id);
+      selected = { sceneId: currentScene, groupId: g.id };
+      refreshSelectionUI();
       window.addEventListener('pointermove', onmove);
       window.addEventListener('pointerup', onend, { once: true });
       try { evt.target.setPointerCapture(evt.pointerId); } catch (e) {}
@@ -890,8 +1139,24 @@
       const dy = p.y - pointerStart.y;
       const state = layout[currentScene][g.id];
       if (mode === 'drag') {
-        state.x = stateStart.x + dx;
-        state.y = stateStart.y + dy;
+        // For multi-drag, move every selected group by the same delta.
+        // For single-drag, also apply smart-guide snap.
+        if (selectedIds.size > 1) {
+          selectedIds.forEach(id => {
+            const s = layout[currentScene][id];
+            s.x = groupStarts[id].x + dx;
+            s.y = groupStarts[id].y + dy;
+            // Update DOM transform for each
+            const sh = document.querySelector('[data-group="' + id + '"]');
+            if (sh) sh.style.transform = `translate(${s.x}px, ${s.y}px) scale(${s.scaleX}, ${s.scaleY})`;
+          });
+        } else {
+          let nx = stateStart.x + dx;
+          let ny = stateStart.y + dy;
+          const snap = snapToGuides(g.id, nx, ny);
+          state.x = snap.x; state.y = snap.y;
+          shell.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scaleX}, ${state.scaleY})`;
+        }
       } else if (mode === 'resize') {
         const proportional = !evt.shiftKey;
         const wOrig = bboxStart.w * stateStart.scaleX;
@@ -904,9 +1169,8 @@
         if (proportional) {
           const sx = newW / bboxStart.w;
           const sy = newH / bboxStart.h;
-          const s = Math.max(sx, sy); // proportional uses the larger
+          const s = Math.max(sx, sy);
           state.scaleX = s; state.scaleY = s;
-          // recompute X/Y by anchoring to corner opposite to dragged
           if (corner === 'se') { state.x = stateStart.x; state.y = stateStart.y; }
           if (corner === 'sw') { state.x = stateStart.x + (wOrig - bboxStart.w * s); state.y = stateStart.y; }
           if (corner === 'ne') { state.x = stateStart.x; state.y = stateStart.y + (hOrig - bboxStart.h * s); }
@@ -916,8 +1180,8 @@
           state.scaleY = newH / bboxStart.h;
           state.x = newX; state.y = newY;
         }
+        shell.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scaleX}, ${state.scaleY})`;
       }
-      shell.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scaleX}, ${state.scaleY})`;
       refreshReadout();
     }
 
@@ -931,10 +1195,32 @@
     shell.addEventListener('pointerdown', start);
   }
 
-  function selectGroup(groupId) {
+  function selectGroup(groupId, additive) {
+    if (additive) {
+      if (selectedIds.has(groupId)) selectedIds.delete(groupId);
+      else selectedIds.add(groupId);
+    } else {
+      selectedIds = new Set([groupId]);
+    }
     selected = { sceneId: currentScene, groupId };
-    Array.from(layer.children).forEach(c => c.classList.toggle('selected', c.dataset.group === groupId));
-    Array.from(groupListEl.children).forEach(li => li.classList.toggle('selected', li.dataset.group === groupId));
+    refreshSelectionUI();
+  }
+  function refreshSelectionUI() {
+    Array.from(layer.children).forEach(c => c.classList.toggle('selected', selectedIds.has(c.dataset.group)));
+    Array.from(groupListEl.children).forEach(li => li.classList.toggle('selected', selectedIds.has(li.dataset.group)));
+    const n = selectedIds.size;
+    const sc = document.getElementById('selCount');
+    sc.textContent = n + ' selected';
+    sc.classList.toggle('has', n > 0);
+    // Update label "Align to canvas" vs "Align to selection"
+    const lbl = document.getElementById('abLabel');
+    if (n === 0) lbl.textContent = 'No selection';
+    else if (n === 1) lbl.textContent = 'Align to canvas';
+    else lbl.textContent = 'Align to selection (' + n + ')';
+    // Disable distribute when < 3 selected
+    document.querySelectorAll('.ab-group button[data-align="distributeH"], .ab-group button[data-align="distributeV"]').forEach(b => {
+      b.disabled = n < 3;
+    });
     refreshReadout();
   }
 
@@ -961,8 +1247,49 @@
       b.classList.add('active');
       currentScene = b.dataset.scene;
       selected = null;
+      selectedIds.clear();
       renderScene();
     });
+  });
+
+  // ---- alignment toolbar ----
+  document.querySelectorAll('.align-bar .ab-group button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const action = btn.dataset.align;
+      if (!action) return;
+      alignSelected(action);
+    });
+  });
+
+  // ---- snap-toggle ----
+  document.getElementById('snapToggle').addEventListener('change', (e) => {
+    snapEnabled = e.target.checked;
+  });
+
+  // ---- background click clears selection ----
+  document.getElementById('canvas').addEventListener('pointerdown', (evt) => {
+    // Only if click hits the SVG itself (not inside a group)
+    if (evt.target.id === 'canvas' || evt.target === document.getElementById('groupsLayer')) {
+      selectedIds.clear();
+      selected = null;
+      refreshSelectionUI();
+    }
+  });
+
+  // ---- keyboard shortcuts (XD parity) ----
+  document.addEventListener('keydown', (e) => {
+    const isCmd = e.metaKey || e.ctrlKey;
+    if (!isCmd || !e.shiftKey) return;
+    const k = e.key.toLowerCase();
+    let action = null;
+    if (k === 'l') action = 'alignLeft';
+    if (k === 'r') action = 'alignRight';
+    if (k === 't') action = 'alignTop';
+    if (k === 'b') action = 'alignBottom';
+    if (k === 'c') action = 'alignCenter';
+    if (k === 'm') action = 'alignMiddle';
+    if (action) { e.preventDefault(); alignSelected(action); }
   });
 
   // ---- reset scene ----
@@ -975,13 +1302,16 @@
     renderScene();
   });
 
-  // ---- esc to deselect ----
+  // ---- esc to deselect, cmd/ctrl-A to select all in scene ----
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+      selectedIds.clear();
       selected = null;
-      Array.from(layer.children).forEach(c => c.classList.remove('selected'));
-      Array.from(groupListEl.children).forEach(li => li.classList.remove('selected'));
-      refreshReadout();
+      refreshSelectionUI();
+    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a' && !e.shiftKey) {
+      e.preventDefault();
+      selectedIds = new Set(SCENES[currentScene].map(g => g.id));
+      refreshSelectionUI();
     }
   });
 
@@ -990,11 +1320,19 @@
     const out = {
       meta: {
         source: 'scrollytelling-portrait-editor',
-        version: '1.0',
+        version: '2.0',
         viewBox: '0 0 1280 2050',
-        generated: new Date().toISOString()
+        generated: new Date().toISOString(),
+        notes: 'alignmentLog records every align/distribute action the user ' +
+               'ran, in order. Each entry tells the implementer the USER\'S ' +
+               'INTENT (e.g. centered to canvas, distributed by gap) — not ' +
+               'just the resulting coordinates. Apply alignment ops in order ' +
+               'on top of the per-group transforms below; the final coords ' +
+               'in scenes[].x/y already reflect the cumulative effect of ' +
+               'these ops + any free-form drag.'
       },
-      scenes: {}
+      scenes: {},
+      alignmentLog: alignmentLog.slice() // append-only history of XD-style ops
     };
     Object.keys(SCENES).forEach(s => {
       out.scenes[s] = {};
@@ -1013,6 +1351,94 @@
     });
     return out;
   }
+
+  // ---- SVG download (per-element backup files for Adobe XD) ----
+  // Each movable element rendered to a standalone SVG file, sized to its
+  // bbox. foreignObject content is converted to <text> with manual line
+  // breaks so the SVGs open cleanly in XD (which does not render
+  // foreignObject).
+  function downloadAllSvgs() {
+    const files = [];
+    Object.keys(SCENES).forEach(s => {
+      SCENES[s].forEach(g => {
+        files.push({ name: 'scene-' + s + '-' + g.id + '.svg', svg: buildStandaloneSvg(g) });
+      });
+    });
+    // Trigger downloads sequentially (some browsers throttle if all at once)
+    let i = 0;
+    function tick() {
+      if (i >= files.length) { flashMessage('Downloaded ' + files.length + ' SVGs'); return; }
+      const f = files[i++];
+      const blob = new Blob([f.svg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = f.name; a.click();
+      URL.revokeObjectURL(url);
+      setTimeout(tick, 110);
+    }
+    tick();
+  }
+  function buildStandaloneSvg(g) {
+    const w = g.bbox.w, h = g.bbox.h;
+    // Render the group into an off-screen SVG so we can serialize it.
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const root = document.createElementNS(svgNS, 'svg');
+    root.setAttribute('xmlns', svgNS);
+    root.setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+    root.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    root.setAttribute('width', w);
+    root.setAttribute('height', h);
+    const content = g.render();
+    root.appendChild(content);
+    // Replace any foreignObject with native SVG <text> for XD compatibility.
+    Array.from(root.querySelectorAll('foreignObject')).forEach(fo => {
+      const x = parseFloat(fo.getAttribute('x')) || 0;
+      const y = parseFloat(fo.getAttribute('y')) || 0;
+      const fw = parseFloat(fo.getAttribute('width')) || w;
+      const div = fo.querySelector('div');
+      const text = (div ? div.textContent : '').trim();
+      // Pull font-size from inline style; default 36.
+      const styleStr = (div ? div.getAttribute('style') || '' : '');
+      const fsMatch = styleStr.match(/font-size:\s*(\d+)/);
+      const fwMatch = styleStr.match(/font-weight:\s*(\d+)/);
+      const fontSize = fsMatch ? parseInt(fsMatch[1], 10) : 36;
+      const fontWeight = fwMatch ? parseInt(fwMatch[1], 10) : 400;
+      const ff = "Source Serif 4, Georgia, serif";
+      // Approximate wrap: assume ~0.55em char width; line break at word boundaries.
+      const charsPerLine = Math.max(8, Math.floor(fw / (fontSize * 0.55)));
+      const lines = wrapText(text, charsPerLine);
+      const lineH = Math.round(fontSize * 1.2);
+      const t = document.createElementNS(svgNS, 'text');
+      t.setAttribute('x', x);
+      t.setAttribute('y', y + fontSize);
+      t.setAttribute('font-family', ff);
+      t.setAttribute('font-size', fontSize);
+      t.setAttribute('font-weight', fontWeight);
+      t.setAttribute('fill', '#1a1a1a');
+      lines.forEach((ln, i) => {
+        const ts = document.createElementNS(svgNS, 'tspan');
+        ts.setAttribute('x', x);
+        if (i > 0) ts.setAttribute('dy', lineH);
+        ts.textContent = ln;
+        t.appendChild(ts);
+      });
+      fo.parentNode.replaceChild(t, fo);
+    });
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(root);
+  }
+  function wrapText(text, maxChars) {
+    const words = text.split(/\s+/);
+    const lines = [];
+    let cur = '';
+    words.forEach(w => {
+      if (!cur) cur = w;
+      else if ((cur + ' ' + w).length <= maxChars) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    });
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  document.getElementById('downloadSvgsBtn').addEventListener('click', downloadAllSvgs);
   const modal = document.getElementById('modal');
   const exportOut = document.getElementById('exportOut');
   document.getElementById('exportBtn').addEventListener('click', () => {
