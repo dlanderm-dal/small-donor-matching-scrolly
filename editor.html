@@ -2195,22 +2195,15 @@
     const iframeVB = iframeSVG.getAttribute('viewBox') || '0 0 1280 1700';
     document.getElementById('canvas').setAttribute('viewBox', iframeVB);
 
-    // V3.8.4 — getCTM() on an element returns local→viewport (screen) px.
-    // The editor canvas has its own viewBox (same dims as iframe), so we
-    // need local→viewBox to clone correctly. Compute that by:
-    //   svgRoot.getCTM() = viewBox→viewport
-    //   (svgRoot.getCTM())⁻¹ * el.getCTM() = local→viewBox
-    const svgRootCTM = iframeSVG.getCTM();
-    if (!svgRootCTM) {
-      if (status) status.textContent = '⚠ iframe SVG CTM null';
-      renderScene();
-      return;
-    }
-    const svgRootInv = svgRootCTM.inverse();
+    // V3.10 — el.getCTM() per SVG spec returns local→nearest-viewport in
+    // viewBox user units, NOT screen pixels. So we use it DIRECTLY — no
+    // matrix-inverse dance. The previous code multiplied by
+    // inverse(svgRoot.getCTM()), but on the outermost <svg> some browsers
+    // return viewBox→CSS-pixels there (instead of null per spec), which
+    // baked a viewportPx/viewBoxUnits scale (~0.31) into every clone —
+    // that's the "artificial shrinking" you saw.
     function elInViewBox(el) {
-      const elCTM = el.getCTM();
-      if (!elCTM) return null;
-      return svgRootInv.multiply(elCTM);
+      try { return el.getCTM(); } catch (e) { return null; }
     }
 
     Object.keys(registry).forEach(groupId => {
