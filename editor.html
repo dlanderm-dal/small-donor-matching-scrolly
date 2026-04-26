@@ -543,6 +543,9 @@
           <input type="checkbox" id="liveSourceToggle"> Use live SVG
         </label>
       </div>
+      <div class="ca-group">
+        <button id="harvestBtn" title="Snapshot whatever the live preview is currently showing and clone it onto the editor canvas — every visible id'd element in the active scene's group, exactly as positioned." style="background:transparent;color:var(--ink);border:1px solid var(--ink);padding:4px 10px;font:600 11px/1 'Inter',sans-serif;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Harvest live ↺</button>
+      </div>
       <div class="ca-group" style="margin-left:auto; color: var(--ink-3);">
         <span id="livePreviewStatus" style="font-style:italic;">Live preview ready</span>
       </div>
@@ -2181,6 +2184,36 @@
       const leftovers = Object.keys(sceneSpec).filter(id => !covered.has(id) && !sceneSpec[id].hide);
       if (leftovers.length) registry.ungrouped = leftovers;
     }
+
+    // V3.10.2 — Harvest mode: walk the iframe's #scene-N group and pick up
+    // every visible id'd descendant, even ones the dict doesn't know about.
+    // This is what "Harvest live preview" means: snapshot exactly what's on
+    // screen, regardless of registry/dict state. Decorative/unconfigured
+    // elements still get cloned so you can drag them and add a dict entry.
+    try {
+      const sceneGroup = iframeSVG.querySelector('#scene-' + currentScene);
+      if (sceneGroup) {
+        const covered = new Set();
+        Object.values(registry).forEach(arr => arr.forEach(id => covered.add(id)));
+        const harvested = [];
+        sceneGroup.querySelectorAll('[id]').forEach(el => {
+          const id = el.id;
+          if (covered.has(id)) return;
+          if (id === 'scene-' + currentScene) return;
+          // Skip elements explicitly hidden via display:none.
+          const cs = iframeWin && iframeWin.getComputedStyle ? iframeWin.getComputedStyle(el) : null;
+          if (cs && cs.display === 'none') return;
+          // Skip wrapper <g>s — they have their own children we'll catch.
+          if (el.tagName === 'g' && el.children && el.children.length > 0) {
+            // Only skip if children include other id'd elements; otherwise treat as leaf.
+            const hasIdChild = Array.from(el.querySelectorAll('[id]')).length > 0;
+            if (hasIdChild) return;
+          }
+          harvested.push(id);
+        });
+        if (harvested.length) registry.harvested = harvested;
+      }
+    } catch (e) {}
     // V3.8.5 — clone iframe styles + wrap groupsLayer's content in a
     // .sbs-root-classed wrapper so the scoped CSS rules apply.
     cloneIframeStyles();
@@ -3034,6 +3067,31 @@
     flashMessage('Scene ' + currentScene + ' SVG downloaded');
   }
   document.getElementById('exportSceneSvgBtn').addEventListener('click', downloadCurrentSceneSvg);
+
+  // V3.10.2 — Manual harvest button. Force-flips Use-live-SVG ON, drives the
+  // iframe to the current scene+sub-scene, then re-clones whatever's visible.
+  // Useful when the auto-harvest fired before the iframe finished rendering,
+  // or when you want a fresh snapshot after scrolling/resizing the live page.
+  const harvestBtn = document.getElementById('harvestBtn');
+  if (harvestBtn) {
+    harvestBtn.addEventListener('click', () => {
+      if (!liveSourceMode) {
+        liveSourceMode = true;
+        if (liveSrcToggle) liveSrcToggle.checked = true;
+        try { localStorage.setItem(PREFS_KEY, JSON.stringify({ currentScene, snapEnabled, currentViewport, currentSubScene, stageZoom, layoutMode, liveSourceMode })); } catch (e) {}
+      }
+      // Re-drive iframe scrollY first so we snapshot the right scene state,
+      // then re-clone after a delay long enough for rAF + transitions.
+      const status = document.getElementById('livePreviewStatus');
+      if (status) status.textContent = 'Harvesting…';
+      try { driveLivePreview(); } catch (e) {}
+      setTimeout(() => {
+        try { renderSceneFromLiveSVG(); } catch (e) {
+          if (status) status.textContent = '⚠ harvest failed: ' + e.message;
+        }
+      }, 900);
+    });
+  }
   const modal = document.getElementById('modal');
   const exportOut = document.getElementById('exportOut');
   function markExported() {
