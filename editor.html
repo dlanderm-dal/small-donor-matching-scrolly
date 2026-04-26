@@ -2150,10 +2150,36 @@
     }
     const layer = document.getElementById('groupsLayer');
     layer.innerHTML = '';
-    const registry = LIVE_GROUP_REGISTRY[currentScene];
-    if (!registry) {
+
+    // V3.10 — read the live MOBILE_LAYOUTS_V3 spec from the iframe window
+    // (exposed via `window.MOBILE_LAYOUTS_V3 = ...` in scrollytelling-v3.html).
+    // We derive draggable groups from this dict so nothing is ever stale: any
+    // element with a dict entry becomes draggable, grouped per the hand-coded
+    // LIVE_GROUP_REGISTRY for collective row-drag, with an "ungrouped" bucket
+    // catching whatever the registry forgot.
+    const iframeWin = (function () {
+      try { return document.getElementById('liveFrame').contentWindow; } catch (e) { return null; }
+    })();
+    const liveDict = (iframeWin && iframeWin.MOBILE_LAYOUTS_V3) || null;
+    const sceneSpec = liveDict ? liveDict[currentScene] : null;
+    const handRegistry = LIVE_GROUP_REGISTRY[currentScene] || null;
+    if (!sceneSpec && !handRegistry) {
       renderScene();
       return;
+    }
+
+    // Build the effective registry: hand-coded groupings first (so the user
+    // gets sensible row-drag), then an "ungrouped" bucket containing every
+    // dict-entry id NOT covered by the hand-coded groups.
+    const registry = {};
+    if (handRegistry) {
+      Object.keys(handRegistry).forEach(g => { registry[g] = handRegistry[g].slice(); });
+    }
+    if (sceneSpec) {
+      const covered = new Set();
+      Object.values(registry).forEach(arr => arr.forEach(id => covered.add(id)));
+      const leftovers = Object.keys(sceneSpec).filter(id => !covered.has(id) && !sceneSpec[id].hide);
+      if (leftovers.length) registry.ungrouped = leftovers;
     }
     // V3.8.5 — clone iframe styles + wrap groupsLayer's content in a
     // .sbs-root-classed wrapper so the scoped CSS rules apply.
@@ -2252,6 +2278,13 @@
         clone.setAttribute('data-svg-id', realId);
         clone.setAttribute('data-orig-tx-e', tx.e.toFixed(2));
         clone.setAttribute('data-orig-tx-f', tx.f.toFixed(2));
+        // V3.10 — stash the original MOBILE_LAYOUTS_V3 spec for this id so
+        // buildMobileLayoutsV3Snippet can MERGE the user's drag/resize deltas
+        // with the existing styling (fontSize/fill/textAnchor/scale/etc.)
+        // instead of dropping properties on every round-trip.
+        if (sceneSpec && sceneSpec[realId]) {
+          try { clone.setAttribute('data-orig-spec', JSON.stringify(sceneSpec[realId])); } catch (e) {}
+        }
         clone.setAttribute('transform',
           'matrix(' + tx.a.toFixed(4) + ' ' + tx.b.toFixed(4) + ' ' + tx.c.toFixed(4) + ' ' + tx.d.toFixed(4) + ' ' +
           (tx.e - minX).toFixed(2) + ' ' + (tx.f - minY).toFixed(2) + ')');
@@ -2725,32 +2758,114 @@
     if (!shells.length) {
       return '/* MOBILE_LAYOUTS_V3 snippet unavailable — turn on "Use live SVG" and switch through every scene tab to populate the editor canvas. */';
     }
-    // Collect per-scene per-id absolute coords. The editor only renders ONE
-    // scene at a time, so we only have data for currentScene; use that.
+    // V3.10 — Merge mode. For each clone, read its stashed `data-orig-spec`
+    // (the existing MOBILE_LAYOUTS_V3 entry from the iframe) and overlay only
+    // what the user actually changed: x/y from drag, scale from resize. All
+    // other properties (fontSize, fill, fontWeight, fontFamily, textAnchor,
+    // hide, x1/y1/x2/y2 for lines) round-trip cleanly without regression.
+    //
+    // Scale capture: the shell's transform may include a scale() factor on
+    // top of the translate(). We parse both translate AND scale from the
+    // shell transform; if scale ≠ original spec scale (or ≠ 1 when none was
+    // set), we emit it.
+    function parseShellTransform(tx) {
+      const out = { tx: 0, ty: 0, sx: 1, sy: 1 };
+      if (!tx) return out;
+      const tm = tx.match(/translate\(\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*\)/);
+      if (tm) { out.tx = parseFloat(tm[1]); out.ty = parseFloat(tm[2]); }
+      const sm = tx.match(/scale\(\s*(-?[\d.]+)(?:[\s,]+(-?[\d.]+))?\s*\)/);
+      if (sm) {
+        out.sx = parseFloat(sm[1]);
+        out.sy = sm[2] != null ? parseFloat(sm[2]) : out.sx;
+      }
+      return out;
+    }
+    function origScalePair(spec) {
+      if (!spec || spec.scale == null) return [1, 1];
+      if (Array.isArray(spec.scale)) return [spec.scale[0], spec.scale[1]];
+      return [spec.scale, spec.scale];
+    }
+    function formatSpec(spec) {
+      // Stable property order so diffs read cleanly.
+      const order = ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'scale', 'textAnchor', 'fontSize', 'fontWeight', 'fontFamily', 'fill', 'hide'];
+      const keys = Object.keys(spec);
+      keys.sort((a, b) => {
+        const ai = order.indexOf(a), bi = order.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b);
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
+      const parts = keys.map(k => {
+        const v = spec[k];
+        if (Array.isArray(v)) return k + ': [' + v.map(n => Number(n).toString()).join(', ') + ']';
+        if (typeof v === 'number') return k + ': ' + v;
+        if (typeof v === 'boolean') return k + ': ' + v;
+        return k + ": '" + String(v).replace(/'/g, "\\'") + "'";
+      });
+      return '{ ' + parts.join(', ') + ' }';
+    }
+
     const lines = [];
     lines.push('// MOBILE_LAYOUTS_V3 snippet — generated by editor at ' + new Date().toISOString());
     lines.push('// Scene ' + currentScene + ' only. Re-run editor for other scenes.');
+    lines.push('// Merged with existing dict: x/y/scale reflect editor changes; all other');
+    lines.push('// properties (fontSize/fill/textAnchor/etc.) preserved from the live spec.');
     lines.push("'" + currentScene + "': {");
     shells.forEach(shell => {
-      const tx = shell.getAttribute('transform') || '';
-      const tm = tx.match(/translate\(\s*(-?[\d.]+)[\s,]+(-?[\d.]+)\s*\)/);
-      const curX = tm ? parseFloat(tm[1]) : 0;
-      const curY = tm ? parseFloat(tm[2]) : 0;
+      const shellT = parseShellTransform(shell.getAttribute('transform'));
       const initX = parseFloat(shell.getAttribute('data-init-min-x') || '0');
       const initY = parseFloat(shell.getAttribute('data-init-min-y') || '0');
-      const dx = curX - initX;
-      const dy = curY - initY;
+      const dx = shellT.tx - initX;
+      const dy = shellT.ty - initY;
       const groupId = shell.getAttribute('data-group') || '?';
-      lines.push('  // group: ' + groupId + (Math.abs(dx) + Math.abs(dy) > 0.5 ? ' (dragged Δ ' + Math.round(dx) + ', ' + Math.round(dy) + ')' : ''));
+      const dragNote = Math.abs(dx) + Math.abs(dy) > 0.5 ? ' (Δ ' + Math.round(dx) + ', ' + Math.round(dy) + ')' : '';
+      const scaleNote = (Math.abs(shellT.sx - 1) > 0.001 || Math.abs(shellT.sy - 1) > 0.001)
+        ? ' (scale ' + shellT.sx.toFixed(2) + ', ' + shellT.sy.toFixed(2) + ')' : '';
+      lines.push('  // group: ' + groupId + dragNote + scaleNote);
       shell.querySelectorAll('[data-svg-id]').forEach(child => {
         const id = child.getAttribute('data-svg-id');
         if (!id) return;
+        let origSpec = {};
+        try {
+          const raw = child.getAttribute('data-orig-spec');
+          if (raw) origSpec = JSON.parse(raw);
+        } catch (e) {}
         const ox = parseFloat(child.getAttribute('data-orig-tx-e') || '0');
         const oy = parseFloat(child.getAttribute('data-orig-tx-f') || '0');
-        const x = Math.round(ox + dx);
-        const y = Math.round(oy + dy);
+
+        // Build merged spec: start from origSpec, overlay drag/scale deltas.
+        const merged = Object.assign({}, origSpec);
+
+        // x/y override only when the source spec has x/y (lines use x1/y1/x2/y2).
+        const isLine = origSpec.x1 != null || origSpec.x2 != null;
+        if (isLine) {
+          if (origSpec.x1 != null) merged.x1 = Math.round(origSpec.x1 + dx);
+          if (origSpec.y1 != null) merged.y1 = Math.round(origSpec.y1 + dy);
+          if (origSpec.x2 != null) merged.x2 = Math.round(origSpec.x2 + dx);
+          if (origSpec.y2 != null) merged.y2 = Math.round(origSpec.y2 + dy);
+        } else {
+          merged.x = Math.round(ox + dx);
+          merged.y = Math.round(oy + dy);
+        }
+
+        // Scale capture: shell transform's scale is multiplied INTO the
+        // original spec's scale. New scale = origScale × shellScale.
+        const [osx, osy] = origScalePair(origSpec);
+        const newSx = osx * shellT.sx;
+        const newSy = osy * shellT.sy;
+        const scaleChanged = Math.abs(shellT.sx - 1) > 0.001 || Math.abs(shellT.sy - 1) > 0.001;
+        if (scaleChanged || origSpec.scale != null) {
+          if (Math.abs(newSx - newSy) < 0.001) {
+            if (Math.abs(newSx - 1) > 0.001) merged.scale = Number(newSx.toFixed(3));
+            else delete merged.scale;
+          } else {
+            merged.scale = [Number(newSx.toFixed(3)), Number(newSy.toFixed(3))];
+          }
+        }
+
         // Quote keys defensively (ids may contain leading underscore or hyphen).
-        lines.push("  '" + id + "': { x: " + x + ', y: ' + y + ' },');
+        lines.push("  '" + id + "': " + formatSpec(merged) + ',');
       });
     });
     lines.push('},');

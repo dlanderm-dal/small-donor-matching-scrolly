@@ -2352,6 +2352,11 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       },
     };
 
+    // V3.10 — expose the dict on window so editor.html can read the current
+    // spec from the iframe and emit a paste-ready snippet that PRESERVES
+    // existing styling (fontSize/fill/textAnchor/scale) when only x/y change.
+    try { window.MOBILE_LAYOUTS_V3 = MOBILE_LAYOUTS_V3; } catch (e) {}
+
     /**
      * Parse "translate(x, y)" or "translate(x y)" — returns [x, y] or [0, 0].
      */
