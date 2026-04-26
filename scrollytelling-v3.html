@@ -818,7 +818,8 @@ html, body {
 .sbs-root #scene-2 g[id="Group_2"],
 .sbs-root #scene-3 g[id^="This_is_an_expanded_version_of_the_equation"],
 .sbs-root #scene-4 g[id^="This_is_an_expanded_version"],   /* if any */
-.sbs-root #scene-5 g[id="Group_5"] {
+.sbs-root #scene-5 g[id="Group_5"],
+.sbs-root #scene-5 g[id="Group_6"] {  /* "Max county money / $870,170" callout — now merged into scene-5 heading */
   display: none;
 }
 /* Also hide the scattered tier text blocks in scenes 4-5 that the running
@@ -1004,161 +1005,40 @@ html, body {
       `meet` so nothing crops.
 
    The after-scrolly section reflows to a single column. */
+/* Mobile portrait — minimal stub. The mobile layout is rebuilt from
+   scratch via MOBILE_LAYOUTS_V3 (the JS dict) operating on the desktop
+   SVG. Only structural CSS that the V3 dict cannot express lives here;
+   element repositioning, font sizing and color are all in the dict. */
 @media (max-width: 768px) {
-  /* Mobile portrait: SVG viewBox swaps to 1280×2050 (aspect 0.624) via JS.
-     On a 375-wide phone the SVG fits to ~375×600 device px. Stage at 80vh
-     ≈ 650 device px on an iPhone fits the SVG edge-to-edge with a small
-     vertical collar that blends with the page background. */
+  /* Stage height: tall enough that the 1280×2050 portrait viewBox fits
+     edge-to-edge on a phone with a small breathing collar. */
   .sbs-root .sticky-stage {
     height: 80vh; height: 80dvh; min-height: 600px;
     background: transparent;
   }
-  /* Scene-2 prohibited list: switch to single-column on mobile portrait so
-     the 6 prohibited categories stack vertically (instead of 2-col grid
-     that overflows the narrowed mobile foreignObject width). */
+  .sbs-root .svg-wrapper { width: 100%; height: 100%; }
+  /* Scene-2 prohibited-list grid collapses to a single column on the
+     narrower mobile foreignObject. CSS-only because foreignObject inner
+     content can't be repositioned by the V3 dict. */
   .sbs-root .prohibited-list-compact {
     grid-template-columns: 1fr !important;
     column-gap: 0;
     row-gap: 8px;
   }
-  /* Hide chart axis labels that visually overlap with chart content on
-     mobile-portrait. On desktop these axis annotations sit OUTSIDE the
-     chart (left of the y-axis line); on the narrower mobile portrait the
-     labels render close enough to the chart bars that they read as
-     overlapping the bars themselves. The numeric labels inside each bar
-     ($350, $250, $400) carry the same information. */
-  /* V3.8.1: removed #scene-1 #_350-38 from this hide-list — the $350 label
-     is now shown INSIDE the blue match bar (positioned by V3 dict at
-     viewBox y=870). */
-  .sbs-root #scene-1 #Candidate_receives-23,
-  .sbs-root #scene-1 #_400-35,
-  .sbs-root #scene-2 #Candidate_receives-19,
-  .sbs-root #scene-2 #_400-27,
-  .sbs-root #scene-2 #_400-28,
-  .sbs-root #scene-3 #Candidate_receives-20,
-  .sbs-root #scene-3 #_400-30,
-  .sbs-root #scene-4 #Candidate_receives-21,
-  .sbs-root #scene-4 #_400-32,
-  .sbs-root #scene-5 #Candidate_receives-18,
-  .sbs-root #scene-5 #_400-25 {
-    display: none;
-  }
-  /* V3.8.1: Scene-1 "First $50 matched seven times by county" caption is
-     RESTORED on mobile (positioned above the $350 blue box in the lower
-     box-equation row by the V3 dict). Reviewer wanted this label back
-     ("you did get rid of an element at one point that I wanted to stay").
-     The chart is now on top so there's no longer a "Candidate receives"
-     label adjacency conflict — the caption can sit at viewBox y=1250 above
-     the $350 box without overlapping anything. */
-  /* Scene-6 mobile — partial restoration (V2.16). The DESKTOP scene-6
-     narrative has 4 horizontal rows (top boxes / per-donor breakdown /
-     × 10 multiplication / final comparison) that would massively overlap
-     when squeezed into the 1280-wide mobile viewBox. We hide ONLY the
-     middle "per-donor breakdown" row ($10 + $70 = $80 box step) on
-     mobile, since those three boxes physically can't fit side-by-side
-     with the +/= operators between them. The top boxes, the × 10
-     multiplication, and the final $650-vs-$800 comparison row all
-     stay visible — that gives the reader the full punchline:
-       (1) $100 donor → $650 candidate  (already seen)
-       (2) × 10 People (multiplication callout)
-       (3) $650 vs $800 — ten small donors give MORE than one big donor.
-     The mobile slot timing for scene-6 has 3 sub-scenes that reveal
-     content from the hidden per-donor row; on mobile those slots become
-     "hold time" where the scene state doesn't change. Acceptable until
-     the layout editor pass produces a redrawn mobile-portrait scene 6. */
-  .sbs-root #scene-6 #Already_Seen\:-2,
-  .sbs-root #scene-6 #_10-2,
-  .sbs-root #scene-6 #Rectangle_114,
-  .sbs-root #scene-6 #Donation_to_publicly_funded_candidate-2,
-  .sbs-root #scene-6 #_70-2,
-  .sbs-root #scene-6 #Rectangle_113,
-  .sbs-root #scene-6 #Tier_1_Matching_7_x_10,
-  .sbs-root #scene-6 #_80-2,
-  .sbs-root #scene-6 #Rectangle_112,
-  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-3,
-  .sbs-root #scene-6 #until_scene_2H_this_element_is_100_opacity-4 {
-    display: none;
-  }
-  /* "vs" between Rectangle_110 ($650) and shifted Rectangle_111 ($800) on
-     mobile — at desktop's 110-px font-size it would still overlap both
-     boxes once they're 22 viewBox units apart. Shrink to 50 on mobile so
-     it sits cleanly in the gap. */
-  .sbs-root #scene-6 #vs-2 { font-size: 50px; }
-  /* Scene-6 bottom-row labels ("One $100 donor" / "Ten $10 donors") at
-     desktop's 30-px size are wider than the box gap on mobile and run
-     into each other. Shrink to 22 px so each label sits inside its
-     respective box's column. */
-  .sbs-root #scene-6 #One_100_donor-2,
-  .sbs-root #scene-6 #Ten_10_donors-2 { font-size: 22px; }
-  .sbs-root .svg-wrapper { width: 100%; height: 100%; }
-
-  /* CH26: fill mobile vertical space by SIZING UP elements. Heading
-     title bumps to 70 viewBox px (≈ 20 device px) and paragraph to 56
-     viewBox px (≈ 16 device px). Heading band height grows in JS to
-     accommodate the larger type — previously 300, now 460. */
-  .sbs-root .heading-overlay .heading-title { font-size: 70px; }
-  .sbs-root .heading-overlay .heading-paragraph { font-size: 56px; line-height: 1.22; }
-  .sbs-root .prohibited-list-svg li { font-size: 42px; }
-  /* Scene 2 prohibited list is bumped slightly bigger on mobile, with
-     tightened padding/row-gap so the 3-row block still clears the chart
-     below at viewBox y=585. */
-  .sbs-root .prohibited-list-compact { row-gap: 6px; column-gap: 30px; }
-  .sbs-root .prohibited-list-compact li { font-size: 38px; padding: 4px 0 4px 50px; line-height: 1.18; }
-  .sbs-root .prohibited-list-compact li::before { font-size: 44px; }
-  .sbs-root .prohibited-label { font-size: 42px; }
-  /* V3.8: shrunk mobile eq-overlay to fit 5 rows (scene 5) inside the band
-     y=1430..1700 (270 viewBox-units available after viewBox cut to 1700).
-     Was: font 42, max-height 80/110, total margin-top 18 → ~430u stack.
-     Now: font 36, max-height 50/56, total margin-top 6 → ~270u stack. */
-  .sbs-root .eq-overlay { font-size: 36px; gap: 2px; }
-  .sbs-root .eq-row {
-    grid-template-columns: 280px 95px 28px 95px 28px 130px;
-  }
-  .sbs-root .eq-row.visible { max-height: 50px; }
-  .sbs-root .eq-row.eq-total-row {
-    margin-top: 6px;
-    grid-template-columns: 280px 95px 145px 130px 0 0;
-  }
-  .sbs-root .eq-row.eq-total-row.visible { max-height: 56px; }
-  .sbs-root .eq-row.eq-total-row .d, .sbs-root .eq-row.eq-total-row .t { padding-top: 6px; }
-  .sbs-root .eq-row.eq-total-row .op { font-size: 22px; }
-
-  /* Bump in-SVG raw <text> labels — chart values, Donation/Candidate
-     receives axis labels, multipliers — for mobile legibility. Targeted
-     via attribute selector matching font-size on the original element so
-     each size class scales proportionally. ~1.5× across the board. */
-  .sbs-root #sceneStack text[font-size="20"] { font-size: 30px; }
-  .sbs-root #sceneStack text[font-size="25"] { font-size: 36px; }
-  .sbs-root #sceneStack text[font-size="30"] { font-size: 42px; }
-  .sbs-root #sceneStack text[font-size="35"] { font-size: 48px; }
-  .sbs-root #sceneStack text[font-size="50"] { font-size: 64px; }
-  .sbs-root #sceneStack text[font-size="75"] { font-size: 95px; }
-  .sbs-root #sceneStack text[font-size="110"] { font-size: 130px; }
-  .sbs-root #sceneStack text[font-size="120"] { font-size: 140px; }
-
+  /* After-scrolly column reflow on phone widths. */
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
   .sbs-root .as-heading { font-size: 1rem; line-height: 1.45; }
   .sbs-root .office-selector button { font-size: 13px; padding: 12px 4px; }
-  /* CH23: bigger mobile slider hit-area. Track stays at the editorial
-     2-px hairline, but the thumb grows to 28×28 so a thumb on a phone
-     reliably grabs it. Visually still a square (per CH09), just sized
-     for finger-precision. */
   .sbs-root .slider-wrap input[type="range"] { height: 2px; }
-  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 28px; height: 28px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
-  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
+  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 18px; height: 18px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
+  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
   .sbs-root .slider-ticks { font-size: 0.7rem; }
   .sbs-root .eq-table { font-size: 0.95rem; }
   .sbs-root .restart-btn { padding: 0.95rem 1rem; font-size: 1rem; }
 }
 
-/* Tablet portrait — between phone and desktop. The 1920×1280 SVG still
-   letterboxes here (a 768-wide tablet fits the SVG to ~512px tall, leaving
-   the rest of a 95vh stage as empty letterbox). Apply a moderate stage-
-   height reduction + small in-SVG font bump so the SVG occupies a healthier
-   share of the visible area. Tablet readers also lose the after-scrolly
-   2-column grid (eq table beside chart) at this width. */
 /* CH05 — muted-palette overrides. Activated by adding `.muted-palette`
    class to `.sbs-root` (toggle controlled by the palette-toggle bar at
    the top of the preview page). Each rule maps an original saturated
@@ -1213,21 +1093,6 @@ html, body {
 .sbs-root.muted-palette text[fill="#0027ff"] { fill: #11283e !important; }
 .sbs-root.muted-palette text[fill="#7600ff"] { fill: #5e1c4a !important; }
 
-/* CH24: dedicated tablet-portrait pass. Tighter stage, modest in-SVG
-   font bump, after-scrolly content constrained to 720-px column,
-   single-column equation table + info row. */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .sbs-root .sticky-stage { height: 75vh; height: 75dvh; }
-  .sbs-root .heading-overlay .heading-title { font-size: 60px; }
-  .sbs-root .heading-overlay .heading-paragraph { font-size: 56px; }
-  .sbs-root .prohibited-list-compact li { font-size: 34px; }
-  .sbs-root .eq-overlay { font-size: 36px; }
-  .sbs-root .after-scrolly { max-width: 720px; padding: 1rem 1rem 1.5rem; }
-  .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
-  .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; margin-top: 1rem; }
-  .sbs-root .prohibited-list-clean { columns: 1; }
-}
-
 </style>
 </head>
 <body>
@@ -1237,13 +1102,6 @@ html, body {
   the reviewer can flip between the original saturated colors and the
   proposed muted-editorial palette. NOT part of the WordPress paste.
 ========================================================================= -->
-<div class="palette-toggle" id="paletteToggle" role="group" aria-label="Color palette preview">
-  <span class="pt-label">Palette</span>
-  <button class="pt-btn active" data-palette="original" type="button">Original</button>
-  <button class="pt-btn" data-palette="muted" type="button">Muted (proposed)</button>
-  <span class="pt-help">preview only · not in WP paste</span>
-</div>
-
 <!-- =========================================================================
   PREVIEW-ONLY article body (above the graphic). Lorem ipsum stand-in for
   the WordPress article paragraphs. Lives outside `.sbs-root`. NOT part of
@@ -1290,36 +1148,34 @@ html, body {
       <text id="_3" data-name="+" transform="translate(832 592.25)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">+</tspan></text>
       <text id="_4" data-name="=" transform="translate(1223 592.25)" text-anchor="middle" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="1"><tspan x="0" y="0">=</tspan></text>
       <rect id="Rectangle_56" data-name="Rectangle 56" width="171" height="136" rx="27" transform="translate(1324.969 488.75)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
-      <text id="_400-34" data-name="$400" transform="translate(1354.469 575.25)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
-      <text id="Candidate_receives-22" data-name="Candidate receives" transform="translate(1424.469 435.75)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-128.625" y="0">Candidate receives</tspan></text>
+      <text id="_400-34" data-name="$400" text-anchor="middle" transform="translate(1410.469 575.25)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$400</tspan></text>
+      <text id="Candidate_receives-22" data-name="Candidate receives" text-anchor="middle" transform="translate(1410.469 435.75)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Candidate gets</tspan></text>
       <g id="Scene_1C" data-name="Scene 1C">
-        <text id="First_50_matched_seven_times_by_county-4" data-name="First $50 matched 
-seven times by county" transform="translate(1036.469 420)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-125.61" y="0">First</tspan><tspan y="0" xml:space="preserve" fill="#229500"> $50 </tspan><tspan y="0">matched </tspan><tspan fill="#0027ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-155.85" y="36">seven times</tspan><tspan y="36" xml:space="preserve" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400"> by county</tspan></tspan></text>
+        <text id="First_50_matched_seven_times_by_county-4" data-name="First $50 matched seven times by county" text-anchor="middle" transform="translate(1035.469 420)" fill="#434343" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">First <tspan fill="#229500" font-weight="700">$50</tspan> matched</tspan><tspan x="0" dy="36"><tspan fill="#0027ff" font-weight="700">seven times</tspan><tspan fill="#434343" font-weight="400" xml:space="preserve"> by county</tspan></tspan></text>
         <rect id="Rectangle_55" data-name="Rectangle 55" width="171" height="136" rx="27" transform="translate(949.969 497.25)" fill="#fff" stroke="#0027ff" stroke-linejoin="round" stroke-width="15"/>
-        <text id="_350-37" data-name="$350" transform="translate(980.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
+        <text id="_350-37" data-name="$350" text-anchor="middle" transform="translate(1035.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
         <g id="Rectangle_58" data-name="Rectangle 58" transform="translate(296 586.5)" fill="rgba(0,39,255,0.15)" stroke="#0027ff" stroke-width="3">
           <rect width="114" height="350" stroke="none"/>
           <rect x="2.5" y="2.5" width="109" height="345" fill="none"/>
         </g>
         <line id="Line_15" data-name="Line 15" x2="374" transform="translate(280.344 987.5)" fill="none" stroke="#707070" stroke-width="4"/>
         <line id="Line_16" data-name="Line 16" y2="401.75" transform="translate(295.5 586.25)" fill="none" stroke="#707070" stroke-width="4"/>
-        <text id="Candidate_receives-23" data-name="Candidate
-receives" transform="translate(230 773)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-48.9" y="0">Candidate </tspan><tspan x="-36.85" y="24">receives</tspan></text>
-        <text id="_350-38" data-name="$350" transform="translate(325 855.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
-        <text id="Donation-23" data-name="Donation" transform="translate(473.094 1020.5)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-40.38" y="0">Donation</tspan></text>
-        <text id="x7-16" data-name="x7" transform="translate(353 575.25)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-13.425" y="0">x7</tspan></text>
+        <text id="Candidate_receives-23" data-name="County matching funds" text-anchor="end" transform="translate(290 773)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">County</tspan><tspan x="0" dy="24">matching</tspan><tspan x="0" dy="24">funds</tspan></text>
+        <text id="_350-38" data-name="$350" text-anchor="middle" transform="translate(353 855.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$350</tspan></text>
+        <text id="Donation-23" data-name="Donation" text-anchor="middle" transform="translate(353 1020.5)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Donation</tspan></text>
+        <text id="x7-16" data-name="x7" text-anchor="middle" transform="translate(353 575.25)" fill="#434343" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">× 7</tspan></text>
         <g id="Scene_1B" data-name="Scene 1B">
           <rect id="Rectangle_54" data-name="Rectangle 54" width="171" height="136" rx="27" transform="translate(542.969 497.25)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
-          <text id="_50-59" data-name="$50" transform="translate(586.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
-          <text id="Donation-24" data-name="Donation" transform="translate(628.469 439.75)" fill="#434343" font-size="35" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-70.665" y="0">Donation</tspan></text>
+          <text id="_50-59" data-name="$50" text-anchor="middle" transform="translate(628.469 583.75)" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
+          <text id="Donation-24" data-name="Donation" text-anchor="middle" transform="translate(628.469 439.75)" fill="#434343" font-size="35" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Donation</tspan></text>
           <g id="Rectangle_57" data-name="Rectangle 57" transform="translate(296 936.5)" fill="rgba(34,149,0,0.15)" stroke="#229500" stroke-width="3">
             <rect width="114" height="50" stroke="none"/>
             <rect x="2.5" y="2.5" width="109" height="45" fill="none"/>
           </g>
-          <text id="_50-60" data-name="$50" transform="translate(332 971.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
+          <text id="_50-60" data-name="$50" text-anchor="middle" transform="translate(353 971.5)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$50</tspan></text>
           <g id="Scene_1A" data-name="Scene 1A">
             <foreignObject x="100" y="180" width="1700" height="210">
-<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">Once a publicly financed candidate for County Executive receives a combined $40,000 from at least 500 residents of their jurisdiction the matching kicks in:</div></foreignObject>
+<div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 400; color: #434343; line-height: 1.18;">Once a publicly financed candidate for <strong>County Executive</strong> receives a combined <strong style="color: #229500;">$40,000</strong> from at least <strong style="color: #229500;">500</strong> residents of their jurisdiction the matching kicks in:</div></foreignObject>
             <foreignObject x="100" y="70" width="1720" height="80">
 <div xmlns="http://www.w3.org/1999/xhtml" class="svg-heading" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 50px; font-weight: 700; color: #434343; line-height: 1.18;">Montgomery County Public Campaign Financing Example</div></foreignObject>
           </g>
@@ -1616,7 +1472,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
                        a lighter italic recap treatment. Smaller, lower-contrast,
                        italicized — reads as past-tense without the patronizing
                        label. -->
-                  <text id="Already_Seen:-2" data-name="Already Seen:" transform="translate(164 4715)" fill="#7a7a7a" font-size="24" font-style="italic" font-weight="400" font-family="Source Serif 4, Georgia, serif"><tspan x="0" y="0">Already seen ↓</tspan></text>
+                  <text id="Already_Seen:-2" data-name="Already Seen:" transform="translate(520 4715)" text-anchor="end" fill="#7a7a7a" font-size="32" font-style="italic" font-weight="400" font-family="Source Serif 4, Georgia, serif"><tspan x="0" y="0">Already seen:</tspan></text>
                   <rect id="Rectangle_116" data-name="Rectangle 116" width="171" height="136" rx="27" transform="translate(538.5 4640)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="15"/>
                   <text id="_100-26" data-name="$100" transform="translate(624 4726.5)" text-anchor="middle" fill="#464546" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
                   <rect id="Rectangle_118" data-name="Rectangle 118" width="171" height="136" rx="27" transform="translate(1284.5 4640)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="15"/>
@@ -1915,27 +1771,6 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     }
   } catch (e) { window.__eqSlide = false; window.__embed = false; }
 
-  // CH05: palette-toggle wiring. Adds/removes `.muted-palette` class on
-  // .sbs-root. Persists choice in localStorage. Must run before boot so
-  // the initial render uses the chosen palette.
-  (function paletteToggle() {
-    const KEY = 'sbs-palette';
-    const root = document.querySelector('.sbs-root');
-    const buttons = document.querySelectorAll('.palette-toggle .pt-btn');
-    if (!root || !buttons.length) return;
-    function apply(palette) {
-      root.classList.toggle('muted-palette', palette === 'muted');
-      buttons.forEach(b => b.classList.toggle('active', b.dataset.palette === palette));
-      try { localStorage.setItem(KEY, palette); } catch (e) {}
-    }
-    let saved = 'original';
-    try { saved = localStorage.getItem(KEY) || 'original'; } catch (e) {}
-    apply(saved);
-    buttons.forEach(b => {
-      b.addEventListener('click', () => apply(b.dataset.palette));
-    });
-  })();
-
   // --------------------------------------------------------------------------
   // Boot gate — wait for layout + fonts so getBBox / getCTM measurements are
   // stable. Same pattern as V1.
@@ -2225,274 +2060,295 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // ════════════════════════════════════════════════════════════════════════
     const V3_LAYOUT_ENABLED = true;
 
+    // ════════════════════════════════════════════════════════════════════════
+    // CLEAN-ROOM REBUILD — Phase 2.
+    //
+    // Mobile portrait viewBox = 1280 × 2050. Vertical bands shared by every
+    // scene unless a per-scene comment says otherwise:
+    //   y=  40..  500  Heading band (drawn by headingFo overlay; reserved)
+    //   y= 550.. 1410  Scene content band (charts / boxes / captions)
+    //   y=1430.. 1700  Equation overlay band (eqOverlayG; reserved)
+    //   y=1700.. 2050  Free space below equation overlay (used only by
+    //                  scene 1's bar-chart bottom + scene 6's third row).
+    //
+    // Bar-chart convention (scenes 2-5): native bar is 114 wide × N tall;
+    // scale 1.4 gives a ~160-wide visual. The x-axis sits at y=1410. Bars
+    // are placed using their TOP-LEFT corner so a $400 bar (560 tall) at
+    // y=850 has its bottom at 1410. Multi-tier scenes line bars up FLUSH
+    // across the full mobile width (x=200..1100 broadly), not crammed into
+    // the desktop's left-third 296..410 strip.
+    //
+    // Captions sit ABOVE bars. Tier number labels (Tier 1, x4, etc.) have
+    // BAKED-IN tspan x-offsets that center the text on the element origin
+    // under default text-anchor=start — DO NOT pass textAnchor:'middle' for
+    // those (it double-applies the offset and shifts text left).
+    // ════════════════════════════════════════════════════════════════════════
     const MOBILE_LAYOUTS_V3 = {
+      // Scene 1: heading 40-500 · box equation 733-979 · bar chart 1244-1804
+      // (matches scene 1 example.svg reference layout). No equation overlay
+      // for scene 1 — chart extends below the eq band into y=1700+.
       '1': {
-        // V3.8.1 — chart-on-top layout per reviewer feedback.
-        // Bar chart sits in the upper half of the card (the dominant visual);
-        // the $50+$350=$400 box equation moves to the lower half as a reinforcing
-        // recap. The chart band is now y=580..1120 and the box equation is
-        // anchored at y=1280 (label baseline).
+        // V3.10 — scene 1 mobile rebuilt to match scene-1 reference SVG
+        // (~/scene 1 example.svg). Three vertical bands inside viewBox 1280×2050:
+        //   y=40-500    Heading band (handled by overlay, not this dict)
+        //   y=733-979   Box equation: $50 + $350 = $400 (boxes 113/520/895 lt-edges)
+        //   y=1244-1804 Bar chart (scale 1.4, blue $350 + green $50 strip)
+        //
+        // Box-equation column centers (boxes are NATIVE 171×136, no scale):
+        //   GREEN  Rectangle_54  x=113..284  center 198.5
+        //   BLUE   Rectangle_55  x=520..691  center 605.5
+        //   PURPLE Rectangle_56  x=895..1066 center 980.5
 
-        // Box-equation diagram — y-band 1280..1500 (moved DOWN from 660..820).
-        'Donation-24':                              { x: 200, y: 1280, textAnchor: 'middle' }, // label above $50 box
-        'Rectangle_54':                             { x: 116, y: 1310 }, // $50 green box
-        '_50-59':                                   { x: 200, y: 1398, textAnchor: 'middle' }, // $50 text centered
-        '_3':                                       { x: 405, y: 1407, textAnchor: 'middle' }, // + sign between boxes
-        'Rectangle_55':                             { x: 522, y: 1310 }, // $350 blue box
-        '_350-37':                                  { x: 607, y: 1398, textAnchor: 'middle' }, // $350 text centered
-        '_4':                                       { x: 796, y: 1407, textAnchor: 'middle' }, // = sign
-        'Rectangle_56':                             { x: 897, y: 1300 }, // $400 purple box
-        '_400-34':                                  { x: 982, y: 1390, textAnchor: 'middle' }, // $400 text centered
-        // V3.8.1: First_50_matched_seven_times caption RESTORED above $350 box
-        // per reviewer note ("you did get rid of an element at one point that
-        // I wanted to stay. Its a heading above the $350 box").
-        // NO textAnchor override — the element's original tspan layout (with
-        // x=-125.61 for "First" and x=-155.85 for "seven times" line break)
-        // already handles centering relative to the text origin. Forcing
-        // text-anchor=middle would double-shift the tspans and break
-        // alignment between the two lines.
-        'First_50_matched_seven_times_by_county-4': { x: 730, y: 1240, fontSize: 30 },
-        // Candidate receives still omitted — overlaps the wide "=" glyph at
-        // mobile font sizes.
-        'Candidate_receives-22':                    { hide: true },
+        // ── Captions ABOVE boxes (text-anchor=middle baked into SVG) ────────
+        // Captions at y=793 (single-line) / y=763+36 (two-line "First $50…").
+        'Donation-24':                              { x: 199, y: 793 }, // "Donation"
+        'First_50_matched_seven_times_by_county-4': { x: 606, y: 763 }, // two lines, ends ~y=799
+        'Candidate_receives-22':                    { x: 981, y: 793 }, // "Candidate gets"
 
-        // Bar chart band — y=580..1120 (moved UP from 850..1410 per reviewer).
-        // Bar at x=560..720, centered horizontally near viewBox x=640.
-        // Bar group native 114×400 (50 donor + 350 match) → scale 1.4 → 160×560.
-        'Rectangle_58':           { x: 560, y: 580, scale: 1.4 },  // blue $350 match (top of bar)
-        'Rectangle_57':           { x: 560, y: 1070, scale: 1.4 }, // green $50 donor (bottom)
-        // V3.8.1: x-axis line HIDDEN per reviewer ("git rid of the x axis").
-        'Line_15':                { hide: true },
-        'Line_16':                { x1: 560, y1: 580, x2: 560, y2: 1140 }, // y-axis only
-        // x7 multiplier ABOVE the bar (was at y=835, now at y=560 above the bar top).
-        'x7-16':                  { x: 640, y: 555, textAnchor: 'middle', fontSize: 40 },
-        // $50 label inside the green donor strip
-        '_50-60':                 { x: 640, y: 1110, textAnchor: 'middle', fontSize: 30 },
-        // Donation-23 (label below the bar) stays hidden — replaced by side
-        // labels handled by the new caption logic in CSS overrides if added later.
-        'Donation-23':            { hide: true },
-        // V3.8.1: $350 label INSIDE the blue match bar is now SHOWN on mobile
-        // (was hidden in V3.8). Reviewer's editor render shows it.
-        '_350-38':                { x: 640, y: 870, textAnchor: 'middle', fontSize: 28 },
-        'Candidate_receives-23':  { hide: true }, // y-axis label
-        '_400-35':                { hide: true }, // $400 y-axis tick
-        'Line_17':                { hide: true }, // small tick mark
+        // ── Boxes ──────────────────────────────────────────────────────────
+        'Rectangle_54':                             { x: 113, y: 843 },
+        'Rectangle_55':                             { x: 520, y: 843 },
+        'Rectangle_56':                             { x: 895, y: 843 },
+
+        // ── Numbers in boxes (text-anchor=middle baked into SVG) ───────────
+        '_50-59':                                   { x: 199, y: 931 },
+        '_350-37':                                  { x: 606, y: 931 },
+        '_400-34':                                  { x: 981, y: 931 },
+
+        // ── Operators (text-anchor=middle is in source SVG) ────────────────
+        '_3':                                       { x: 403, y: 928 }, // +
+        '_4':                                       { x: 794, y: 928 }, // =
+
+        // ── Bar chart band ─────────────────────────────────────────────────
+        // Bar group native 114×400 (350 blue + 50 green) → scale 1.4 → 160×560.
+        // Group origin at viewBox (538, 1244) so bar spans x=538..698, y=1244..1804.
+        // Y-axis line (Line_16) co-located with bar's left edge.
+        'Rectangle_58':           { x: 538, y: 1244, scale: 1.4 }, // blue $350 (top)
+        'Rectangle_57':           { x: 538, y: 1734, scale: 1.4 }, // green $50 (bottom strip)
+        'Line_15':                { hide: true },                  // x-axis hidden per ref
+        'Line_16':                { x1: 538, y1: 1244, x2: 538, y2: 1804 }, // y-axis
+        'Line_17':                { hide: true },                  // small tick — no $400 tick in ref
+
+        // V3.11: mobile-only styling (color/weight/size) lives HERE in the
+        // layout spec — the SVG keeps its desktop-default neutral styling so
+        // mobile changes don't leak.
+
+        // "× 7" label ABOVE bar (Source-Serif weight-700 on mobile only).
+        'x7-16':                  { x: 618, y: 1227, fontSize: 35, fontWeight: '700' },
+
+        // In-bar "$350" (blue + bold) and "$50" (green + bold) — match the
+        // after-scrolly chart's coloring convention.
+        '_350-38':                { x: 618, y: 1510, fontSize: 32, fill: '#0027ff', fontWeight: '700' },
+        '_50-60':                 { x: 618, y: 1780, fontSize: 28, fill: '#229500', fontWeight: '700' },
+
+        // LEFT y-axis labels — blue/green + bold on mobile, default gray on desktop.
+        'Candidate_receives-23':  { x: 528, y: 1486, fontSize: 28, fill: '#0027ff', fontWeight: '700' },
+        'Donation-23':            { x: 528, y: 1776, fontSize: 28, fill: '#229500', fontWeight: '700', textAnchor: 'end' },
+
+        // No $400 axis tick in this revision per reference layout.
+        '_400-35':                { hide: true },
       },
 
-      // ════════════════════════════════════════════════════════════════
-      // SCENE 2 — Tier 1 full $400 bar with dashed $50 boundary line.
-      // Single bar centered around viewBox x=640. Bar at x=560-720.
-      // Equation row at bottom handled by eqOverlayG (separate overlay).
-      // ════════════════════════════════════════════════════════════════
+      // Scene 2: heading 40-500 · single $400 bar 600-1410 · equation 1430-1700
+      // ONE Tier-1 bar at full mobile presence (~224u wide, scale 1.4 over 160 native).
+      // Bar centered at x=640 (canvas center). Caption "x7" above; "$400" inside;
+      // "$50" green strip at bottom; dashed boundary line indicates the $50 cap.
       '2': {
-        // V3.4: chart band moved up 300 units to close gap with prohibited list above.
-        'Rectangle_61': { x: 560, y: 850, scale: 1.4 }, // Tier 1 purple bar (114×400 → 160×560)
-        // V3.8: x-axis trimmed to bar width on single-bar scene (was 1064).
-        'Line_18':      { x1: 560, y1: 1410, x2: 720, y2: 1410 }, // x-axis
-        'Line_19':      { x1: 560, y1: 850, x2: 560,  y2: 1410 }, // y-axis
-        'Line_22':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 }, // dashed $50 boundary
-        '_50-48':       { x: 640, y: 1380,textAnchor: 'middle', fontSize: 30 }, // $50 below dashed
-        '_400-28':      { x: 640, y: 980,  textAnchor: 'middle', fontSize: 30 }, // $400 in upper bar
-        // V3.8: Donation-20 hidden on mobile — eq overlay row below already
-        // labels the donation axis ("Tier 1: $50 + $350 = $400"), so the
-        // standalone "Donation" label below the bar is redundant and was
-        // taking up scarce vertical space (eq overlay needed y=1430+).
-        'Donation-20':  { hide: true },
-        'x7-15':        { x: 640, y: 835, textAnchor: 'middle', fontSize: 35 }, // x7 above bar
-        // Hidden — small ticks and y-axis labels redundant on narrow mobile.
-        '_400-27':                { hide: true },
-        'Candidate_receives-19':  { hide: true },
-        'Line_20':                { hide: true },
-        'Line_21':                { hide: true },
+        // Single $400 Tier-1 purple bar — wide (224u) and centered.
+        // Native 114 × 400 → scale 1.96(x) × 1.4(y) lands the bar at
+        // x=528..752 (224 wide), y=850..1410.
+        'Rectangle_61':           { x: 528, y: 850, scale: [1.96, 1.4] }, // $400 purple
+        'Line_18':                { x1: 528, y1: 1410, x2: 752, y2: 1410 }, // x-axis under bar
+        'Line_19':                { x1: 528, y1: 850,  x2: 528, y2: 1410 }, // y-axis (left bar edge)
+        'Line_22':                { x1: 528, y1: 1340, x2: 752, y2: 1340 }, // dashed $50 boundary line
+        'x7-15':                  { x: 640, y: 825, textAnchor: 'middle', fontSize: 38, fontWeight: '700' }, // × 7 above bar
+        '_400-28':                { x: 640, y: 1145, textAnchor: 'middle', fontSize: 36, fill: '#0027ff', fontWeight: '700' }, // $400 inside purple
+        '_50-48':                 { x: 640, y: 1390, textAnchor: 'middle', fontSize: 26, fill: '#229500', fontWeight: '700' }, // $50 in green strip
+        // Donation axis label sits just below the x-axis, before the eq band.
+        'Donation-20':            { x: 640, y: 1418, fontSize: 24, fontWeight: '700', fill: '#229500' }, // tspan baked-in dx centers it
+        // "Candidate receives" axis label to the LEFT of the bar (vertical center).
+        'Candidate_receives-19':  { x: 510, y: 1130, fontSize: 22, fontWeight: '700', fill: '#0027ff', textAnchor: 'end' },
+        '_400-27':                { hide: true }, // TODO REVIEW: redundant with in-bar $400-28; out-of-bar tick label has no clean home in portrait
+        'Line_20':                { hide: true }, // TODO REVIEW: legacy unused tick line in source SVG
+        'Line_21':                { hide: true }, // TODO REVIEW: legacy unused tick line in source SVG
       },
 
-      // ════════════════════════════════════════════════════════════════
-      // SCENE 3 — Tier 1 + Tier 2 (x4 multiplier). Two bars FLUSH.
-      // Tier 1 (full $400): x=480-640. Tier 2 (match $200 + $50 strip): x=640-800.
-      // Both bars centered around viewBox x=640.
-      // ════════════════════════════════════════════════════════════════
+      // Scene 3: heading 40-500 · 2 bars 850-1410 · equation 1430-1700
+      // Tier 1 ($400) + Tier 2 ($200 blue match + $50 green strip = $250).
+      // Bars FLUSH at x=440..600..760 (each 160u wide, scale 1.4 over 114 native).
+      // Centered around the canvas center (x=600 between the two bars).
       '3': {
-        // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_103': { x: 480, y: 850,  scale: 1.4 },
-        'Rectangle_83':  { x: 640, y: 1130,  scale: 1.4 },
-        'Path_29':       { x: 640, y: 1340, scale: 1.4 },
-        'Line_68':       { x1: 480, y1: 1410, x2: 1064, y2: 1410 },
-        'Line_69':       { x1: 480, y1: 850, x2: 480,  y2: 1410 },
-        'Line_109':      { x1: 480, y1: 1340, x2: 640,  y2: 1340 },
-        'Tier_1-9':      { x: 560, y: 835, textAnchor: 'middle', fontSize: 30 },
-        'x4-9':          { x: 720, y: 1115, textAnchor: 'middle', fontSize: 35 },
-        '_400-30':       { x: 560, y: 980,  textAnchor: 'middle', fontSize: 30 },
-        '_50-50':        { x: 560, y: 1380,textAnchor: 'middle', fontSize: 28 },
-        '_200-12':       { x: 720, y: 1235, textAnchor: 'middle', fontSize: 30 },
-        '_50-51':        { x: 720, y: 1385,textAnchor: 'middle', fontSize: 28 },
-        '_100-21':       { x: 720, y: 1460,textAnchor: 'middle', fontSize: 28 },
-        // V3.8: Donation-21 hidden on mobile — eq overlay rows below already
-        // identify the donation axis. Frees vertical space for eq overlay.
-        'Donation-21':   { hide: true },
-        'Candidate_receives-20': { hide: true },
+        'Rectangle_103':         { x: 440, y: 850,  scale: 1.4 }, // Tier 1 purple ($400) — top y = 1410-560
+        'Rectangle_83':          { x: 600, y: 1130, scale: 1.4 }, // Tier 2 blue match ($200) — top y = 1410-280
+        'Path_29':               { x: 600, y: 1340, scale: 1.4 }, // Tier 2 green strip ($50) — top y = 1410-70
+        'Line_68':               { x1: 440, y1: 1410, x2: 760, y2: 1410 }, // x-axis under both bars
+        'Line_69':               { x1: 440, y1: 850,  x2: 440, y2: 1410 }, // y-axis (left bar edge)
+        'Line_109':              { x1: 600, y1: 1340, x2: 760, y2: 1340 }, // dashed $50 boundary on Tier 2
+
+        // Tier labels above bars (tspan offsets center on origin → no textAnchor).
+        'Tier_1-9':              { x: 520, y: 830, fontSize: 30, fontWeight: '700' },
+        'x4-9':                  { x: 680, y: 1110, fontSize: 35, fontWeight: '700' },
+
+        // In-bar values.
+        '_400-30':               { x: 520, y: 1140, textAnchor: 'middle', fontSize: 32, fill: '#7600ff', fontWeight: '700' },
+        '_200-12':               { x: 680, y: 1280, textAnchor: 'middle', fontSize: 28, fill: '#0027ff', fontWeight: '700' },
+        '_50-51':                { x: 680, y: 1390, textAnchor: 'middle', fontSize: 22, fill: '#229500', fontWeight: '700' },
+
+        // Axis labels — Donation under x-axis, Candidate receives to left of bars.
+        'Donation-21':           { x: 600, y: 1418, fontSize: 24, fontWeight: '700', fill: '#229500' },
+        'Candidate_receives-20': { x: 430, y: 1130, fontSize: 22, fontWeight: '700', fill: '#0027ff', textAnchor: 'end' },
+
+        '_50-50':                { hide: true }, // TODO REVIEW: redundant tick label below x-axis (same info as in-strip _50-51)
+        '_100-21':               { hide: true }, // TODO REVIEW: legacy donation-tick label; conflicts with axis caption in portrait
       },
 
-      // ════════════════════════════════════════════════════════════════
-      // SCENE 4 — Tier 1 + 2 + 3 (x2 multiplier). Three bars FLUSH.
-      // Three bars × 160 wide = 480 total. Centered: x=400, 560, 720.
-      // ════════════════════════════════════════════════════════════════
+      // Scene 4: heading 40-500 · 3 bars 850-1410 · equation 1430-1700
+      // Tier 1 ($400) + Tier 2 ($250) + Tier 3 ($100 blue + $50 green = $150).
+      // 3 bars FLUSH at x=360..520..680..840 (each 160u wide), centered around x=600.
       '4': {
-        // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_104': { x: 400, y: 850,  scale: 1.4 },
-        'Rectangle_105': { x: 560, y: 1130,  scale: 1.4 },
-        'Rectangle_106': { x: 720, y: 1270, scale: 1.4 },
-        'Path_41':       { x: 720, y: 1340, scale: 1.4 },
-        'Line_110':      { x1: 400, y1: 1410, x2: 1064, y2: 1410 },
-        'Line_111':      { x1: 400, y1: 850, x2: 400,  y2: 1410 },
-        'Line_112':      { x1: 400, y1: 1340, x2: 560,  y2: 1340 },
-        'Line_113':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 },
-        'Line_118':      { hide: true },
-        'Tier_1-11':     { x: 480, y: 835, textAnchor: 'middle', fontSize: 28 },
-        'Tier_2-7':      { x: 640, y: 1115, textAnchor: 'middle', fontSize: 28 },
-        'x2-6':          { x: 800, y: 1255,textAnchor: 'middle', fontSize: 32 },
-        '_400-32':       { x: 480, y: 980,  textAnchor: 'middle', fontSize: 26 },
-        '_250-10':       { x: 640, y: 1235, textAnchor: 'middle', fontSize: 26 },
-        '_100-23':       { x: 800, y: 1330,textAnchor: 'middle', fontSize: 26 },
-        '_50-55':        { x: 480, y: 1380,textAnchor: 'middle', fontSize: 26 },
-        '_50-54':        { x: 640, y: 1380,textAnchor: 'middle', fontSize: 26 },
-        '_100-24':       { x: 800, y: 1380,textAnchor: 'middle', fontSize: 26 },
-        '_150-13':       { x: 800, y: 1460,textAnchor: 'middle', fontSize: 26 },
-        // V3.8: Donation-22 hidden on mobile — eq overlay rows label axis.
-        'Donation-22':   { hide: true },
-        'Candidate_receives-21': { hide: true },
+        'Rectangle_104':         { x: 360, y: 850,  scale: 1.4 }, // Tier 1 purple ($400)
+        'Rectangle_105':         { x: 520, y: 1060, scale: 1.4 }, // Tier 2 purple ($250) — top y = 1410-350
+        'Rectangle_106':         { x: 680, y: 1270, scale: 1.4 }, // Tier 3 blue match ($100) — top y = 1410-140
+        'Path_41':               { x: 680, y: 1340, scale: 1.4 }, // Tier 3 green strip ($50)
+        'Line_110':              { x1: 360, y1: 1410, x2: 840, y2: 1410 }, // x-axis
+        'Line_111':              { x1: 360, y1: 850,  x2: 360, y2: 1410 }, // y-axis
+        'Line_113':              { x1: 680, y1: 1340, x2: 840, y2: 1340 }, // dashed $50 boundary on Tier 3
+
+        // Tier labels above bars.
+        'Tier_1-11':             { x: 440, y: 830,  fontSize: 28, fontWeight: '700' },
+        'Tier_2-7':               { x: 600, y: 1040, fontSize: 28, fontWeight: '700' },
+        'x2-6':                  { x: 760, y: 1255, fontSize: 32, fontWeight: '700' },
+
+        // In-bar values.
+        '_400-32':               { x: 440, y: 1140, textAnchor: 'middle', fontSize: 30, fill: '#7600ff', fontWeight: '700' },
+        '_250-10':               { x: 600, y: 1245, textAnchor: 'middle', fontSize: 26, fill: '#7600ff', fontWeight: '700' },
+        '_100-23':               { x: 760, y: 1340, textAnchor: 'middle', fontSize: 24, fill: '#0027ff', fontWeight: '700' },
+        '_50-54':                { x: 760, y: 1390, textAnchor: 'middle', fontSize: 20, fill: '#229500', fontWeight: '700' },
+
+        // Axis labels.
+        'Donation-22':           { x: 600, y: 1418, fontSize: 24, fontWeight: '700', fill: '#229500' },
+        'Candidate_receives-21': { x: 350, y: 1130, fontSize: 22, fontWeight: '700', fill: '#7600ff', textAnchor: 'end' },
+
+        'Line_112':              { hide: true }, // TODO REVIEW: legacy unused dashed line
+        'Line_118':              { hide: true }, // TODO REVIEW: legacy duplicate dashed line
+        '_50-55':                { hide: true }, // TODO REVIEW: tick label below x-axis; same data shown in-strip
+        '_100-24':               { hide: true }, // TODO REVIEW: tick label below x-axis; same data shown in-bar
+        '_150-13':               { hide: true }, // TODO REVIEW: tick label below x-axis; total of Tier 3 already shown by stacked _100/_50
       },
 
-      // ════════════════════════════════════════════════════════════════
-      // SCENE 5 — Tier 1 + 2 + 3 + green-strip $500 max indicator.
-      // Three bars + a long green strip showing $500 cap.
-      // ════════════════════════════════════════════════════════════════
+      // Scene 5: heading 40-500 · 3 bars + cap strip 850-1410 · equation 1430-1700
+      // Tier 1+2+3 stacked + the wide green $500-cap strip extending to the right.
+      // Bars at x=200..360..520..680 (3 bars × 160u). Cap strip from x=680 → 1080.
       '5': {
-        // V3.4: chart band moved up 300 units (1000→700) for tighter layout.
-        'Rectangle_107': { x: 400, y: 850,  scale: 1.4 },
-        'Rectangle_108': { x: 560, y: 1130,  scale: 1.4 },
-        'Rectangle_109': { x: 720, y: 1270, scale: 1.4 },
-        'Path_44':       { x: 720, y: 1340, scale: 1.4 },
-        'Line_119':      { x1: 400, y1: 1410, x2: 1064, y2: 1410 },
-        'Line_120':      { x1: 400, y1: 850, x2: 400,  y2: 1410 },
-        'Line_121':      { x1: 400, y1: 1340, x2: 560,  y2: 1340 },
-        'Line_122':      { x1: 560, y1: 1340, x2: 720,  y2: 1340 },
-        'Line_127':      { hide: true },
-        'Line_128':      { hide: true },
-        'Tier_1-7':      { x: 480, y: 835, textAnchor: 'middle', fontSize: 28 },
-        'Tier_2-5':      { x: 640, y: 1115, textAnchor: 'middle', fontSize: 28 },
-        'Tier_3-5':      { x: 800, y: 1255,textAnchor: 'middle', fontSize: 28 },
-        '_400-25':       { x: 480, y: 980,  textAnchor: 'middle', fontSize: 26 },
-        '_250-7':        { x: 640, y: 1235, textAnchor: 'middle', fontSize: 26 },
-        '_100-18':       { x: 800, y: 1330,textAnchor: 'middle', fontSize: 26 },
-        '_50-44':        { x: 480, y: 1380,textAnchor: 'middle', fontSize: 26 },
-        '_100-19':       { x: 640, y: 1380,textAnchor: 'middle', fontSize: 26 },
-        '_150-11':       { x: 800, y: 1455, textAnchor: 'middle', fontSize: 26 },
-        '_350-30':       { hide: true },
-        '_500-11':       { x: 950, y: 1375,textAnchor: 'middle', fontSize: 26 },
-        // V3.8: Donation-19 hidden on mobile — eq overlay rows label axis.
-        'Donation-19':   { hide: true },
-        'Candidate_receives-18': { hide: true },
+        'Rectangle_107':         { x: 200, y: 850,  scale: 1.4 }, // Tier 1 purple ($400)
+        'Rectangle_108':         { x: 360, y: 1060, scale: 1.4 }, // Tier 2 purple ($250)
+        'Rectangle_109':         { x: 520, y: 1200, scale: 1.4 }, // Tier 3 purple ($150 stacked)
+        // Cap strip native 782 × 50; squeeze width to fit (scaleX 0.51 → 400 wide),
+        // height match other bars (scaleY 1.4 → 70u tall, bottom on x-axis).
+        'Path_44':               { x: 680, y: 1340, scale: [0.51, 1.4] },
+        'Line_119':              { x1: 200, y1: 1410, x2: 1080, y2: 1410 }, // x-axis spans bars + strip
+        'Line_120':              { x1: 200, y1: 850,  x2: 200,  y2: 1410 }, // y-axis
+
+        // Tier labels above each bar.
+        'Tier_1-7':              { x: 280, y: 830,  fontSize: 26, fontWeight: '700' },
+        'Tier_2-5':              { x: 440, y: 1040, fontSize: 26, fontWeight: '700' },
+        'Tier_3-5':              { x: 600, y: 1180, fontSize: 26, fontWeight: '700' },
+
+        // In-bar totals.
+        '_400-25':               { x: 280, y: 1140, textAnchor: 'middle', fontSize: 28, fill: '#7600ff', fontWeight: '700' },
+        '_250-7':                { x: 440, y: 1245, textAnchor: 'middle', fontSize: 26, fill: '#7600ff', fontWeight: '700' },
+        '_150-11':               { x: 600, y: 1315, textAnchor: 'middle', fontSize: 24, fill: '#7600ff', fontWeight: '700' },
+
+        // $500 label at right edge of the green cap strip (vertically centered in 70u-tall strip).
+        '_500-11':               { x: 1070, y: 1385, textAnchor: 'end', fontSize: 26, fill: '#229500', fontWeight: '700' },
+
+        // Axis labels.
+        'Donation-19':           { x: 640, y: 1418, fontSize: 24, fontWeight: '700', fill: '#229500' },
+        'Candidate_receives-18': { x: 190, y: 1130, fontSize: 22, fontWeight: '700', fill: '#7600ff', textAnchor: 'end' },
+
+        'Line_121':              { hide: true }, // TODO REVIEW: legacy unused dashed line
+        'Line_122':              { hide: true }, // TODO REVIEW: legacy duplicate axis tick line
+        'Line_127':              { hide: true }, // TODO REVIEW: legacy unused dashed line
+        'Line_128':              { hide: true }, // TODO REVIEW: legacy unused dashed line
+        '_50-44':                { hide: true }, // TODO REVIEW: tick label below x-axis; same data implicit in stacked Tier 3
+        '_100-19':               { hide: true }, // TODO REVIEW: tick label below x-axis; same data implicit in stack
+        '_100-18':               { hide: true }, // TODO REVIEW: redundant numeric label inside Tier 3 (totals shown via _150-11)
+        '_350-30':               { hide: true }, // TODO REVIEW: tick label below x-axis; total of $400+250+150 implicit
       },
 
-      // ════════════════════════════════════════════════════════════════
-      // SCENE 6 — comparison view ("one $100 donor vs ten $10 donors").
-      // Mobile shows top row + multiplication + final comparison; the
-      // per-donor breakdown row ($10 + $70 = $80) is HIDDEN per V2.16
-      // since 3 boxes side-by-side don't fit in mobile portrait width.
-      //
-      // V3.8 layout (viewBox now 1280×1700):
-      //   y=180-340   heading band
-      //   y=420-660   top row: $100 → $650 (labels + boxes + arrow)
-      //   y=820-940   multiplication band: One $100 donor / × 10 / Ten $10 donors
-      //   y=1080-1450 final comparison: $650 vs $800 boxes
-      //
-      // V3.8 text-anchor fix: many scene-6 text elements have BAKED-IN
-      // tspan x offsets (e.g. tspan x="-122.25" centers the text around
-      // the element transform origin even with default text-anchor=start).
-      // Forcing text-anchor=middle in V3 DOUBLE-applies the offset, shifting
-      // the text by tspan_x in the wrong direction and clipping the left
-      // edge off the viewBox. Fix: leave text-anchor at default (drop it
-      // from the V3 spec) so the bundled tspan offset still produces the
-      // intended centering at the element transform origin.
-      // ════════════════════════════════════════════════════════════════
+      // Scene 6: heading 40-500 · 3 narrative rows · equation 1430-1700 (eq fades out for scene 6)
+      // Three horizontal rows of 171×136 NATIVE-sized boxes:
+      //   Row 1 ($100 → $650)            y=560..696
+      //   Row 2 ($10 + $70 = $80)        y=820..956   (per-donor breakdown — RESTORED with header)
+      //   Row 3 ($650 vs $800)           y=1130..1266 (final comparison)
+      // Three columns: LEFT center=185 (x=100), MID center=640 (x=555 / x=900 op), RIGHT center=985 (x=900).
+      // Row-3 headers ("One $100 donor" / "Ten $10 donors") sit ABOVE Row 3, not below.
       '6': {
-        // Top row — One person giving $100 → In total for candidate $650
-        // tspan-baked centering means we set element x to the desired CENTER
-        // and let the original tspan offset do the centering naturally.
-        'One_person_giving-2':                   { x: 185, y: 430, fontSize: 28 },
-        'Donation_to_publicly_funded_candidate-2': { x: 185, y: 460, fontSize: 22 },
-        'Rectangle_116':                         { x: 100, y: 490 },  // $100 green box
-        '_100-26':                               { x: 185, y: 578, textAnchor: 'middle', fontSize: 50 },
-        'Becomes-5':                             { x: 640, y: 555, fontSize: 30 },
-        'sceneSixArrowGroup':                    { x: 640, y: 575 },  // arrow group (wraps from desktop coords)
-        'In_total_for_the_candidate-2':          { x: 985, y: 430, fontSize: 28 },
-        'Rectangle_118':                         { x: 900, y: 490 },  // $650 purple box
-        '_650-11':                               { x: 985, y: 578, textAnchor: 'middle', fontSize: 50 },
+        // ── Row 1: TOP single-donor scenario ($100 → $650) ────────────────
+        'One_person_giving-2':                          { x: 185, y: 528, fontSize: 28 }, // tspan offset centers
+        'Rectangle_116':                                { x: 100, y: 560 }, // $100 green box (native 171×136)
+        '_100-26':                                      { x: 185, y: 648, textAnchor: 'middle', fontSize: 50 },
+        'Becomes-5':                                    { x: 640, y: 615, fontSize: 30 },
+        'sceneSixArrowGroup':                           { x: 640, y: 640 },
+        'In_total_for_the_candidate-2':                 { x: 985, y: 510, fontSize: 28 },
+        'Rectangle_118':                                { x: 900, y: 560 }, // $650 purple box
+        '_650-11':                                      { x: 985, y: 648, textAnchor: 'middle', fontSize: 50 },
 
-        // Per-donor breakdown row — HIDDEN (3 boxes side-by-side don't fit)
-        'Rectangle_113':                         { hide: true },  // $10 box
-        '_10-2':                                 { hide: true },
-        'Rectangle_114':                         { hide: true },  // $70 box
-        '_70-2':                                 { hide: true },
-        'Rectangle_112':                         { hide: true },  // $80 box
-        '_80-2':                                 { hide: true },
-        'until_scene_2H_this_element_is_100_opacity-3': { hide: true },  // + sign
-        'until_scene_2H_this_element_is_100_opacity-4': { hide: true },  // = sign
+        // ── Row 2: PER-DONOR breakdown ($10 + $70 = $80) — RESTORED with header
+        // "Tier 1 Matching · 7 × $10" header sits ABOVE the blue $70 box.
+        'Tier_1_Matching_7_x_10':                       { x: 640, y: 790, fontSize: 22 },
+        'Rectangle_114':                                { x: 100, y: 820 }, // $10 green
+        '_10-2':                                        { x: 185, y: 908, textAnchor: 'middle', fontSize: 50 },
+        'until_scene_2H_this_element_is_100_opacity-3': { x: 413, y: 908, textAnchor: 'middle', fontSize: 70 }, // +
+        'Rectangle_113':                                { x: 555, y: 820 }, // $70 blue
+        '_70-2':                                        { x: 640, y: 908, textAnchor: 'middle', fontSize: 50 },
+        'until_scene_2H_this_element_is_100_opacity-4': { x: 813, y: 908, textAnchor: 'middle', fontSize: 70 }, // =
+        'Rectangle_112':                                { x: 900, y: 820 }, // $80 purple
+        '_80-2':                                        { x: 985, y: 908, textAnchor: 'middle', fontSize: 50 },
+        'Donation_to_publicly_funded_candidate-2':      { x: 185, y: 980, textAnchor: 'middle', fontSize: 22 },
 
-        // Multiplication row — × 10 People
-        // V3.8: vertical separator line at y=750; "x" centered at viewBox 555;
-        // "10 People" anchored at viewBox 620 (clears the "x" with gap).
-        // Side labels under the line.
-        'Line_137':                              { x1: 100, y1: 750, x2: 1180, y2: 750 },
-        'One_100_donor-2':                       { x: 185, y: 820, fontSize: 26 },
-        'x-2':                                   { x: 555, y: 850, textAnchor: 'middle', fontSize: 60 },
-        // _10_People-2 has tspan x=-168.787 baked in. Setting textAnchor=start
-        // means text starts at element_x + tspan_x. To start at viewBox x=620
-        // we set element x = 620 - (-168.787) = 789.
-        '_10_People-2':                          { x: 789, y: 845, textAnchor: 'start', fontSize: 38 },
-        'Ten_10_donors-2':                       { x: 985, y: 820, fontSize: 26 },
+        // ── × 10 People multiplication line (between Row 2 and Row 3) ─────
+        'Line_137':                                     { x1: 850, y1: 1030, x2: 1140, y2: 1030 },
+        'x-2':                                          { x: 940, y: 1010, textAnchor: 'middle', fontSize: 36 },
+        '_10_People-2':                                 { x: 1130, y: 1010, textAnchor: 'end', fontSize: 32 },
 
-        // Final comparison — $650 (one person) vs $800 (ten people, capped)
-        // V3.8: comparison row pushed to y=1300 (was 1080) to fill the lower
-        // half of the card. With viewBox 1700 the content now extends from
-        // top row y=420 → comparison y=1450 with 250u of bottom breathing room.
-        'Rectangle_110':                         { x: 100, y: 1300 },   // $650 box (left, from one person)
-        '_650-10':                               { x: 185, y: 1388, textAnchor: 'middle', fontSize: 50 },
-        '_650-8':                                { x: 185, y: 1388, textAnchor: 'middle', fontSize: 50 },  // alt $650 (some scenes use diff id)
-        'vs-2':                                  { x: 640, y: 1380, textAnchor: 'middle', fontSize: 60 },
-        'Rectangle_111':                         { x: 900, y: 1300 },   // $800 box (right, capped total)
-        // V3.8: _800-3 NO LONGER hidden. Previously V3 tried to swap it for
-        // _1150-5, but _1150-5 is physically inside scene-5 (not scene-6) —
-        // so applyV3LayoutForScene's scene-6 baseTransform compensation
-        // placed it at the wrong y, leaving the right box visibly empty.
-        // Reverting to the canonical $800 label (which lives in scene-6).
-        '_800-3':                                { x: 985, y: 1388, textAnchor: 'middle', fontSize: 50 },
+        // ── Row-3 HEADERS (above the boxes, per user spec) ────────────────
+        'One_100_donor-2':                              { x: 185, y: 1098, fontSize: 26 },
+        'Ten_10_donors-2':                              { x: 985, y: 1098, fontSize: 26 },
 
-        // Hide all the equation table elements (Tier 1, Tier 2, etc. inside scene 6)
-        // these are remnants from the chart that scene 6 inherits but doesn't need.
-        'Tier_1-6':                              { hide: true },
-        'Tier_2-4':                              { hide: true },
-        'Tier_3-4':                              { hide: true },
-        'Total-5':                               { hide: true },
-        'NOT_MATCHED-3':                         { hide: true },
-        'Tier_1_Matching_7_x_10':                { hide: true },
-        '_50-47':                                { hide: true },
-        '_200-11':                               { hide: true },
-        '_250-8':                                { hide: true },
-        '_350-33':                               { hide: true },
-        '_400-26':                               { hide: true },
-        '_500-12':                               { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-51': { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-52': { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-53': { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-54': { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-55': { hide: true },
-        'until_scene_1H_this_element_is_100_opacity-56': { hide: true },
-        'Line_123':                              { hide: true },
-        'Line_124':                              { hide: true },
-        'Line_125':                              { hide: true },
-        'Line_126':                              { hide: true },
-        '_870_170':                              { hide: true },
+        // ── Row 3: FINAL comparison ($650 vs $800) ────────────────────────
+        'Rectangle_110':                                { x: 100, y: 1130 }, // $650 left
+        '_650-10':                                      { x: 185, y: 1218, textAnchor: 'middle', fontSize: 50 },
+        '_650-8':                                       { x: 185, y: 1218, textAnchor: 'middle', fontSize: 50 }, // duplicate id pair from source
+        'vs-2':                                         { x: 640, y: 1218, textAnchor: 'middle', fontSize: 60 },
+        'Rectangle_111':                                { x: 900, y: 1130 }, // $800 right
+        '_800-3':                                       { x: 985, y: 1218, textAnchor: 'middle', fontSize: 50 },
+
+        // ── Equation-table inheritance from scene-5 stack — keep hidden ───
+        // These elements live inside scene-6's <g> in source SVG but belong
+        // visually to the scene-5 chart equation; on mobile they're absent.
+        'Tier_1-6':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table label inside scene-6; not part of mobile narrative
+        'Tier_2-4':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table label
+        'Tier_3-4':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table label
+        'Total-5':                                      { hide: true }, // TODO REVIEW: scene-5 eq-table label
+        'NOT_MATCHED-3':                                { hide: true }, // TODO REVIEW: scene-5 eq-table annotation
+        '_50-47':                                       { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        '_200-11':                                      { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        '_250-8':                                       { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        '_350-33':                                      { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        '_400-26':                                      { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        '_500-12':                                      { hide: true }, // TODO REVIEW: scene-5 eq-table cell
+        'until_scene_1H_this_element_is_100_opacity-51': { hide: true }, // TODO REVIEW: scene-5 eq + symbol
+        'until_scene_1H_this_element_is_100_opacity-52': { hide: true }, // TODO REVIEW: scene-5 eq = symbol
+        'until_scene_1H_this_element_is_100_opacity-53': { hide: true }, // TODO REVIEW: scene-5 eq + symbol
+        'until_scene_1H_this_element_is_100_opacity-54': { hide: true }, // TODO REVIEW: scene-5 eq = symbol
+        'until_scene_1H_this_element_is_100_opacity-55': { hide: true }, // TODO REVIEW: scene-5 eq + symbol
+        'until_scene_1H_this_element_is_100_opacity-56': { hide: true }, // TODO REVIEW: scene-5 eq = symbol
+        'Line_123':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table underline
+        'Line_124':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table underline
+        'Line_125':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table underline
+        'Line_126':                                     { hide: true }, // TODO REVIEW: scene-5 eq-table underline
+        '_870_170':                                     { hide: true }, // TODO REVIEW: scene-5 max-county-money callout (already in after-scrolly card)
       },
     };
 
@@ -2541,12 +2397,18 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           continue;
         }
         el.style.display = '';
-        // Snapshot original attrs for restore on desktop.
+        // Snapshot original attrs for restore on desktop. V3.11: extended to
+        // include styling attributes (fill / font-weight / font-family) so
+        // mobile-only color & weight overrides can be specified in the layout
+        // dict without editing the static SVG (which would leak to desktop).
         if (!el.hasAttribute('data-v3-orig')) {
           el.setAttribute('data-v3-orig', JSON.stringify({
             transform: el.getAttribute('transform'),
             textAnchor: el.getAttribute('text-anchor'),
             fontSize: el.getAttribute('font-size'),
+            fill: el.getAttribute('fill'),
+            fontWeight: el.getAttribute('font-weight'),
+            fontFamily: el.getAttribute('font-family'),
             x: el.getAttribute('x'), y: el.getAttribute('y'),
             x1: el.getAttribute('x1'), y1: el.getAttribute('y1'),
             x2: el.getAttribute('x2'), y2: el.getAttribute('y2'),
@@ -2570,11 +2432,22 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           // rect / text / g — use translate(local_x, local_y), optionally scale().
           // scale() multiplies inner content; useful for bar-chart groups whose
           // inner rects keep native size while group scales 1.4×.
-          const scaleStr = spec.scale != null ? ' scale(' + spec.scale + ')' : '';
+          // V3.9: spec.scale may be a number (uniform) or [sx, sy] array
+          // (non-uniform — used for Path_44 to shrink width without squeezing
+          // height per round-2 mobile annotation #4).
+          let scaleStr = '';
+          if (spec.scale != null) {
+            scaleStr = Array.isArray(spec.scale)
+              ? ' scale(' + spec.scale[0] + ' ' + spec.scale[1] + ')'
+              : ' scale(' + spec.scale + ')';
+          }
           el.setAttribute('transform', 'translate(' + localX + ' ' + localY + ')' + scaleStr);
         }
-        if (spec.textAnchor) el.setAttribute('text-anchor', spec.textAnchor);
-        if (spec.fontSize != null) el.setAttribute('font-size', spec.fontSize);
+        if (spec.textAnchor)        el.setAttribute('text-anchor', spec.textAnchor);
+        if (spec.fontSize   != null) el.setAttribute('font-size',   spec.fontSize);
+        if (spec.fill)              el.setAttribute('fill',         spec.fill);
+        if (spec.fontWeight)        el.setAttribute('font-weight',  spec.fontWeight);
+        if (spec.fontFamily)        el.setAttribute('font-family',  spec.fontFamily);
         n++;
       }
       return n;
@@ -2584,9 +2457,11 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     function restoreV3Layout() {
       document.querySelectorAll('[data-v3-orig]').forEach(el => {
         const orig = JSON.parse(el.getAttribute('data-v3-orig'));
+        // camelCase → kebab-case for SVG attribute names.
+        const TO_SVG = { textAnchor: 'text-anchor', fontSize: 'font-size',
+                         fontWeight: 'font-weight', fontFamily: 'font-family' };
         for (const [attr, val] of Object.entries(orig)) {
-          const svgAttr = attr === 'textAnchor' ? 'text-anchor' :
-                          attr === 'fontSize' ? 'font-size' : attr;
+          const svgAttr = TO_SVG[attr] || attr;
           if (val == null) el.removeAttribute(svgAttr);
           else el.setAttribute(svgAttr, val);
         }
@@ -2599,16 +2474,15 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       window.__mobilePortrait = isMobile;
       const canvasFrame = svg.querySelector('#canvasFrame');
       if (isMobile) {
-        // V3.8: viewBox shortened from 2050 -> 1700. Scene-1/6 content extent
-        // is ~1100-1500 in viewBox units; the trailing 350-950 units of empty
-        // space dominated the page on those scenes. eq overlay (scene 5,
-        // tallest at 5 rows) compressed via row-height tightening below.
-        svg.setAttribute('viewBox', '0 0 1280 1700');
-        // The white card background must track the viewBox or content past
-        // its bottom edge renders on the page background (looks detached).
+        // V3.10: viewBox restored to 1280×2050 per scene-1 reference layout
+        // (~/scene 1 example.svg). The taller viewBox lets scene 1's bar
+        // chart sit at y=1244..1804 (scale 1.4 over native 400u height).
+        // Other scenes have more empty space below their content as a result
+        // — that's acceptable while we iterate scene-by-scene.
+        svg.setAttribute('viewBox', '0 0 1280 2050');
         if (canvasFrame) {
           canvasFrame.setAttribute('width', '1280');
-          canvasFrame.setAttribute('height', '1700');
+          canvasFrame.setAttribute('height', '2050');
         }
 
         if (V3_LAYOUT_ENABLED) {
@@ -2934,7 +2808,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     // Per-scene heading content. Title is shown on scene 1 only.
     const SCENE_HEADINGS = [
       { title: 'Montgomery County Public Campaign Financing Example',
-        para:  'Once a publicly financed candidate for County Executive receives a combined $40,000 from at least 500 residents of their jurisdiction, the matching kicks in:' },
+        para:  'Once a publicly financed candidate for <strong>County Executive</strong> receives a combined <strong style="color:#229500">$40,000</strong> from at least <strong style="color:#229500">500</strong> residents of their jurisdiction, the matching kicks in:' },
       { title: '',
         para:  'The county only matches money given by donors who reside in a candidate\u2019s jurisdiction. Candidates also can\u2019t accept donations of any amount from:' },
       { title: '',
@@ -2942,7 +2816,7 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       { title: '',
         para:  'The state board keeps a running total of each donor\u2019s contributions, and as a donor gives more to a candidate over the course of an election, the amount the county matches drops.' },
       { title: '',
-        para:  'The county stops matching when a donor has given more than $150 to a candidate over the course of an election, and candidates are prohibited from accepting more than $500 from any single donor.' },
+        para:  'The county stops matching when a donor has given more than <strong style="color:#229500">$150</strong> to a candidate over the course of an election, and candidates are prohibited from accepting more than <strong style="color:#229500">$500</strong> from any single donor. The county stops matching all donations to a candidate for <strong>County Executive</strong> after they’ve given: <strong style="color:#0027ff">$870,170</strong>.' },
       // Scene 6 heading needs a smaller font-size (40 vs 50) so it fits on
       // one line and doesn't crowd scene 6's recap-row "In total for the
       // candidate" label that sits at the top-right of the scene.
@@ -3052,8 +2926,8 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
       // Heading content
       const head = SCENE_HEADINGS[activeSceneIdx];
       if (head) {
-        const titleChanged = headingTitleEl.textContent !== (head.title || '');
-        const paraChanged = headingParaEl.textContent !== head.para;
+        const titleChanged = headingTitleEl.innerHTML !== (head.title || '');
+        const paraChanged = headingParaEl.innerHTML !== head.para;
         if (titleChanged || paraChanged) {
           // Snap opacity to 0 BEFORE swapping content so the new heading
           // doesn't flash at the previous scene's lingering opacity. The
@@ -3071,11 +2945,11 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
           // before the next style change in this same frame.
           void headingOverlayG.offsetHeight;
           if (titleChanged) {
-            headingTitleEl.textContent = head.title || '';
+            headingTitleEl.innerHTML = head.title || '';
             headingTitleEl.classList.toggle('has-content', !!head.title);
           }
           if (paraChanged) {
-            headingParaEl.textContent = head.para;
+            headingParaEl.innerHTML = head.para;
           }
           // Restore the CSS opacity transition so subsequent JS opacity
           // sets (the localSlot * 1.5 ramp below) animate smoothly.
@@ -3514,6 +3388,213 @@ the candidate" transform="translate(1360 4577)" fill="#434343" font-size="30" fo
     setTimeout(update, 500);
   }
 })();
+</script>
+
+<script>
+  // Debug overlay — live scroll/viewport display + jump-to input
+  (function () {
+    const el = document.createElement('div');
+    el.id = 'scroll-debug';
+    Object.assign(el.style, {
+      position: 'fixed',
+      bottom: '12px',
+      left: '12px',
+      zIndex: '9999',
+      background: 'rgba(0,0,0,0.82)',
+      color: '#0f0',
+      fontFamily: 'monospace',
+      fontSize: '13px',
+      lineHeight: '1.7',
+      padding: '8px 12px',
+      borderRadius: '6px',
+      pointerEvents: 'auto',
+      userSelect: 'none',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+    });
+
+    el.innerHTML = `
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+        <div id="sd-readout"></div>
+        <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;align-self:center;">
+          <button id="sd-copy" title="Copy as filename string"
+            style="background:#0f0;color:#000;border:none;border-radius:3px;
+                   padding:2px 7px;font:700 11px monospace;cursor:pointer;line-height:1.6;">copy</button>
+          <button id="sd-shot" title="Screenshot → annotations folder"
+            style="background:#0a0;color:#fff;border:none;border-radius:3px;
+                   padding:2px 7px;font:700 11px monospace;cursor:pointer;line-height:1.6;">📸</button>
+        </div>
+      </div>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:6px;">
+        <label style="color:#888;font-size:11px;">scrollY→</label>
+        <input id="sd-scroll-input" type="number" placeholder="px"
+          style="width:72px;background:#111;color:#0f0;border:1px solid #0f0;
+                 border-radius:3px;padding:2px 5px;font:inherit;font-size:12px;outline:none;" />
+      </div>
+      <div style="margin-top:4px;display:flex;align-items:center;gap:6px;">
+        <label style="color:#888;font-size:11px;">viewport→</label>
+        <input id="sd-vp-input" type="text" placeholder="390x844"
+          style="width:72px;background:#111;color:#0f0;border:1px solid #0f0;
+                 border-radius:3px;padding:2px 5px;font:inherit;font-size:12px;outline:none;" />
+      </div>
+      <div id="sd-shot-status" style="font-size:10px;color:#888;margin-top:3px;min-height:13px;"></div>`;
+
+    document.body.appendChild(el);
+
+    const readout     = el.querySelector('#sd-readout');
+    const copyBtn     = el.querySelector('#sd-copy');
+    const shotBtn     = el.querySelector('#sd-shot');
+    const shotStatus  = el.querySelector('#sd-shot-status');
+    const scrollInput = el.querySelector('#sd-scroll-input');
+    const vpInput     = el.querySelector('#sd-vp-input');
+
+    function update() {
+      readout.innerHTML =
+        'scrollY: <b>' + Math.round(window.scrollY) + 'px</b><br>' +
+        'viewport: <b>' + window.innerWidth + ' × ' + window.innerHeight + 'px</b>';
+    }
+
+    copyBtn.addEventListener('click', function () {
+      const str = window.innerWidth + 'x' + window.innerHeight + '_scrollY-' + Math.round(window.scrollY);
+      navigator.clipboard.writeText(str).then(() => {
+        const orig = copyBtn.textContent;
+        copyBtn.textContent = '✓';
+        copyBtn.style.background = '#fff';
+        setTimeout(() => { copyBtn.textContent = orig; copyBtn.style.background = '#0f0'; }, 1000);
+      });
+    });
+
+    // ── Screenshot → annotations/WxH/scrollY-XXXX.png ───────────────────────
+    let annotationsDir = null;
+
+    async function loadHtml2Canvas() {
+      if (window.html2canvas) return;
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    shotBtn.addEventListener('click', async function () {
+      shotBtn.textContent = '⏳';
+      shotStatus.textContent = '';
+      try {
+        // First use: let user pick the annotations/ folder
+        if (!annotationsDir) {
+          shotStatus.textContent = 'pick annotations/ folder…';
+          annotationsDir = await window.showDirectoryPicker({ mode: 'readwrite' });
+        }
+
+        shotStatus.textContent = 'rendering…';
+        await loadHtml2Canvas();
+
+        const scrollY = Math.round(window.scrollY);
+        const w = window.innerWidth, h = window.innerHeight;
+
+        const canvas = await window.html2canvas(document.documentElement, {
+          x: 0, y: scrollY,
+          width: w, height: h,
+          scrollX: 0, scrollY: scrollY,
+          windowWidth: w, windowHeight: h,
+          useCORS: true, allowTaint: true,
+          logging: false,
+        });
+
+        // Get or create WxH subfolder
+        const vpFolder = w + 'x' + h;
+        const vpDir = await annotationsDir.getDirectoryHandle(vpFolder, { create: true });
+        const filename = 'scrollY-' + scrollY + '.png';
+        const fileHandle = await vpDir.getFileHandle(filename, { create: true });
+        const writable = await fileHandle.createWritable();
+
+        await new Promise((res, rej) => {
+          canvas.toBlob(async blob => {
+            try { await writable.write(blob); await writable.close(); res(); }
+            catch(e) { rej(e); }
+          }, 'image/png');
+        });
+
+        shotBtn.textContent = '✓';
+        shotBtn.style.background = '#fff';
+        shotBtn.style.color = '#000';
+        shotStatus.textContent = 'saved → ' + vpFolder + '/' + filename;
+        setTimeout(() => {
+          shotBtn.textContent = '📸';
+          shotBtn.style.background = '#0a0';
+          shotBtn.style.color = '#fff';
+          shotStatus.textContent = '';
+        }, 2500);
+
+      } catch (err) {
+        shotBtn.textContent = '📸';
+        shotBtn.style.background = '#0a0';
+        shotBtn.style.color = '#fff';
+        shotStatus.textContent = err.name === 'AbortError' ? 'cancelled' : '⚠ ' + err.message;
+        console.error('[screenshot]', err);
+      }
+    });
+    // ────────────────────────────────────────────────────────────────────────
+
+    scrollInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const target = parseInt(this.value, 10);
+        if (!isNaN(target)) {
+          window.scrollTo({ top: target, behavior: 'smooth' });
+          this.blur();
+        }
+      }
+      e.stopPropagation();
+    });
+
+    vpInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const match = this.value.trim().match(/^(\d+)[x×,\s](\d+)$/i);
+        if (match) {
+          const w = parseInt(match[1], 10);
+          const h = parseInt(match[2], 10);
+          window.resizeTo(w, h);
+          setTimeout(() => {
+            if (window.innerWidth !== w || window.innerHeight !== h) {
+              window.open(location.href, '_blank',
+                'width=' + w + ',height=' + h + ',resizable=yes,scrollbars=yes');
+            }
+          }, 150);
+          this.blur();
+        } else {
+          this.style.borderColor = '#f55';
+          setTimeout(() => this.style.borderColor = '#0f0', 800);
+        }
+      }
+      e.stopPropagation();
+    });
+
+    // clicking inside the overlay shouldn't trigger Agentation
+    el.addEventListener('mousedown', e => e.stopPropagation());
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
+
+<script type="module">
+  // Agentation annotator — only loads when ?annotate=1 is in the URL
+  if (new URLSearchParams(location.search).has('annotate')) {
+    try {
+      const React = (await import('https://esm.sh/react@18')).default;
+      const { createRoot } = await import('https://esm.sh/react-dom@18/client');
+      const { Agentation } = await import('https://esm.sh/agentation?deps=react@18,react-dom@18');
+      const mount = document.createElement('div');
+      mount.id = 'agentation-mount';
+      document.body.appendChild(mount);
+      createRoot(mount).render(React.createElement(Agentation));
+      console.log('[Agentation] mounted');
+    } catch (err) {
+      console.error('[Agentation] failed to load:', err);
+      alert('Agentation failed to load — check console. ' + err.message);
+    }
+  }
 </script>
 
 </body>
