@@ -152,6 +152,7 @@ html, body {
   color: #1a1a1a;
 }
 .sbs-root .as-heading .accent { color: #229500; font-weight: 700; }
+.sbs-root .as-heading .accent-blue { color: #0027ff; font-weight: 700; }
 .sbs-root .as-heading .office-name { font-weight: 700; }
 
 /* ----------------------------------------------------------------------------
@@ -513,7 +514,7 @@ html, body {
     <span class="accent" id="asQualifyDollars">$40,000</span>
     from at least
     <span class="accent" id="asQualifyDonors">500</span>
-    residents of their jurisdiction, the matching kicks in. The county only matches donors from the candidate&rsquo;s jurisdiction and it&rsquo;s <strong>cumulative based on donor</strong> meaning it doesn&rsquo;t matter if someone gives their donation all at once or in smaller pieces.<br><strong>For example:</strong> One <span class="accent">$100</span> donation is treated as if the same person donated <span class="accent">$50</span> twice.
+    residents of their jurisdiction, the matching kicks in. The county only matches donors from the candidate&rsquo;s jurisdiction. As a donor contributes to a candidate over the course of an election, their money falls progressively into tiers with different matching ratios.<br><strong>For instance,</strong> the first <span class="accent">$50</span> is matched <span class="accent-blue" id="asTier1Match">seven times</span> over in tier 1, the second <span class="accent">$50</span> falls into tier 2 and is matched <span class="accent-blue" id="asTier2Match">four times</span> over.
   </p>
 
   <!-- ↓ EDIT EYEBROW + SUBHEAD ↓ -->
@@ -736,6 +737,9 @@ html, body {
   }
 
   function fmt$(n) { return '$' + n.toLocaleString(); }
+  function numToWord(n) {
+    return ['zero','one','two','three','four','five','six','seven','eight','nine','ten'][n] || String(n);
+  }
 
   function renderAfterScrolly() {
     const office = OFFICE_DATA[currentOffice];
@@ -748,6 +752,8 @@ html, body {
     document.getElementById('asOfficeName').textContent = office.label;
     document.getElementById('asQualifyDollars').textContent = office.qualifyDollars;
     document.getElementById('asQualifyDonors').textContent = office.qualifyDonors;
+    document.getElementById('asTier1Match').textContent = numToWord(office.t1) + ' times';
+    document.getElementById('asTier2Match').textContent = numToWord(office.t2) + ' times';
     document.getElementById('maxOffice').textContent = office.label;
     document.getElementById('maxAmount').textContent = office.maxPerElection;
     document.getElementById('bigDonationValue').textContent = fmt$(donation);
