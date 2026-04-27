@@ -3,806 +3,1200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mockup — small-donor matching, redesigned in CNS Maryland editorial style</title>
-<!-- Editorial type stack: Source Serif for body+headlines (newsprint feel),
-     Inter for UI/labels (small-caps eyebrows, byline), JetBrains Mono for
-     dollar amounts (numbers as data, columns aligned). -->
+<title>Small-donor matching — article mockup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- =========================================================================
+  ARTICLE MOCKUP — drops the two WordPress components into a fake article
+  with lorem-ipsum body so you can see what the final page looks like.
+
+  Order:  article paragraphs
+          interactive (slider widget)
+          article paragraphs
+          scrollytelling (one-scene reveal)
+          article paragraphs
+
+  This file is for SHOWING THE LAYOUT only. To embed in WordPress, paste
+  the two source files (interactive.html / simplified-scrolly.html) into
+  separate Custom HTML blocks per HOW-TO-EMBED.txt.
+========================================================================= -->
+
 <style>
-  :root {
-    --bg: #f7f3ea;
-    --paper: #fcf9f1;
-    --ink: #1a1a1a;
-    --ink-2: #4a4a4a;
-    --ink-3: #7a7a7a;
-    --ink-4: #b8b1a3;
-    --rule: #1a1a1a;
-    --rule-soft: #c9c2b3;
-    --green: #1a5928;
-    --blue:  #11283e;
-    --purple:#5e1c4a;
-    --red:   #8a1f1f;
-    --amber: #b97a16;
-    --green-fill:  rgba(26, 89, 40, 0.10);
-    --blue-fill:   rgba(17, 40, 62, 0.10);
-    --purple-fill: rgba(94, 28, 74, 0.10);
-  }
+/* MOCKUP-ONLY: simple article body styling for the lorem-ipsum paragraphs.
+   These rules don't go into WordPress — your theme handles body type. */
+html, body { background: #fafafa; color: #2a2a2a; color-scheme: light; }
+body { margin: 0; }
+.mockup-article-head {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 1rem;
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+.mockup-article-head .kicker {
+  font: 700 11px/1 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a1f1f;
+  border-top: 2px solid #8a1f1f;
+  padding-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.mockup-article-head h1 {
+  font: 700 clamp(2rem, 4vw, 2.75rem)/1.15 'Source Serif 4', Georgia, serif;
+  margin: 0 0 0.6rem;
+  color: #1a1a1a;
+  letter-spacing: -0.012em;
+}
+.mockup-article-head .byline {
+  font: 600 13px/1.4 'Inter', sans-serif;
+  color: #4a4a4a;
+}
+.mockup-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  line-height: 1.7;
+  color: #2a2a2a;
+}
+.mockup-body p { margin: 0 0 1rem; }
+.mockup-body p:last-child { margin-bottom: 0; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ============================================================================
+   COMPONENT #1 STYLES — interactive widget (scoped under .sbs-root)
+============================================================================ */
+.sbs-root, .sbs-root *, .sbs-root *::before, .sbs-root *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
 
-  html, body {
-    background: var(--bg);
-    color: var(--ink);
-    font: 400 18px/1.55 'Source Serif 4', Georgia, serif;
-    -webkit-font-smoothing: antialiased;
-  }
+.sbs-root {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #2a2a2a;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  font-size: 16px;
+  text-align: left;
+  overflow-x: clip;
+}
 
-  /* sticky preview banner */
-  .preview-banner {
-    background: var(--ink);
-    color: var(--bg);
-    font: 600 11px/1.4 'Inter', sans-serif;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 8px 12px;
-    text-align: center;
-  }
-  .preview-banner a {
-    color: var(--bg);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
+/* ----------------------------------------------------------------------------
+   AFTER-SCROLLY container
+---------------------------------------------------------------------------- */
+.sbs-root .after-scrolly {
+  padding: 1.25rem 1rem 1.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-  /* ==== article shell ==== */
+/* ----------------------------------------------------------------------------
+   Office selector — newspaper-style horizontal tabs.
+---------------------------------------------------------------------------- */
+.sbs-root .office-selector {
+  display: flex;
+  gap: 0;
+  border-top: 2px solid #1a1a1a;
+  border-bottom: 1px solid #c9c2b3;
+  margin: 0 auto 1.5rem;
+  max-width: 720px;
+  background: transparent;
+  font: 600 12px/1 'Inter', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.sbs-root .office-selector button {
+  flex: 1;
+  padding: 14px 8px;
+  border: 0;
+  border-right: 1px solid #c9c2b3;
+  background: transparent;
+  color: #4a4a4a;
+  font: inherit;
+  cursor: pointer;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.sbs-root .office-selector button:last-child { border-right: none; }
+.sbs-root .office-selector button + button { border-left: none; }
+.sbs-root .office-selector button:hover { color: #1a1a1a; background: rgba(26,26,26,0.04); }
+.sbs-root .office-selector button.active {
+  background: #1a1a1a;
+  color: #fafafa;
+  font-weight: 700;
+}
 
-  .masthead {
-    border-bottom: 2px solid var(--rule);
-    padding: 1.25rem 1.5rem;
-  }
-  .masthead .inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-  }
-  .masthead .logo {
-    font: 700 18px/1 'Source Serif 4', serif;
-    letter-spacing: -0.005em;
-  }
-  .masthead .nav {
-    margin-left: auto;
-    display: flex;
-    gap: 1.25rem;
-    font: 600 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-  .masthead .nav a { color: inherit; text-decoration: none; }
-  .masthead .nav a:hover { color: var(--ink); }
+/* ----------------------------------------------------------------------------
+   Headline paragraph above the slider.
+---------------------------------------------------------------------------- */
+.sbs-root .as-heading {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+.sbs-root .as-heading .accent { color: #229500; font-weight: 700; }
+.sbs-root .as-heading .office-name { font-weight: 700; }
 
-  article {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 2rem;
-  }
+/* ----------------------------------------------------------------------------
+   Two-column grid for chart (left) + equation table (right).
+---------------------------------------------------------------------------- */
+.sbs-root .as-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.6fr) minmax(280px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .sbs-root .as-grid { grid-template-columns: 1fr; }
+}
 
-  .kicker {
-    font: 700 12px/1 'Inter', sans-serif;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 1rem;
-  }
-  h1.headline {
-    font: 700 52px/1.06 'Source Serif 4', serif;
-    letter-spacing: -0.022em;
-    color: var(--ink);
-    margin-bottom: 1.25rem;
-  }
-  .deck {
-    font: 400 22px/1.4 'Source Serif 4', serif;
-    color: var(--ink-2);
-    margin-bottom: 1.5rem;
-  }
+/* ----------------------------------------------------------------------------
+   Slider + ticks + small-caps "DONATION" label.
+---------------------------------------------------------------------------- */
+.sbs-root .slider-wrap {
+  margin-bottom: 0.75rem;
+}
+.sbs-root .slider-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+.sbs-root .slider-label-caps {
+  font: 700 11px/1 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7a7a7a;
+  font-style: normal;
+}
+.sbs-root .slider-live-val {
+  font: 700 1.35rem/1 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  color: #229500;
+  letter-spacing: -0.02em;
+}
+.sbs-root .section-eyebrow {
+  font: 700 11px/1 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7a7a7a;
+  border-top: 2px solid #1a1a1a;
+  padding-top: 0.6rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.sbs-root .section-subhead {
+  font: 700 1.25rem/1.2 'Source Serif 4', Georgia, serif;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.01em;
+}
+.sbs-root .sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+.sbs-root .slider-wrap input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2px;
+  border-radius: 0;
+  background: #1a1a1a;
+  outline: none;
+  margin: 0.85rem 0 0.5rem;
+  cursor: pointer;
+}
+.sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 0;
+  background: #229500;
+  cursor: pointer;
+  border: 0;
+  box-shadow: none;
+}
+.sbs-root .slider-wrap input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 0;
+  background: #229500;
+  cursor: pointer;
+  border: 0;
+  box-shadow: none;
+}
+.sbs-root .slider-ticks {
+  position: relative;
+  height: 1.2em;
+  font-size: 0.72rem;
+  color: #7a7a7a;
+  margin: 0 7px 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+.sbs-root .slider-ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
 
-  .byline {
-    font: 600 12px/1.4 'Inter', sans-serif;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    border-top: 1px solid var(--rule-soft);
-    border-bottom: 1px solid var(--rule-soft);
-    padding: 0.6rem 0;
-    margin-bottom: 2rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.25rem;
-    align-items: baseline;
-  }
-  .byline strong { color: var(--ink); }
+/* ----------------------------------------------------------------------------
+   Equation table (right column of the grid).
+---------------------------------------------------------------------------- */
+.sbs-root .eq-table {
+  border-collapse: separate;
+  border-spacing: 0 2px;
+  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 1rem;
+}
+.sbs-root .eq-table td {
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+.sbs-root .eq-table .tier-label { color: #434343; padding-right: 8px; text-align: right; min-width: 90px; font-family: 'Source Serif 4', Georgia, serif; }
+.sbs-root .eq-table .donor { color: #229500; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .match { color: #0027ff; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 64px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; text-align: center; min-width: 18px; padding: 0 8px; }
+.sbs-root #bigDonationValue,
+.sbs-root #bigCandidateValue,
+.sbs-root .as-heading .accent {
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+.sbs-root .eq-table .total-row td { padding-top: 14px; }
+.sbs-root .eq-table .total-row td.donor,
+.sbs-root .eq-table .total-row td.match,
+.sbs-root .eq-table .total-row td.total {
+  border-top: 2px solid #444;
+}
+.sbs-root .eq-table .total-row .tier-label { font-weight: 700; }
+.sbs-root .eq-table .not-matched { color: red; font-weight: 700; }
+.sbs-root .eq-table tr { transition: opacity 0.25s ease-out; }
+.sbs-root .eq-table tr.hidden {
+  visibility: collapse;
+  opacity: 0;
+  pointer-events: none;
+}
 
-  article p {
-    margin-bottom: 1.1rem;
-    font-size: 19px;
-    line-height: 1.6;
-    color: var(--ink);
-  }
-  article p strong { font-weight: 700; color: var(--ink); }
-  article a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
-  article a:hover { color: var(--purple); }
+/* ----------------------------------------------------------------------------
+   Bar chart (left column of the grid).
+---------------------------------------------------------------------------- */
+.sbs-root .bar-chart-wrap {
+  position: relative;
+}
+.sbs-root .bar-chart-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 
-  /* drop cap on first paragraph */
-  article p.lede:first-letter {
-    float: left;
-    font: 700 76px/0.85 'Source Serif 4', serif;
-    color: var(--ink);
-    margin: 6px 8px -2px 0;
-  }
+/* ----------------------------------------------------------------------------
+   Info row below the chart (prohibited list + callouts).
+---------------------------------------------------------------------------- */
+.sbs-root .info-row {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.4fr) minmax(220px, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .sbs-root .info-row { grid-template-columns: 1fr; }
+}
+.sbs-root .info-minor-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
 
-  /* ==== section labels ==== */
+/* Prohibited-donor list — thin-rule typography list. */
+.sbs-root .prohibited-block {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.sbs-root .prohibited-block h3 {
+  font: 700 11px/1 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8a1f1f;
+  border-bottom: 2px solid #8a1f1f;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+.sbs-root .prohibited-list-clean {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  columns: 2;
+  column-gap: 1.5rem;
+}
+@media (max-width: 600px) { .sbs-root .prohibited-list-clean { columns: 1; } }
+.sbs-root .prohibited-list-clean li {
+  font: 400 16px/1.4 'Source Serif 4', Georgia, serif;
+  color: #1a1a1a;
+  padding: 8px 0;
+  border-bottom: 1px solid #c9c2b3;
+  break-inside: avoid;
+  display: flex;
+  gap: 8px;
+}
+.sbs-root .prohibited-list-clean li::before {
+  content: "—";
+  color: #d92b2b;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.sbs-root .prohibited-list-clean li:last-child { border-bottom: none; }
 
-  .seclabel {
-    font: 700 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    padding: 0.6rem 0;
-    border-top: 2px solid var(--ink);
-    margin: 2.5rem 0 1.25rem;
-  }
-  .seclabel.numbered::before {
-    content: counter(sec, decimal-leading-zero) ' / ';
-    color: var(--red);
-    margin-right: 4px;
-  }
-  body { counter-reset: sec; }
-  .seclabel.numbered { counter-increment: sec; }
+/* Callout — left-rule pull-quote (donor cap, county match cap). */
+.sbs-root .callout {
+  background: transparent;
+  border: 0;
+  border-left: 3px solid #1a1a1a;
+  padding: 6px 14px;
+  margin: 0 0 1rem 0;
+}
+.sbs-root .callout-eyebrow {
+  font: 700 10px/1 'Inter', sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #7a7a7a;
+  margin-bottom: 4px;
+}
+.sbs-root .callout-label {
+  font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+.sbs-root .callout-label #maxOffice {
+  font-weight: 700;
+}
+.sbs-root .callout-value {
+  font: 700 26px/1 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: #1a5928;
+}
+.sbs-root .callout-value.county-blue {
+  color: #0027ff;
+}
+.sbs-root .callout-value-suffix {
+  font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
+  font-variant-numeric: normal;
+  letter-spacing: normal;
+  color: #1a1a1a;
+  margin-left: 8px;
+}
 
-  h2.sub {
-    font: 700 30px/1.1 'Source Serif 4', serif;
-    letter-spacing: -0.012em;
-    margin-bottom: 0.75rem;
-  }
+/* ----------------------------------------------------------------------------
+   Methodology footer.
+---------------------------------------------------------------------------- */
+.sbs-root .methodology {
+  border-top: 2px solid #1a1a1a;
+  margin: 2.5rem 0 0;
+  padding: 1rem 0 2rem;
+}
+.sbs-root .methodology h6 {
+  font: 700 11px/1 'Inter', sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.sbs-root .methodology p.meth-todo {
+  font: 700 14px/1.55 'Source Serif 4', Georgia, serif;
+  color: #c0392b;
+  margin-bottom: 0.6rem;
+}
+.sbs-root .methodology p.meth-todo em {
+  display: block;
+  margin-top: 0.3rem;
+  font: italic 12px/1.3 'Inter', sans-serif;
+  color: #c0392b;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+.sbs-root .methodology p.graphics-credit {
+  font: 600 11px/1.2 'Inter', sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #4a4a4a;
+  margin-top: 1.25rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #c9c2b3;
+}
+.sbs-root .methodology p.graphics-credit strong {
+  color: #1a1a1a;
+}
 
-  /* ==== inline pull-quote ==== */
+/* ----------------------------------------------------------------------------
+   Mobile overrides (≤ 768px).
+---------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
+  .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
+  .sbs-root .as-heading { font-size: 1rem; line-height: 1.45; }
+  .sbs-root .office-selector button { font-size: 13px; padding: 12px 4px; }
+  .sbs-root .slider-wrap input[type="range"] { height: 2px; }
+  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 18px; height: 18px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
+  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 0; background: #229500; border: 0; box-shadow: none; }
+  .sbs-root .slider-ticks { font-size: 0.7rem; }
+  .sbs-root .eq-table { font-size: 0.95rem; }
+}
 
-  blockquote.pull {
-    font: 600 26px/1.25 'Source Serif 4', serif;
-    color: var(--ink);
-    border-left: 3px solid var(--red);
-    padding: 0.4rem 0 0.4rem 1.1rem;
-    margin: 1.75rem 0;
-    letter-spacing: -0.005em;
-  }
-  blockquote.pull cite {
-    display: block;
-    font: 600 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    font-style: normal;
-    margin-top: 0.6rem;
-  }
+/* ============================================================================
+   COMPONENT #2 STYLES — scrollytelling (scoped under .sbs-scrolly)
+============================================================================ */
+.sbs-scrolly, .sbs-scrolly *, .sbs-scrolly *::before, .sbs-scrolly *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.sbs-scrolly {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #2a2a2a;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  margin: 15px 0;
+  /* `overflow-x: clip` (not `hidden`) so position: sticky still works on the
+     stage. `hidden` makes .sbs-scrolly a scroll container which breaks sticky. */
+  overflow-x: clip;
+}
 
-  /* ==== STAGE — illustrative scene composite ==== */
+/* The track is the tall element that determines how much scroll is
+   available for stepping through the scenes. Stage sticks at top, track
+   scrolls past. 800vh total → ~89vh of scroll per step. Tweak height
+   here to make the scrolly faster/slower. */
+.sbs-scrolly .scrolly-track {
+  position: relative;
+  height: 800vh;
+}
 
-  .stage {
-    margin: 2rem -1.5rem;
-    padding: 2rem 1.5rem;
-    background: var(--paper);
-    border-top: 2px solid var(--ink);
-    border-bottom: 2px solid var(--ink);
-  }
-  .stage .stage-eyebrow {
-    font: 700 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    margin-bottom: 0.8rem;
-  }
-  .stage h3 {
-    font: 700 26px/1.2 'Source Serif 4', serif;
-    margin-bottom: 1.5rem;
-    max-width: 28ch;
-    letter-spacing: -0.01em;
-  }
+.sbs-scrolly .scrolly-stage {
+  position: sticky; top: 0;
+  /* Stage shrinks to fit the SVG's natural aspect + 15px top/bottom padding,
+     capped at viewport height. Eliminates the big vertical letterbox the
+     fixed `height: 100vh` caused when SVG aspect didn't match viewport. */
+  height: auto;
+  max-height: 100vh;
+  padding: 15px 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background: #fff;
+}
 
-  /* "scene 1" composite chart — heading on top, boxes-equation in middle,
-     vertical bar chart at bottom. Drawn in CSS so the mockup is single-file. */
-  .scene1-fig {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
-  }
-  @media (max-width: 640px) {
-    .scene1-fig { grid-template-columns: 1fr; }
-  }
-  .scene1-fig .col-left .annotation {
-    font: italic 15px/1.4 'Source Serif 4', serif;
-    color: var(--ink-2);
-    margin-bottom: 0.6rem;
-  }
-  .scene1-fig .col-left .annotation strong {
-    font-style: normal;
-    color: var(--ink);
-  }
+.sbs-scrolly .scene-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 30px);
+}
+.sbs-scrolly .desktop-svg { display: block; }
+.sbs-scrolly .mobile-svg  { display: none; }
+@media (max-width: 768px) {
+  .sbs-scrolly .desktop-svg { display: none; }
+  .sbs-scrolly .mobile-svg  { display: block; }
+}
 
-  /* boxes-equation composite */
-  .eq-strip {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin: 0.4rem 0 1.2rem;
-    font: 700 28px/1 'JetBrains Mono', monospace;
-    letter-spacing: -0.02em;
-    flex-wrap: wrap;
-  }
-  .eq-strip .box {
-    border: 2px solid currentColor;
-    padding: 6px 10px;
-    background: transparent;
-    min-width: 78px;
-    text-align: center;
-  }
-  .eq-strip .box.donor   { color: var(--green); background: var(--green-fill); }
-  .eq-strip .box.match   { color: var(--blue);  background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.10) 4px 5px); }
-  .eq-strip .box.total   { color: var(--purple); background: var(--purple-fill); }
-  .eq-strip .op { color: var(--ink-3); font-weight: 500; padding: 0 4px; }
-  .eq-strip .annot {
-    flex: 1 0 100%;
-    font: italic 13px/1.4 'Source Serif 4', serif;
-    color: var(--ink-3);
-    margin-top: 4px;
-  }
+/* Reveal mechanic — every element tagged at boot starts hidden, fades
+   in when the reader's current step ≥ the element's step. */
+.sbs-scrolly [data-step] {
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
 
-  /* vertical bar chart */
-  .bar {
-    position: relative;
-    border-bottom: 2px solid var(--ink);
-    border-left: 1px solid var(--rule-soft);
-    height: 240px;
-    display: flex;
-    align-items: flex-end;
-    padding: 0 0 0 8px;
-    margin-top: 1rem;
-  }
-  .bar .col {
-    width: 70px;
-    margin-right: 18px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-  .bar .col .stack {
-    border-top: 2px solid var(--blue);
-    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.18) 4px 5px);
-    width: 100%;
-    position: relative;
-  }
-  .bar .col .stack::after {
-    content: attr(data-amount);
-    position: absolute;
-    inset: auto 0 6px 0;
-    text-align: center;
-    font: 700 13px/1 'JetBrains Mono', monospace;
-    color: var(--blue);
-  }
-  .bar .col .donor-strip {
-    height: 18px;
-    background: var(--green-fill);
-    border-top: 2px solid var(--green);
-    margin-top: 0;
-  }
-  .bar .col .donor-strip::after {
-    content: attr(data-amount);
-    display: block;
-    text-align: center;
-    font: 700 12px/18px 'JetBrains Mono', monospace;
-    color: var(--green);
-  }
-  .bar .col .mult {
-    position: absolute;
-    top: -22px;
-    left: 0; right: 0;
-    text-align: center;
-    font: 700 12px/1 'JetBrains Mono', monospace;
-    color: var(--ink);
-  }
-  .bar .col .axis-tick {
-    position: absolute;
-    bottom: -22px;
-    left: 0; right: 0;
-    text-align: center;
-    font: 12px/1 'JetBrains Mono', monospace;
-    color: var(--ink-3);
-  }
-  .bar-leader {
-    margin-top: 38px;
-    font: italic 13px/1.4 'Source Serif 4', serif;
-    color: var(--ink-2);
-    border-top: 1px dashed var(--rule-soft);
-    padding-top: 6px;
-  }
-
-  /* ==== AFTER-SCROLLY — interactive panel mockup ==== */
-
-  .after {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: var(--paper);
-    border-top: 2px solid var(--ink);
-  }
-  .after .seclabel { margin: 0 0 0.6rem; padding: 0; border: 0; }
-  .after h2.sub { margin-bottom: 0.4rem; }
-  .after .deck { font-size: 18px; margin-bottom: 1.5rem; }
-
-  .office-tabs {
-    display: flex;
-    gap: 0;
-    border-top: 2px solid var(--ink);
-    border-bottom: 1px solid var(--rule-soft);
-    margin-bottom: 1.5rem;
-    font: 600 12px/1 'Inter', sans-serif;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .office-tabs a {
-    padding: 14px 16px;
-    color: var(--ink-2);
-    text-decoration: none;
-    border-right: 1px solid var(--rule-soft);
-  }
-  .office-tabs a:last-child { border-right: none; }
-  .office-tabs a.active {
-    color: var(--bg);
-    background: var(--ink);
-  }
-
-  .as-heading {
-    font: 19px/1.5 'Source Serif 4', serif;
-    color: var(--ink);
-    margin-bottom: 1.5rem;
-  }
-  .as-heading .accent { color: var(--green); font-weight: 700; }
-  .as-heading .office-name { font-weight: 700; }
-
-  .slider-wrap {
-    margin-bottom: 1.5rem;
-  }
-  .slider-wrap .slabel {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 14px;
-  }
-  .slider-wrap .slabel .lbl {
-    font: 700 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
-  .slider-wrap .slabel .val {
-    font: 700 22px/1 'JetBrains Mono', monospace;
-    color: var(--green);
-    letter-spacing: -0.02em;
-  }
-  .slider-wrap input[type=range] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 2px; background: var(--ink); outline: none;
-    margin: 6px 0 4px;
-  }
-  .slider-wrap input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 14px; height: 14px;
-    background: var(--green);
-    border: 0;
-    cursor: pointer;
-    box-shadow: none;
-  }
-  .slider-wrap input[type=range]::-moz-range-thumb {
-    width: 14px; height: 14px; background: var(--green); border: 0; cursor: pointer;
-  }
-  .slider-ticks {
-    display: grid;
-    grid-template-columns: repeat(11, 1fr);
-    font: 11px/1 'JetBrains Mono', monospace;
-    color: var(--ink-3);
-    margin-top: 8px;
-  }
-  .slider-ticks span:nth-child(even) { color: transparent; }
-
-  .as-grid {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 1.5rem;
-    margin: 1.5rem 0;
-  }
-  @media (max-width: 720px) { .as-grid { grid-template-columns: 1fr; } }
-
-  /* mini sideways chart */
-  .as-chart {
-    border-left: 2px solid var(--ink);
-    border-bottom: 2px solid var(--ink);
-    height: 200px;
-    position: relative;
-    padding: 12px 0 0 12px;
-  }
-  .as-chart .ax-y {
-    position: absolute;
-    left: -64px;
-    top: 50%;
-    transform: rotate(-90deg);
-    font: 700 10px/1 'Inter', sans-serif;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--blue);
-  }
-  .as-chart .col {
-    position: absolute;
-    bottom: 0;
-    border-top: 2px solid var(--blue);
-    background: repeating-linear-gradient(45deg, transparent 0 4px, rgba(17,40,62,0.15) 4px 5px);
-  }
-  .as-chart .col::after {
-    content: attr(data-amount);
-    position: absolute;
-    inset: 6px 0 auto 0;
-    text-align: center;
-    font: 700 12px/1 'JetBrains Mono', monospace;
-    color: var(--blue);
-  }
-  .as-chart .donor-strip {
-    position: absolute;
-    bottom: -22px;
-    height: 14px;
-    border-top: 2px solid var(--green);
-    background: var(--green-fill);
-  }
-  .as-chart .x-tick {
-    position: absolute;
-    bottom: -42px;
-    transform: translateX(-50%);
-    font: 10px/1 'JetBrains Mono', monospace;
-    color: var(--ink-3);
-  }
-
-  .as-chart-legend {
-    display: flex;
-    gap: 24px;
-    margin-top: 60px;
-    font: 12px/1.3 'Source Serif 4', serif;
-    color: var(--ink-2);
-  }
-  .as-chart-legend .key {
-    display: inline-block;
-    width: 16px;
-    height: 12px;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-  .as-chart-legend .key.donor { background: var(--green-fill); border: 1.5px solid var(--green); }
-  .as-chart-legend .key.match { background: repeating-linear-gradient(45deg, transparent 0 3px, rgba(17,40,62,0.2) 3px 4px); border: 1.5px solid var(--blue); }
-
-  /* equation table — mono digits, no card */
-  .eq-table {
-    width: 100%;
-    border-collapse: collapse;
-    font: 14px/1.4 'Source Serif 4', serif;
-  }
-  .eq-table thead th {
-    text-align: left;
-    font: 700 10px/1 'Inter', sans-serif;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    padding: 6px 8px;
-    border-bottom: 2px solid var(--ink);
-  }
-  .eq-table thead th:not(:first-child) { text-align: right; }
-  .eq-table td {
-    padding: 8px 8px;
-    border-bottom: 1px solid var(--rule-soft);
-    font: 14px/1.2 'Source Serif 4', serif;
-    color: var(--ink);
-  }
-  .eq-table td:not(:first-child) {
-    text-align: right;
-    font: 600 16px/1.2 'JetBrains Mono', monospace;
-    letter-spacing: -0.02em;
-  }
-  .eq-table .donor { color: var(--green); }
-  .eq-table .match { color: var(--blue); }
-  .eq-table .total { color: var(--purple); }
-  .eq-table .total-row td { font-weight: 700; border-top: 2px solid var(--ink); border-bottom: none; padding-top: 12px; }
-  .eq-table .nm { color: var(--red); font-weight: 700; }
-
-  /* prohibited list — no card, just typography */
-  .prohibited {
-    margin: 2rem 0;
-  }
-  .prohibited h4 {
-    font: 700 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--red);
-    border-bottom: 2px solid var(--red);
-    padding-bottom: 6px;
-    margin-bottom: 8px;
-  }
-  .prohibited ul {
-    list-style: none;
-    columns: 2;
-    column-gap: 1.5rem;
-  }
-  @media (max-width: 600px) { .prohibited ul { columns: 1; } }
-  .prohibited li {
-    font-size: 16px;
-    line-height: 1.4;
-    color: var(--ink);
-    padding: 8px 0;
-    border-bottom: 1px solid var(--rule-soft);
-    break-inside: avoid;
-    display: flex;
-    gap: 8px;
-  }
-  .prohibited li::before {
-    content: "—";
-    color: var(--red);
-    font-weight: 700;
-  }
-
-  /* callout — left-edge rule + small caps */
-  .callout {
-    border-left: 3px solid var(--ink);
-    padding: 6px 14px;
-    margin: 1.75rem 0;
-  }
-  .callout .seclbl {
-    font: 700 10px/1 'Inter', sans-serif;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    margin-bottom: 4px;
-  }
-  .callout .lbl  { font: 17px/1.3 'Source Serif 4', serif; color: var(--ink); margin-bottom: 4px; }
-  .callout .val  { font: 700 28px/1 'JetBrains Mono', monospace; color: var(--blue); letter-spacing: -0.02em; }
-
-  /* replay link — text, not button */
-  .replay {
-    margin: 2.5rem 0 1rem;
-    font: 600 14px/1.3 'Inter', sans-serif;
-  }
-  .replay a {
-    color: var(--ink);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1.5px;
-  }
-
-  /* methodology footer */
-  .meth {
-    border-top: 2px solid var(--ink);
-    margin: 3rem 0 0;
-    padding: 1rem 0 2rem;
-  }
-  .meth h5 {
-    font: 700 11px/1 'Inter', sans-serif;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    margin-bottom: 8px;
-  }
-  .meth p {
-    font: 14px/1.55 'Source Serif 4', serif;
-    color: var(--ink-2);
-    margin-bottom: 0.6rem;
-  }
-
-  /* ==== mobile column ==== */
-  @media (max-width: 700px) {
-    article { padding: 2rem 1.25rem; }
-    h1.headline { font-size: 36px; }
-    .deck { font-size: 18px; }
-    .stage { padding: 1.5rem 1.25rem; margin: 2rem -1.25rem; }
-    .scene1-fig { gap: 2rem; }
-    .scene1-fig .bar { height: 200px; }
-  }
+/* Hairline progress bar at the top of the stage (optional — comment out
+   the rule to remove). */
+.sbs-scrolly .progress-bar {
+  position: absolute; top: 0; left: 0;
+  height: 2px; background: #1a1a1a;
+  width: 0%;
+  transition: width 0.1s linear;
+  z-index: 5;
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
 
-<div class="preview-banner">
-  Mockup · what the page would look like with all 22 audit changes applied · <a href="audit.html">go back to audit</a>
-</div>
+<header class="mockup-article-head">
+  <div class="kicker">Montgomery County · Investigations</div>
+  <h1>How small donors can outweigh a big check</h1>
+  <div class="byline">By Reporter Name · Published April 26, 2026</div>
+</header>
 
-<div class="masthead">
-  <div class="inner">
-    <span class="logo">Capital News Service</span>
-    <span class="nav">
-      <a href="#">Politics</a>
-      <a href="#">Government</a>
-      <a href="#">Investigations</a>
-      <a href="#">Multimedia</a>
-    </span>
-  </div>
-</div>
+<section class="mockup-body">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+</section>
 
-<article>
+<!-- ===== COMPONENT #1: INTERACTIVE WIDGET ===== -->
+<div class="sbs-root">
+<div class="after-scrolly">
 
-  <div class="kicker">Politics · Government · Investigations</div>
-  <h1 class="headline">A $50 donation in Montgomery County is worth $400 to a candidate. Here's the math.</h1>
-  <p class="deck">The county's small-donor matching program turns a $50 check from a constituent into $400 of campaign money — but only for candidates who agree to forgo PAC dollars and stay under tight donation caps. The mechanics aren't obvious. They are also the entire point.</p>
-
-  <div class="byline">
-    <span>By <strong>Jane Reporter</strong></span>
-    <span>April 25, 2026</span>
-    <span>Capital News Service · 6 min read</span>
+  <!-- ↓ EDIT TAB LABELS ↓
+       data-office values must match the keys in OFFICE_DATA at the top of
+       the <script> block. Tab text can be whatever short label fits. -->
+  <div class="office-selector" id="officeSelector">
+    <button type="button" data-office="executive" class="active">County Executive</button>
+    <button type="button" data-office="at-large">At-Large</button>
+    <button type="button" data-office="district">District</button>
   </div>
 
-  <p class="lede">When Marc Elrich first ran for Montgomery County Executive in 2018, he turned down nearly every donor who could give more than $150 and won anyway. He was one of the first three Maryland candidates to ever fund a county-level race entirely through small individual donations, and the program that made it possible — Bill 16-14, signed in 2014 — has since been imitated by Howard, Baltimore, and Prince George's counties.</p>
+  <!-- ↓ EDIT INTRO PARAGRAPH ↓
+       The three <span> placeholders are filled in from OFFICE_DATA: office
+       name, qualifying-dollars threshold, qualifying-donors threshold. -->
+  <p class="as-heading">
+    Once a publicly financed candidate for
+    <span class="office-name" id="asOfficeName">County Executive</span>
+    receives a combined
+    <span class="accent" id="asQualifyDollars">$40,000</span>
+    from at least
+    <span class="accent" id="asQualifyDonors">500</span>
+    residents of their jurisdiction, the matching kicks in. The county only matches donors from the candidate&rsquo;s jurisdiction and it&rsquo;s <strong>cumulative based on donor</strong> meaning it doesn&rsquo;t matter if someone gives their donation all at once or in smaller pieces.<br>For example: one $100 donation is treated the same as if the same person donated $50 twice.
+  </p>
 
-  <p>The program works on a simple but unintuitive premise: the smaller the donation, the more the county is willing to match it. The first $50 a constituent gives a publicly-financed candidate is matched <em>seven-to-one</em>. The next $50 is matched four-to-one. The $50 after that, two-to-one. Everything past $150 from a single donor receives no match at all.</p>
+  <!-- ↓ EDIT EYEBROW + SUBHEAD ↓ -->
+  <div class="section-eyebrow">Try it yourself</div>
+  <h3 class="section-subhead">
+    Drag the slider to see how a donors money gets matched by the county
+  </h3>
 
-  <p>The result is a steep ramp at the bottom of the donation curve and a flat line above it — by design.</p>
+  <div class="slider-wrap">
+    <div class="slider-label-row">
+      <label for="donationSlider" class="slider-label-caps">Donation<span class="sr-only" id="donationValue">100</span></label>
+      <span class="slider-live-val" id="sliderLiveVal">$100</span>
+    </div>
+    <!-- Slider min is 1 (not 0) so the chart never shows the empty state.
+         Default value $100 crosses two tier boundaries so first-time
+         readers see the encoding immediately without having to slide. -->
+    <input type="range" id="donationSlider" min="1" max="500" step="1" value="100">
 
-  <blockquote class="pull">
-    "It changes who you spend your time on the phone with. You stop calling the donor who can write you a $4,000 check, and you start calling fifty people who can each write you $50."
-    <cite>— Marc Elrich, County Executive (2018-2026)</cite>
-  </blockquote>
-
-  <!-- ============= STAGE: scene 1 illustrative composite ============= -->
-  <div class="stage">
-    <div class="stage-eyebrow">Tier 1 · The first $50</div>
-    <h3>Why $50 of donor money becomes $400 of candidate money</h3>
-
-    <div class="scene1-fig">
-      <div class="col-left">
-        <p class="annotation"><strong>One donor.</strong> One $50 check. The candidate has already qualified for matching by raising <strong>$40,000</strong> from at least <strong>500</strong> in-jurisdiction residents.</p>
-
-        <div class="eq-strip">
-          <span class="box donor">$50</span>
-          <span class="op">+</span>
-          <span class="box match">$350</span>
-          <span class="op">=</span>
-          <span class="box total">$400</span>
-          <span class="annot">Donor money plus county match equals what the campaign actually spends.</span>
-        </div>
-
-        <p class="annotation">The county's match is <strong>seven times</strong> the donor's contribution because this is Tier 1 — the highest match multiplier the program offers. Above $150, that multiplier drops to zero.</p>
-      </div>
-
-      <div class="col-right">
-        <div class="bar">
-          <div class="col" style="height:240px;">
-            <span class="mult">×7</span>
-            <div class="stack" data-amount="$350" style="height: calc(100% - 18px);"></div>
-            <div class="donor-strip" data-amount="$50"></div>
-            <span class="axis-tick">Tier 1</span>
-          </div>
-        </div>
-        <p class="bar-leader">The blue rectangle is what the county adds. The thin green strip below the axis is what the donor gave.</p>
-      </div>
+    <!-- ↓ EDIT TICK LABELS ↓
+         left:N% positions the label at that % along the slider track. -->
+    <div class="slider-ticks">
+      <span style="left:0%">$0</span>
+      <span style="left:10%">$50</span>
+      <span style="left:20%">$100</span>
+      <span style="left:30%">$150</span>
+      <span style="left:100%">$500</span>
     </div>
   </div>
 
-  <p>The next two tiers each add another $50 of donor money — but the county adds proportionally less each time. By the time a donor has given $150, the candidate has $800 to spend. Past $150, the donor can keep writing checks (up to a $500 cap), but the county stops matching.</p>
+  <div class="as-grid">
+    <!-- LEFT: sideways bar chart (rendered by JS into #chartTiers). -->
+    <div class="bar-chart-wrap">
+      <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- ↓ EDIT TOP-RIGHT BOOKEND LABELS ↓ -->
+        <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Individual&apos;s total donation</text>
+        <text id="bigDonationValue" x="420" y="162" text-anchor="middle" font-size="36" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
+        <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="620" y="162" text-anchor="middle" font-size="36" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
 
-  <p>The next chart lets you set any donation amount and watch the math work in real time.</p>
+        <!-- ↓ EDIT Y-AXIS LABEL ↓ ("County / matching / funds" stacked) -->
+        <text x="40" y="216" text-anchor="middle" font-size="15" fill="#0027ff" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">
+          <tspan x="40" dy="0">County</tspan>
+          <tspan x="40" dy="20">matching</tspan>
+          <tspan x="40" dy="20">funds</tspan>
+        </text>
 
-  <!-- ============= AFTER-SCROLLY ============= -->
-  <div class="after">
-    <div class="seclabel numbered">Try it yourself</div>
-    <h2 class="sub">Set a donation, see what the candidate gets</h2>
-    <p class="deck">Multipliers and qualification thresholds vary by office. Pick one to start.</p>
+        <!-- Axis lines. -->
+        <line x1="80" y1="380" x2="700" y2="380" stroke="#707070" stroke-width="3"/>
+        <line x1="80" y1="380" x2="80" y2="100" stroke="#707070" stroke-width="2"/>
 
-    <div class="office-tabs">
-      <a href="#" class="active">County Executive</a>
-      <a href="#">At-Large Council</a>
-      <a href="#">District Council</a>
+        <!-- Tier rectangles drawn dynamically by renderAfterScrolly(). -->
+        <g id="chartTiers"></g>
+
+        <!-- X-axis tick marks + labels. Positioned at 1.24 px/$ along x=80..700. -->
+        <g id="chartTickMarks">
+          <line x1="80" y1="412" x2="80" y2="422" stroke="#707070" stroke-width="2"/>
+          <line x1="142.4" y1="412" x2="142.4" y2="422" stroke="#707070" stroke-width="2"/>
+          <line x1="204.8" y1="412" x2="204.8" y2="422" stroke="#707070" stroke-width="2"/>
+          <line x1="267.2" y1="412" x2="267.2" y2="422" stroke="#707070" stroke-width="2"/>
+          <line x1="700" y1="412" x2="700" y2="422" stroke="#707070" stroke-width="2"/>
+        </g>
+        <!-- ↓ EDIT X-AXIS TICK NUMBERS ↓ -->
+        <g id="chartTicks">
+          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
+          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
+          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
+          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
+          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
+        </g>
+
+        <!-- ↓ EDIT X-AXIS LABEL ↓ (centered below the tick numbers) -->
+        <text x="390" y="475" text-anchor="middle" font-size="15" fill="#229500" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">Individual&apos;s total donation</text>
+      </svg>
     </div>
 
-    <p class="as-heading">
-      Once a publicly financed candidate for
-      <span class="office-name">County Executive</span>
-      receives a combined
-      <span class="accent">$40,000</span>
-      from at least
-      <span class="accent">500</span>
-      residents of their jurisdiction, the matching kicks in:
-    </p>
-
-    <div class="slider-wrap">
-      <div class="slabel">
-        <span class="lbl">Donation</span>
-        <span class="val">$100</span>
-      </div>
-      <input type="range" min="0" max="500" value="100">
-      <div class="slider-ticks">
-        <span>$0</span><span></span><span>$50</span><span></span><span>$100</span><span></span><span>$150</span><span></span><span></span><span></span><span>$500</span>
-      </div>
+    <!-- RIGHT: equation table. Tier rows hide/show as the slider crosses
+         the $50/$100/$150 boundaries; numeric cells are rewritten by
+         renderAfterScrolly(). The static labels and operators are below. -->
+    <div>
+      <table class="eq-table" id="eqTable">
+        <tbody>
+          <!-- ↓ EDIT TIER LABELS ↓ -->
+          <tr id="eqTier1"><td class="tier-label">Tier 1</td><td class="donor">$50</td><td class="op">+</td><td class="match">$350</td><td class="op">=</td><td class="total">$400</td></tr>
+          <tr id="eqTier2"><td class="tier-label">Tier 2</td><td class="donor">$50</td><td class="op">+</td><td class="match">$200</td><td class="op">=</td><td class="total">$250</td></tr>
+          <tr id="eqTier3"><td class="tier-label">Tier 3</td><td class="donor">$50</td><td class="op">+</td><td class="match">$100</td><td class="op">=</td><td class="total">$150</td></tr>
+          <tr id="eqTier4"><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="match not-matched">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+          <tr class="total-row" id="eqTotal"><td class="tier-label">Total</td><td class="donor" id="eqTotalDonor">$50</td><td class="op">+</td><td class="match" id="eqTotalMatch">$350</td><td class="op">=</td><td class="total" id="eqTotalTotal">$400</td></tr>
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <div class="as-grid">
-      <div>
-        <div style="display: flex; gap: 32px; align-items: baseline; margin-bottom: 16px;">
-          <div>
-            <div style="font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px;">Donation</div>
-            <div style="font: 700 30px/1 'JetBrains Mono', monospace; color: var(--green); letter-spacing: -0.02em;">$100</div>
-          </div>
-          <div>
-            <div style="font: 600 11px/1 'Inter', sans-serif; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px;">Candidate gets</div>
-            <div style="font: 700 30px/1 'JetBrains Mono', monospace; color: var(--purple); letter-spacing: -0.02em;">$650</div>
-          </div>
-        </div>
-
-        <div class="as-chart">
-          <span class="ax-y">County match</span>
-          <div class="col" style="left: 12px; bottom: 0; width: 60px; height: 168px;" data-amount="$350"></div>
-          <div class="col" style="left: 84px; bottom: 0; width: 60px; height: 96px;" data-amount="$200"></div>
-          <div class="donor-strip" style="left: 12px; width: 132px;"></div>
-          <span class="x-tick" style="left: 42px;">$50</span>
-          <span class="x-tick" style="left: 114px;">$100</span>
-          <span class="x-tick" style="left: 186px;">$150</span>
-        </div>
-        <div class="as-chart-legend">
-          <span><span class="key donor"></span>Donor money</span>
-          <span><span class="key match"></span>County match</span>
-        </div>
-      </div>
-
-      <div>
-        <table class="eq-table">
-          <thead>
-            <tr><th>Tier</th><th>Donor</th><th>Match</th><th>Total</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Tier 1 (×7)</td><td class="donor">$50</td><td class="match">$350</td><td class="total">$400</td></tr>
-            <tr><td>Tier 2 (×4)</td><td class="donor">$50</td><td class="match">$200</td><td class="total">$250</td></tr>
-            <tr><td style="color: var(--ink-3);">Tier 3 (×2)</td><td style="color: var(--ink-3);">—</td><td style="color: var(--ink-3);">—</td><td style="color: var(--ink-3);">—</td></tr>
-            <tr class="total-row"><td>Donor → candidate</td><td class="donor">$100</td><td>becomes</td><td class="total">$650</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="prohibited">
-      <h4>Prohibited donors</h4>
-      <ul>
-        <li><span>Political action committees (PACs)</span></li>
-        <li><span>Corporations</span></li>
-        <li><span>Labor unions</span></li>
-        <li><span>Limited liability companies</span></li>
-        <li><span>State or local party central committees</span></li>
-        <li><span>Donors who have already given $500</span></li>
+  <div class="info-row">
+    <!-- ↓ EDIT PROHIBITED-DONORS LIST ↓ -->
+    <section class="prohibited-block">
+      <h3>Prohibited donors</h3>
+      <ul class="prohibited-list-clean">
+        <li>Political Action Committees (PACs)</li>
+        <li>Corporations</li>
+        <li>Labor Unions</li>
+        <li>LLCs</li>
+        <li>State or local central committees of a political party</li>
+        <li>Donors who have already given $500</li>
       </ul>
-    </div>
+    </section>
 
-    <div class="callout">
-      <div class="seclbl">County match cap</div>
-      <div class="lbl">Per election, County Executive</div>
-      <div class="val">$870,170</div>
-    </div>
-
-    <div class="replay">
-      <a href="#">← Replay from the top</a>
+    <div class="info-minor-stack">
+      <!-- ↓ EDIT DONOR CAP CALLOUT ↓ -->
+      <aside class="callout">
+        <div class="callout-eyebrow">Donor cap</div>
+        <div class="callout-label">County stops matching after a donor has given a specific candidate:</div>
+        <div class="callout-value">$150<span class="callout-value-suffix">per election</span></div>
+      </aside>
+      <!-- ↓ EDIT COUNTY MATCH CAP CALLOUT ↓
+           #maxOffice and #maxAmount are filled in from OFFICE_DATA. -->
+      <aside class="callout">
+        <div class="callout-eyebrow">County match cap</div>
+        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">County Executive</span> after it has given that candidate:</div>
+        <div class="callout-value county-blue"><span id="maxAmount">$870,170</span><span class="callout-value-suffix">in matching funds</span></div>
+      </aside>
     </div>
   </div>
 
-  <p>Since 2014, every successful Montgomery County Executive — Elrich in 2018 and 2022, and Marc Elrich's successor in 2026 — has been publicly financed. So have a majority of the council. Whether the program will survive a court challenge from outside the county is a different question.</p>
+  <!-- ↓ EDIT METHODOLOGY (red text = lorem ipsum placeholder) ↓ -->
+  <section class="methodology">
+    <h6>About this data</h6>
+    <p class="meth-todo">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <em>(Replace with real methodology + sources before publishing.)</em></p>
+    <p class="meth-todo">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p class="graphics-credit">Graphics by <strong>David Landerman</strong></p>
+  </section>
 
-  <div class="meth">
-    <h5>About this data</h5>
-    <p>Match-multiplier and qualification figures are drawn from the Montgomery County Public Election Fund (Bill 16-14, as amended through 2024). Maximum-per-election figures are county-published caps in effect for the 2026 cycle. Figures are illustrative and assume the donor lives in the candidate's jurisdiction; out-of-jurisdiction donations and any donations from prohibited sources are not eligible for matching.</p>
-    <p>Reporting by Jane Reporter. Data visualization by the Capital News Service graphics desk.</p>
-  </div>
+</div><!-- /.after-scrolly -->
+</div><!-- /.sbs-root -->
+<!-- ===== /COMPONENT #1 ===== -->
 
-</article>
+<section class="mockup-body">
+  <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.</p>
+  <p>Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.</p>
+  <p>Nisi ut aliquid ex ea commodi consequatur, quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+  <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa.</p>
+</section>
+
+<!-- ===== COMPONENT #2: SCROLLYTELLING ===== -->
+<div class="sbs-scrolly">
+  <div class="scrolly-track" id="sbsScrollyTrack">
+    <div class="scrolly-stage">
+      <div class="progress-bar" id="sbsProgressBar"></div>
+
+      <!-- ===== DESKTOP / TABLET LANDSCAPE (≥ 769px) ===================== -->
+      <svg class="scene-svg desktop-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Comparison: one $100 donor versus ten $10 donors. The ten small donors yield $800 in matched funds, more than the single donor's $650.">
+        <g id="dWeb_1920_1" data-name="Web 1920 – 1">
+          <rect width="1920" height="1080" fill="#fff"/>
+          <g id="Scene_1I" data-name="Scene 1I">
+            <g id="Scene_1H" data-name="Scene 1H">
+              <text id="dOne_100_donor" transform="translate(629 901)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-87.156" y="0">One </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="dTen_10_donors" transform="translate(1419 901)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-82.92" y="0">Ten </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan><tspan y="0" fill="#0058ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="dvs" transform="translate(949.5 839.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <g id="Scene_1G" data-name="Scene 1G">
+                <g id="Scene_1F" data-name="Scene 1F">
+                  <line id="dLine_137" x2="377" transform="translate(1190.5 679.5)" fill="none" stroke="#000" stroke-width="8"/>
+                  <text id="d10_People" transform="translate(1419 639)" fill="#434343" font-size="60" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-135.03" y="0">10 People</tspan></text>
+                  <text id="dx" transform="translate(1206.5 648.5)" stroke="#000" stroke-width="3" font-size="85" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
+                  <g id="Scene_1E" data-name="Scene 1E">
+                    <text id="dPlus" transform="translate(774.5 533.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="dEquals" transform="translate(1140.5 533.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <text id="dCandidate_gets" transform="translate(1419 402)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-85.128" y="0">Candidate gets:</tspan></text>
+                    <g id="Scene_1D" data-name="Scene 1D">
+                      <text id="dTier_1_Matching" transform="translate(999 387)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-83.352" y="0">Tier 1 Matching</tspan><tspan x="-39.576" y="29">7 x </tspan><tspan y="29" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan></text>
+                      <g id="Scene_1C" data-name="Scene 1C">
+                        <text id="dDonation_to_publicly_funded_candidate" transform="translate(629 387)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-110.472" y="0">Donation to publicly </tspan><tspan x="-94.032" y="29">funded candidate</tspan></text>
+                        <g id="Scene_1B" data-name="Scene 1B">
+                          <text id="dArrow" transform="translate(948.5 293.5)" stroke="#000" stroke-width="3" font-size="104" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">-&gt;</tspan></text>
+                          <text id="dBecomes" transform="translate(999 216)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-50.676" y="0">Becomes</tspan></text>
+                          <text id="dIn_total_for_the_candidate" transform="translate(1419 145)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-57.78" y="0">In total for </tspan><tspan x="-73.356" y="29">the candidate</tspan></text>
+                          <text id="dOne_person_giving" transform="translate(629 163)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-97.8" y="0">One person giving</tspan></text>
+                          <g id="Scene_1A" data-name="Scene 1A">
+                            <text id="dHeadline" transform="translate(105 66)" fill="#434343" font-size="50" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</tspan></text>
+                          </g>
+                          <text id="dAlready_Seen" transform="translate(209 268)" fill="#434343" font-size="45" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
+                          <path id="dPath_1" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 200.5)" fill="#fff" stroke="#229500" stroke-width="12"/>
+                          <text id="d_100" transform="translate(585 270)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+                          <path id="dPath_2" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 200.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
+                          <text id="d_650" transform="translate(1374 270)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                        </g>
+                        <path id="dPath_3" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 437.5)" fill="#fff" stroke="#229500" stroke-width="12"/>
+                        <text id="d_10" transform="translate(596 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$10</tspan></text>
+                      </g>
+                      <path id="dPath_4" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(929.5 437.5)" fill="#fff" stroke="#0027ff" stroke-width="12"/>
+                      <text id="d_70" transform="translate(965 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$70</tspan></text>
+                    </g>
+                    <path id="dPath_5" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 437.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
+                    <text id="d_80" transform="translate(1385 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
+                  </g>
+                </g>
+                <path id="dPath_6" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 744.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
+                <text id="d_800" transform="translate(1374 813)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+              </g>
+              <path id="dPath_7" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 744.5)" fill="#fff" stroke="#b677ff" stroke-width="12"/>
+              <text id="d_650-2" transform="translate(585 813)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+            </g>
+            <text id="dTakeaway" transform="translate(1021 962)" fill="#434343" font-size="24" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-505.824" y="0">Because the match multiplier drops the more someone donates, multiple small matches </tspan><tspan x="-501.588" y="29">from different residents that stay within the first matching tier can have a higher impact.</tspan></text>
+          </g>
+        </g>
+      </svg>
+
+      <!-- ===== MOBILE PORTRAIT (≤ 768px) =================================== -->
+      <svg class="scene-svg mobile-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 430 932" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Comparison: one $100 donor versus ten $10 donors. The ten small donors yield $800 in matched funds, more than the single donor's $650.">
+        <g id="miPhone_14_Pro_Max_1" data-name="iPhone 14 Pro Max – 1">
+          <rect width="430" height="932" fill="#fff"/>
+          <g id="Scene_1I" data-name="Scene 1I">
+            <g id="Scene_1H" data-name="Scene 1H">
+              <text id="mOne_100_donor" transform="translate(76 720.001)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-65.367" y="0">One </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="mvs" transform="translate(190.5 673.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="50" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <rect id="mRectangle_123" width="85.5" height="59.539" rx="15" transform="translate(33.5 625.5)" fill="#fff" stroke="#b87bff" stroke-linejoin="round" stroke-width="8"/>
+              <text id="mTen_10_donors" transform="translate(348 720.001)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-62.19" y="0">Ten </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan><tspan y="0" fill="#0058ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="m_650" transform="translate(45 666)" fill="#464546" font-size="28" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+              <g id="Scene_1G" data-name="Scene 1G">
+                <rect id="mRectangle_124" width="85.5" height="59.539" rx="15" transform="translate(305.5 625.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="8"/>
+                <text id="m_800" transform="translate(317 666)" fill="#464546" font-size="28" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+                <g id="Scene_1F" data-name="Scene 1F">
+                  <line id="mLine_137" x2="150.667" transform="translate(272.5 597.339)" fill="none" stroke="#000" stroke-width="5"/>
+                  <text id="mx" transform="translate(250.411 579.501)" stroke="#000" stroke-width="3" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
+                  <text id="m10_People" transform="translate(348 579.001)" fill="#434343" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-70.275" y="0">10 People</tspan></text>
+                  <g id="Scene_1E" data-name="Scene 1E">
+                    <text id="mPlus" transform="translate(131.407 524.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="40" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="mEquals" transform="translate(267.417 524.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="40" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <rect id="mRectangle_126" width="73.5" height="51.778" rx="15" transform="translate(311.5 483.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="6"/>
+                    <text id="m_80" transform="translate(327 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
+                    <text id="mCandidate_gets" transform="translate(348 456)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-53.205" y="0">Candidate gets:</tspan></text>
+                    <g id="Scene_1D" data-name="Scene 1D">
+                      <text id="mTier_1_Matching" transform="translate(212 449)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-52.095" y="0">Tier 1 Matching</tspan><tspan x="-24.735" y="18">7 x </tspan><tspan y="18" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan></text>
+                      <g id="Scene_1C" data-name="Scene 1C">
+                        <text id="mDonation_to_publicly_funded_candidate" transform="translate(76 449)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-69.045" y="0">Donation to publicly </tspan><tspan x="-58.77" y="17">funded candidate</tspan></text>
+                        <g id="Scene_1B" data-name="Scene 1B">
+                          <text id="mArrow" transform="translate(187.5 379.5)" stroke="#000" stroke-width="3" font-size="50" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">-&gt;</tspan></text>
+                          <text id="mBecomes" transform="translate(212 341.5)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-38.007" y="0">Becomes</tspan></text>
+                          <text id="mIn_total_for_the_candidate" transform="translate(348 299)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-36.112" y="0">In total for </tspan><tspan x="-45.847" y="17">the candidate</tspan></text>
+                          <text id="mOne_person_giving" transform="translate(76 299)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-41.265" y="0">One person </tspan><tspan x="-19.86" y="17">giving</tspan></text>
+                          <g id="Scene_1A" data-name="Scene 1A">
+                            <text id="mHeadline" transform="translate(11 190.838)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">What&#8217;s better: One person giving $100 or </tspan><tspan x="0" y="24">10 people giving $10 dollars each?</tspan></text>
+                          </g>
+                          <text id="mAlready_Seen" transform="translate(21 264.5)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
+                          <rect id="mRectangle_116" width="73.5" height="51.778" rx="15" transform="translate(39.5 335.5)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_100" transform="translate(48 371)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
+                          <rect id="mRectangle_125" width="73.5" height="51.778" rx="15" transform="translate(311.5 335.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_650-2" transform="translate(320 371)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                        </g>
+                        <rect id="mRectangle_127" width="73.5" height="51.778" rx="15" transform="translate(39.5 483.5)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="6"/>
+                        <text id="m_10" transform="translate(55 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$10</tspan></text>
+                      </g>
+                      <rect id="mRectangle_128" width="73.5" height="51.778" rx="15" transform="translate(175.5 483.5)" fill="#fff" stroke="#003bff" stroke-linejoin="round" stroke-width="6"/>
+                      <text id="m_70" transform="translate(191 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$70</tspan></text>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+            <text id="mTakeaway" transform="translate(11 774)" fill="#434343" font-size="15" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">Because the match multiplier drops the more someone </tspan><tspan x="0" y="18">donates, multiple small matches from different residents </tspan><tspan x="0" y="36">that stay within the first matching tier can have a </tspan><tspan x="0" y="54">higher impact.</tspan></text>
+          </g>
+        </g>
+      </svg>
+
+    </div><!-- /.scrolly-stage -->
+  </div><!-- /.scrolly-track -->
+</div><!-- /.sbs-scrolly -->
+<!-- ===== /COMPONENT #2 ===== -->
+
+<section class="mockup-body">
+  <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.</p>
+  <p>Omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+  <p>Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===========================================================================
+  // EDIT-ME: OFFICE DATA
+  // Each entry sets the multipliers, qualifying thresholds, and per-election
+  // cap copy for one office tab. The KEY (executive / at-large / district)
+  // must match the `data-office` attribute on the corresponding <button>.
+  // ===========================================================================
+  const OFFICE_DATA = {
+    'executive': {
+      label: 'County Executive',
+      // Match multipliers for the first three $50 tiers of a donation.
+      // Tier 4 (donations above $150) is never matched.
+      t1: 7, t2: 4, t3: 2,
+      // Used in the headline above the slider.
+      qualifyDollars: '$40,000',
+      qualifyDonors: 500,
+      // Used in the "County match cap" callout.
+      maxPerElection: '$870,170',
+    },
+    'at-large': {
+      label: 'County Council – At Large',
+      t1: 5, t2: 3, t3: 2,
+      qualifyDollars: '$20,000',
+      qualifyDonors: 250,
+      maxPerElection: '$290,060',
+    },
+    'district': {
+      label: 'County Council – District',
+      t1: 5, t2: 3, t3: 2,
+      qualifyDollars: '$10,000',
+      qualifyDonors: 125,
+      maxPerElection: '$145,030',
+    },
+  };
+  // ===========================================================================
+
+  let currentOffice = 'executive';
+
+  const slider = document.getElementById('donationSlider');
+  const officeButtons = document.querySelectorAll('#officeSelector button');
+
+  officeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentOffice = btn.getAttribute('data-office');
+      officeButtons.forEach(b => b.classList.toggle('active', b === btn));
+      renderAfterScrolly();
+    });
+  });
+  slider.addEventListener('input', renderAfterScrolly);
+
+  function tierBreakdown(donation, office) {
+    const d = OFFICE_DATA[office];
+    const t1Donor = Math.min(donation, 50);
+    const t2Donor = Math.min(Math.max(donation - 50, 0), 50);
+    const t3Donor = Math.min(Math.max(donation - 100, 0), 50);
+    const t4Donor = Math.max(donation - 150, 0);
+    const t1Match = t1Donor * d.t1;
+    const t2Match = t2Donor * d.t2;
+    const t3Match = t3Donor * d.t3;
+    return {
+      donation,
+      t1: { donor: t1Donor, match: t1Match, total: t1Donor + t1Match },
+      t2: { donor: t2Donor, match: t2Match, total: t2Donor + t2Match },
+      t3: { donor: t3Donor, match: t3Match, total: t3Donor + t3Match },
+      t4: { donor: t4Donor, match: 0, total: t4Donor },
+      totalDonor: donation,
+      totalMatch: t1Match + t2Match + t3Match,
+      totalTotal: donation + t1Match + t2Match + t3Match,
+    };
+  }
+
+  function fmt$(n) { return '$' + n.toLocaleString(); }
+
+  function renderAfterScrolly() {
+    const office = OFFICE_DATA[currentOffice];
+    const donation = parseInt(slider.value, 10) || 0;
+    const tb = tierBreakdown(donation, currentOffice);
+
+    document.getElementById('donationValue').textContent = donation;
+    const liveVal = document.getElementById('sliderLiveVal');
+    if (liveVal) liveVal.textContent = '$' + donation.toLocaleString();
+    document.getElementById('asOfficeName').textContent = office.label;
+    document.getElementById('asQualifyDollars').textContent = office.qualifyDollars;
+    document.getElementById('asQualifyDonors').textContent = office.qualifyDonors;
+    document.getElementById('maxOffice').textContent = office.label;
+    document.getElementById('maxAmount').textContent = office.maxPerElection;
+    document.getElementById('bigDonationValue').textContent = fmt$(donation);
+    document.getElementById('bigCandidateValue').textContent = fmt$(tb.totalTotal);
+
+    function setRow(rowId) {
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      const visible =
+        (rowId === 'eqTier1' && donation > 0) ||
+        (rowId === 'eqTier2' && donation > 50) ||
+        (rowId === 'eqTier3' && donation > 100) ||
+        (rowId === 'eqTier4' && donation > 150) ||
+        (rowId === 'eqTotal' && donation > 0);
+      row.classList.toggle('hidden', !visible);
+      const cells = row.querySelectorAll('td');
+      if (rowId === 'eqTier1') {
+        cells[1].textContent = fmt$(tb.t1.donor);
+        cells[3].textContent = fmt$(tb.t1.match);
+        cells[5].textContent = fmt$(tb.t1.total);
+      } else if (rowId === 'eqTier2') {
+        cells[1].textContent = fmt$(tb.t2.donor);
+        cells[3].textContent = fmt$(tb.t2.match);
+        cells[5].textContent = fmt$(tb.t2.total);
+      } else if (rowId === 'eqTier3') {
+        cells[1].textContent = fmt$(tb.t3.donor);
+        cells[3].textContent = fmt$(tb.t3.match);
+        cells[5].textContent = fmt$(tb.t3.total);
+      } else if (rowId === 'eqTier4') {
+        cells[1].textContent = fmt$(tb.t4.donor);
+        cells[3].textContent = '$0';
+        cells[5].textContent = fmt$(tb.t4.total);
+      } else if (rowId === 'eqTotal') {
+        document.getElementById('eqTotalDonor').textContent = fmt$(tb.totalDonor);
+        document.getElementById('eqTotalMatch').textContent = fmt$(tb.totalMatch);
+        document.getElementById('eqTotalTotal').textContent = fmt$(tb.totalTotal);
+      }
+    }
+    setRow('eqTier1'); setRow('eqTier2'); setRow('eqTier3'); setRow('eqTier4'); setRow('eqTotal');
+
+    // ----- Sideways bar chart (AREA-PROPORTIONAL encoding) -----
+    // Layout (chart viewBox 740 × 460):
+    //   y-axis baseline at y=380; vertical at x=80
+    //   donation runs left-to-right: $0 at x=80, $500 at x=700 (1.24 px/$)
+    //   green donor segments sit BELOW the baseline at constant 30px height
+    //   blue match columns rise UP from the baseline
+    //
+    // Blue column height depends ONLY on the tier multiplier (not on donor
+    // amount within a tier), so visual area = match $ × constant.
+    const tiersG = document.getElementById('chartTiers');
+    tiersG.innerHTML = '';
+
+    const X_START = 80;
+    const X_DOLLAR = 620 / 500;     // 1.24 px per dollar
+    const BASELINE_Y = 380;
+    const SEG_HEIGHT = 30;
+    const HEIGHT_PER_MULT = 40;     // 280px bar zone / max multiplier 7
+
+    function svgEl(tag, attrs) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      Object.keys(attrs).forEach(k => el.setAttribute(k, attrs[k]));
+      return el;
+    }
+    function svgText(x, y, text, opts) {
+      opts = opts || {};
+      const t = svgEl('text', {
+        x: String(x), y: String(y),
+        'text-anchor': opts.anchor || 'middle',
+        'font-size': String(opts.size || 13),
+        fill: opts.fill || '#464546',
+        'font-family': 'HelveticaNeue, Helvetica Neue',
+        'font-weight': String(opts.weight || 400),
+      });
+      t.textContent = text;
+      return t;
+    }
+
+    const tierConfigs = [
+      { donor: tb.t1.donor, match: tb.t1.match, mult: office.t1, dollarStart: 0,   dollarEnd: 50  },
+      { donor: tb.t2.donor, match: tb.t2.match, mult: office.t2, dollarStart: 50,  dollarEnd: 100 },
+      { donor: tb.t3.donor, match: tb.t3.match, mult: office.t3, dollarStart: 100, dollarEnd: 150 },
+      { donor: tb.t4.donor, match: 0,           mult: 0,         dollarStart: 150, dollarEnd: 500, isNotMatched: true },
+    ];
+
+    tierConfigs.forEach(tier => {
+      if (tier.donor <= 0) return;
+      const segXStart = X_START + tier.dollarStart * X_DOLLAR;
+      const segXEnd = X_START + (tier.dollarStart + tier.donor) * X_DOLLAR;
+      const segWidth = segXEnd - segXStart;
+
+      // Green donor segment below baseline
+      tiersG.appendChild(svgEl('rect', {
+        x: String(segXStart), y: String(BASELINE_Y),
+        width: String(segWidth), height: String(SEG_HEIGHT),
+        fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': '3'
+      }));
+      if (segWidth > 30) {
+        tiersG.appendChild(svgText(
+          segXStart + segWidth / 2,
+          BASELINE_Y + SEG_HEIGHT / 2 + 5,
+          fmt$(tier.donor),
+          { size: 13, fill: '#229500', weight: 700 }
+        ));
+      }
+
+      if (tier.isNotMatched) {
+        const stripH = 38;
+        tiersG.appendChild(svgEl('rect', {
+          x: String(segXStart), y: String(BASELINE_Y - stripH),
+          width: String(segWidth), height: String(stripH),
+          fill: 'rgba(217,43,43,0.10)', stroke: '#d92b2b',
+          'stroke-width': '3', 'stroke-dasharray': '8 6'
+        }));
+        const NOT_MATCHED_W = 150;
+        if (segWidth >= NOT_MATCHED_W + 16) {
+          tiersG.appendChild(svgText(
+            segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
+            'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
+          ));
+        } else {
+          // Dashed leader line + label parked above-right when strip is narrow.
+          const stripTopY = BASELINE_Y - stripH;
+          const labelX = segXStart + segWidth + 60;
+          const labelY = stripTopY - 30;
+          tiersG.appendChild(svgEl('line', {
+            x1: String(segXStart + segWidth),
+            y1: String(stripTopY + stripH / 2),
+            x2: String(labelX - 4),
+            y2: String(labelY + 4),
+            stroke: '#d92b2b', 'stroke-width': '2', 'stroke-dasharray': '4 4'
+          }));
+          tiersG.appendChild(svgText(
+            labelX, labelY,
+            'NOT MATCHED', { anchor: 'start', size: 16, fill: '#d92b2b', weight: 700 }
+          ));
+        }
+      } else {
+        const colH = tier.mult * HEIGHT_PER_MULT;
+        if (colH > 0) {
+          tiersG.appendChild(svgEl('rect', {
+            x: String(segXStart), y: String(BASELINE_Y - colH),
+            width: String(segWidth), height: String(colH),
+            fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': '3'
+          }));
+          if (colH > 30 && segWidth > 35) {
+            tiersG.appendChild(svgText(
+              segXStart + segWidth / 2, BASELINE_Y - colH / 2 + 5,
+              fmt$(tier.match), { size: 14, fill: '#0027ff', weight: 700 }
+            ));
+          }
+          tiersG.appendChild(svgText(
+            segXStart + segWidth / 2, BASELINE_Y - colH - 8,
+            'x' + tier.mult, { size: 14, fill: '#434343', weight: 700 }
+          ));
+        }
+      }
+    });
+  }
+
+  renderAfterScrolly();
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  // Scene IDs in reveal order — innermost (1A) to outermost (1I).
+  const SCENE_IDS = ['Scene_1A','Scene_1B','Scene_1C','Scene_1D','Scene_1E','Scene_1F','Scene_1G','Scene_1H','Scene_1I'];
+  const NUM_STEPS = SCENE_IDS.length;
+
+  function tagScenesIn(svg) {
+    SCENE_IDS.forEach((id, idx) => {
+      const sceneEl = svg.querySelector('#' + id);
+      if (!sceneEl) return;
+      const step = idx + 1;
+      Array.from(sceneEl.children).forEach(child => {
+        if (child.id && /^Scene_1[A-I]$/.test(child.id)) return;
+        child.setAttribute('data-step', String(step));
+      });
+    });
+  }
+
+  function boot() {
+    const root = document.querySelector('.sbs-scrolly');
+    if (!root) return;
+    const track = document.getElementById('sbsScrollyTrack');
+    const progressBar = document.getElementById('sbsProgressBar');
+    const svgs = root.querySelectorAll('svg.scene-svg');
+    svgs.forEach(tagScenesIn);
+
+    // Cache the tagged elements grouped by step for cheap updates.
+    const elsByStep = {};
+    for (let s = 1; s <= NUM_STEPS; s++) elsByStep[s] = [];
+    root.querySelectorAll('[data-step]').forEach(el => {
+      const s = parseInt(el.getAttribute('data-step'), 10);
+      if (elsByStep[s]) elsByStep[s].push(el);
+    });
+
+    let lastStep = 0;
+    let completed = false;
+    const stage = root.querySelector('.scrolly-stage');
+
+    function update() {
+      if (completed) return;
+      const trackRect = track.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const travelable = Math.max(1, track.offsetHeight - viewportH);
+      const scrolled = -trackRect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / travelable));
+      // Map 0..1 progress → step 1..NUM_STEPS. Each step occupies an equal
+      // slice. Math.floor + clamp ensures step NUM_STEPS shows once progress
+      // has moved beyond (NUM_STEPS-1)/NUM_STEPS.
+      const stepFloat = progress * NUM_STEPS;
+      const currentStep = Math.max(1, Math.min(NUM_STEPS, Math.floor(stepFloat) + 1));
+
+      if (currentStep !== lastStep) {
+        for (let s = 1; s <= NUM_STEPS; s++) {
+          const visible = s <= currentStep;
+          elsByStep[s].forEach(el => { el.style.opacity = visible ? '1' : '0'; });
+        }
+        lastStep = currentStep;
+      }
+      if (progressBar) progressBar.style.width = (progress * 100).toFixed(2) + '%';
+
+      // Once the reader has scrolled all the way through, lock the graphic
+      // at fully-revealed and release sticky so the section becomes a
+      // normal inline element. Won't replay on subsequent scrolling.
+      if (progress >= 0.999) complete();
+    }
+
+    function complete() {
+      if (completed) return;
+      completed = true;
+      // Force every reveal element to opacity 1 (overrides CSS rule).
+      root.querySelectorAll('[data-step]').forEach(el => { el.style.opacity = '1'; });
+      // Collapse the track to a single viewport and release sticky so the
+      // stage sits inline at the top of the (now short) track. The user
+      // can scroll past it normally and scrolling back up just shows the
+      // static, fully-revealed graphic — no reverse animation.
+      const trackTop = track.offsetTop;
+      track.style.height = window.innerHeight + 'px';
+      stage.style.position = 'relative';
+      stage.style.top = '0';
+      // Keep the user's viewport aligned with the now-static stage so
+      // they don't see a visual jump.
+      window.scrollTo(0, trackTop);
+      if (progressBar) progressBar.style.display = 'none';
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking || completed) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; update(); });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { if (!completed) update(); });
+    update();
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    boot();
+  } else {
+    window.addEventListener('DOMContentLoaded', boot);
+  }
+})();
+</script>
 
 </body>
 </html>
