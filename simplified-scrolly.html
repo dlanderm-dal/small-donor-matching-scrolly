@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Small-donor matching — scrollytelling (simplified)</title>
+
+<!-- Google Fonts. The SVG <text> elements declare 'Poppins' (numbers /
+     headlines) and 'Source Serif 4' (body / labels) explicitly. If the
+     host theme already loads these, the duplicate is harmless. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- =========================================================================
+  SIMPLIFIED SCROLLYTELLING (one scene, nine reveals)
+  ─────────────────────────────────────────────────────────────────────────
+  ONE physical scene, revealed step-by-step as the reader scrolls.
+  Reveal cues come from the nested groups inside the SVG:
+
+    Scene_1A (innermost)  → step 1   (headline)
+    Scene_1B              → step 2
+    Scene_1C              → step 3
+    Scene_1D              → step 4
+    Scene_1E              → step 5
+    Scene_1F              → step 6
+    Scene_1G              → step 7
+    Scene_1H              → step 8
+    Scene_1I (outermost)  → step 9   (bottom takeaway sentence)
+
+  Each Scene_1X group's DIRECT non-scene children fade in at step N.
+  Boot-time JS walks the SVG, tags those children with `data-step="N"`,
+  and the scroll listener toggles opacity as the reader passes each step.
+
+  Two SVGs are inlined — `desktop-svg` (1920×1080 landscape) and
+  `mobile-svg` (430×932 portrait). CSS swap at 768px.
+
+  TO EDIT COPY: open the SVG markup below and change the text inside
+  each <tspan>. The scene IDs are what drive reveals — leave those alone.
+========================================================================= -->
+
+<style>
+/* ============================================================================
+   PREVIEW-ONLY (outside .sbs-scrolly scope). Strip when pasting to WP.
+============================================================================ */
+html, body { background: #fafafa; color: #3a3a3a; color-scheme: light; }
+.article-body-preview {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  line-height: 1.75;
+  color: #3a3a3a;
+}
+.article-body-preview p { margin-bottom: 1.25rem; }
+
+/* ============================================================================
+   WORDPRESS DROP-IN STYLES BEGIN ↓
+   Scoped under `.sbs-scrolly` so they cannot leak into the host theme.
+============================================================================ */
+.sbs-scrolly, .sbs-scrolly *, .sbs-scrolly *::before, .sbs-scrolly *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+.sbs-scrolly {
+  /* Body fallback — SVG <text> elements set their own Poppins / Source
+     Serif 4 fonts explicitly via font-family attributes. */
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #2a2a2a;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  margin: 15px 0;
+  /* `overflow-x: clip` (not `hidden`) so position: sticky still works on the
+     stage. `hidden` makes .sbs-scrolly a scroll container which breaks sticky. */
+  overflow-x: clip;
+}
+
+/* The track is the tall element that determines how much scroll is
+   available for stepping through the scenes. Stage sticks at top, track
+   scrolls past. 800vh total → ~89vh of scroll per step. Tweak height
+   here to make the scrolly faster/slower. */
+.sbs-scrolly .scrolly-track {
+  position: relative;
+  height: 800vh;
+}
+
+.sbs-scrolly .scrolly-stage {
+  position: sticky; top: 0;
+  /* Stage shrinks to fit the SVG's natural aspect + 15px top/bottom padding,
+     capped at viewport height. Eliminates the big vertical letterbox the
+     fixed `height: 100vh` caused when SVG aspect didn't match viewport. */
+  height: auto;
+  max-height: 100vh;
+  padding: 15px 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background: #fff;
+}
+
+.sbs-scrolly .scene-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 30px);
+}
+.sbs-scrolly .desktop-svg { display: block; }
+.sbs-scrolly .mobile-svg  { display: none; }
+@media (max-width: 768px) {
+  .sbs-scrolly .desktop-svg { display: none; }
+  .sbs-scrolly .mobile-svg  { display: block; }
+}
+
+/* Reveal mechanic — every element tagged at boot starts hidden, fades
+   in when the reader's current step ≥ the element's step. */
+.sbs-scrolly [data-step] {
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+
+/* Hairline progress bar at the top of the stage (optional — comment out
+   the rule to remove). */
+.sbs-scrolly .progress-bar {
+  position: absolute; top: 0; left: 0;
+  height: 2px; background: #1a1a1a;
+  width: 0%;
+  transition: width 0.1s linear;
+  z-index: 5;
+  pointer-events: none;
+}
+/* ============================================================================
+   WORDPRESS DROP-IN STYLES END ↑
+============================================================================ */
+</style>
+</head>
+
+<body>
+
+<!-- PREVIEW-ONLY article body (above). NOT part of the WP paste. -->
+<section class="article-body-preview">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+</section>
+
+<!-- =========================================================================
+  WORDPRESS DROP-IN BEGIN ↓
+  Copy from `<div class="sbs-scrolly">` through the matching `</div>`.
+========================================================================= -->
+<div class="sbs-scrolly">
+  <div class="scrolly-track" id="sbsScrollyTrack">
+    <div class="scrolly-stage">
+      <div class="progress-bar" id="sbsProgressBar"></div>
+
+      <!-- ===== DESKTOP / TABLET LANDSCAPE (≥ 769px) ===================== -->
+      <svg class="scene-svg desktop-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Comparison: one $100 donor versus ten $10 donors. The ten small donors yield $800 in matched funds, more than the single donor's $650.">
+        <g id="dWeb_1920_1" data-name="Web 1920 – 1">
+          <rect width="1920" height="1080" fill="#fff"/>
+          <g id="Scene_1I" data-name="Scene 1I">
+            <g id="Scene_1H" data-name="Scene 1H">
+              <text id="dOne_100_donor" transform="translate(565 913)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-87.156" y="0">One </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="dTen_10_donors" transform="translate(1355 913)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-82.92" y="0">Ten </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan><tspan y="0" fill="#1979b9" font-family="'Poppins', sans-serif" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="dvs" transform="translate(885.5 851.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <g id="Scene_1G" data-name="Scene 1G">
+                <g id="Scene_1F" data-name="Scene 1F">
+                  <line id="dLine_137" x2="377" transform="translate(1126.5 691.5)" fill="none" stroke="#000" stroke-width="8"/>
+                  <text id="d10_People" transform="translate(1355 651)" fill="#434343" font-size="60" font-family="'Source Serif 4', Georgia, serif"><tspan x="-135.03" y="0">10 People</tspan></text>
+                  <text id="dx" transform="translate(1142.5 660.5)" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">×</tspan></text>
+                  <g id="Scene_1E" data-name="Scene 1E">
+                    <text id="dPlus" transform="translate(710.5 545.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="dEquals" transform="translate(1076.5 545.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <text id="dCandidate_gets" transform="translate(1355 414)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-81" y="0">Candidate gets</tspan></text>
+                    <g id="Scene_1D" data-name="Scene 1D">
+                      <text id="dTier_1_Matching" transform="translate(935 399)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-83.352" y="0">Tier 1 Matching</tspan><tspan x="-39.576" y="29">7 x </tspan><tspan y="29" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan></text>
+                      <g id="Scene_1C" data-name="Scene 1C">
+                        <text id="dDonation_to_publicly_funded_candidate" transform="translate(565 399)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-110.472" y="0">Donation to publicly </tspan><tspan x="-94.032" y="29">funded candidate</tspan></text>
+                        <g id="Scene_1B" data-name="Scene 1B">
+                          <!-- Parchment band that visually scopes the recap row
+                               (the "$100 becomes $650" pair) as content the
+                               reader has already seen. Placed first so it sits
+                               behind every other element in this scene. -->
+                          <rect id="dRecapBand" x="440" y="152" width="1040" height="214" rx="4" fill="#f6f2e8"/>
+                          <!-- Hairlines flanking the "ALREADY SEEN" eyebrow. -->
+                          <line id="dRecapRuleLeft" x1="465" y1="134" x2="868" y2="134" stroke="#c9c2b3" stroke-width="1"/>
+                          <line id="dRecapRuleRight" x1="1052" y1="134" x2="1455" y2="134" stroke="#c9c2b3" stroke-width="1"/>
+                          <!-- Block arrow horizontally aligned with the $100
+                               and $650 box centers (y=289), pointing right
+                               between them so it reads "$100 → $650". -->
+                          <path id="dArrow" d="M-40,-12 H10 V-30 L48,0 L10,30 V12 H-40 Z" transform="translate(935 289)" fill="#1a1a1a"/>
+                          <text id="dBecomes" transform="translate(935 250)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-50.676" y="0">Becomes</tspan></text>
+                          <text id="dIn_total_for_the_candidate" transform="translate(1355 187)" text-anchor="middle" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">In total for</tspan><tspan x="0" y="29">the candidate</tspan></text>
+                          <text id="dOne_person_giving" transform="translate(565 202)" text-anchor="middle" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">One person giving</tspan></text>
+                          <g id="Scene_1A" data-name="Scene 1A">
+                            <!-- Headline rendered via foreignObject so the
+                                 hard line break (<br>) shows on desktop and
+                                 the title wraps responsively on narrower
+                                 viewports without hardcoded tspan breaks. -->
+                            <foreignObject id="dHeadline" x="60" y="20" width="1800" height="160">
+                              <div xmlns="http://www.w3.org/1999/xhtml" style="color: #434343;"><div style="font: 700 42px/1.15 'Poppins', sans-serif;">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</div><div style="font: italic 400 24px/1.25 'Source Serif 4', Georgia, serif; color: #5a5a5a; margin-top: 6px;">Example: A publicly financed candidate for Montgomery County Executive</div></div>
+                            </foreignObject>
+                          </g>
+                          <!-- "ALREADY SEEN" eyebrow header centered over the whole recap row.
+                               The flanking hairlines + tinted parchment band scope
+                               this row off as a "you already saw this" recap from
+                               earlier in the article. -->
+                          <text id="dAlready_Seen" transform="translate(960 140)" text-anchor="middle" fill="#5a5a5a" font-size="16" font-family="'Poppins', sans-serif" font-weight="700" letter-spacing="3.2"><tspan x="0" y="0">ALREADY SEEN</tspan></text>
+                          <path id="dPath_1" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 234.5)" fill="#fff" stroke="#2C8533" stroke-width="12"/>
+                          <text id="d_100" transform="translate(565 289)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
+                          <path id="dPath_2" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 234.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                          <text id="d_650" transform="translate(1355 289)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
+                        </g>
+                        <path id="dPath_3" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 449.5)" fill="#fff" stroke="#2C8533" stroke-width="12"/>
+                        <text id="d_10" transform="translate(565 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$10</tspan></text>
+                      </g>
+                      <path id="dPath_4" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(865.5 449.5)" fill="#fff" stroke="#1979b9" stroke-width="12"/>
+                      <text id="d_70" transform="translate(934 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$70</tspan></text>
+                    </g>
+                    <path id="dPath_5" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 449.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                    <text id="d_80" transform="translate(1355 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$80</tspan></text>
+                  </g>
+                </g>
+                <path id="dPath_6" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 756.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                <text id="d_800" transform="translate(1355 811)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$800</tspan></text>
+              </g>
+              <path id="dPath_7" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 756.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+              <text id="d_650-2" transform="translate(565 811)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
+            </g>
+            <text id="dTakeaway" transform="translate(957 974)" fill="#434343" font-size="30" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="-632.28" y="0">Because the match multiplier drops the more someone donates, multiple small matches </tspan><tspan x="-626.985" y="36">from different residents that stay within the first matching tier can have a higher impact.</tspan></text>
+          </g>
+        </g>
+      </svg>
+
+      <!-- ===== MOBILE PORTRAIT (≤ 768px) =================================== -->
+      <!-- viewBox cropped vertically (origin y=95, height 800) so the big
+           ~190px of empty space above the headline is roughly halved.
+           Horizontal extent unchanged. The white <rect> still spans the
+           original 430x932 artboard. -->
+      <svg class="scene-svg mobile-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 95 430 800" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Comparison: one $100 donor versus ten $10 donors. The ten small donors yield $800 in matched funds, more than the single donor's $650.">
+        <g id="miPhone_14_Pro_Max_1" data-name="iPhone 14 Pro Max – 1">
+          <rect width="430" height="932" fill="#fff"/>
+          <g id="Scene_1I" data-name="Scene 1I">
+            <g id="Scene_1H" data-name="Scene 1H">
+              <text id="mOne_100_donor" transform="translate(76 745)" fill="#434343" font-size="18" font-family="'Source Serif 4', Georgia, serif"><tspan x="-65.367" y="0">One </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="mvs" transform="translate(190.5 673.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="50" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <rect id="mRectangle_123" width="85.5" height="85.5" rx="15" transform="translate(33.5 635.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="8"/>
+              <text id="mTen_10_donors" transform="translate(348 745)" fill="#434343" font-size="18" font-family="'Source Serif 4', Georgia, serif"><tspan x="-62.19" y="0">Ten </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan><tspan y="0" fill="#1979b9" font-family="'Poppins', sans-serif" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="m_650" transform="translate(76.25 678.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="24" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
+              <g id="Scene_1G" data-name="Scene 1G">
+                <rect id="mRectangle_124" width="85.5" height="85.5" rx="15" transform="translate(305.5 635.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="8"/>
+                <text id="m_800" transform="translate(348.25 678.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="24" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$800</tspan></text>
+                <g id="Scene_1F" data-name="Scene 1F">
+                  <!-- Line extended left so it underlines the × symbol too,
+                       and shifted down ~18px alongside the × / "10 People"
+                       to clear the $80 box above. -->
+                  <line id="mLine_137" x2="183.167" transform="translate(240 615.339)" fill="none" stroke="#000" stroke-width="5"/>
+                  <text id="mx" transform="translate(250.411 597.501)" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">×</tspan></text>
+                  <text id="m10_People" transform="translate(348 597.001)" fill="#434343" font-size="30" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="-70.275" y="0">10 People</tspan></text>
+                  <g id="Scene_1E" data-name="Scene 1E">
+                    <text id="mPlus" transform="translate(131.407 524.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="mEquals" transform="translate(267.417 524.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <rect id="mRectangle_126" width="73.5" height="73.5" rx="15" transform="translate(311.5 483.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="6"/>
+                    <text id="m_80" transform="translate(348.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$80</tspan></text>
+                    <text id="mCandidate_gets" transform="translate(348 456)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-51" y="0">Candidate gets</tspan></text>
+                    <g id="Scene_1D" data-name="Scene 1D">
+                      <text id="mTier_1_Matching" transform="translate(212 449)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-52.095" y="0">Tier 1 Matching</tspan><tspan x="-24.735" y="18">7 x </tspan><tspan y="18" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan></text>
+                      <g id="Scene_1C" data-name="Scene 1C">
+                        <text id="mDonation_to_publicly_funded_candidate" transform="translate(76 449)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-69.045" y="0">Donation to publicly </tspan><tspan x="-58.77" y="17">funded candidate</tspan></text>
+                        <g id="Scene_1B" data-name="Scene 1B">
+                          <!-- Parchment band that visually scopes the recap row
+                               (the "$100 becomes $650" pair) as content the
+                               reader has already seen. Placed first so it sits
+                               behind every other element in this scene. -->
+                          <rect id="mRecapBand" x="15" y="240" width="400" height="190" rx="4" fill="#f6f2e8"/>
+                          <!-- Hairlines flanking the "ALREADY SEEN" eyebrow. -->
+                          <line id="mRecapRuleLeft" x1="32" y1="254" x2="161" y2="254" stroke="#c9c2b3" stroke-width="1"/>
+                          <line id="mRecapRuleRight" x1="269" y1="254" x2="398" y2="254" stroke="#c9c2b3" stroke-width="1"/>
+                          <!-- Block arrow horizontally aligned with the $100
+                               and $650 box centers (y=372.25 on mobile). -->
+                          <path id="mArrow" d="M-22,-6 H6 V-15 L24,0 L6,15 V6 H-22 Z" transform="translate(212 372.25)" fill="#1a1a1a"/>
+                          <text id="mBecomes" transform="translate(212 341.5)" fill="#434343" font-size="14" font-family="'Source Serif 4', Georgia, serif"><tspan x="-38.007" y="0">Becomes</tspan></text>
+                          <text id="mIn_total_for_the_candidate" transform="translate(348 299)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-36.112" y="0">In total for </tspan><tspan x="-45.847" y="17">the candidate</tspan></text>
+                          <text id="mOne_person_giving" transform="translate(76 299)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-41.265" y="0">One person </tspan><tspan x="-19.86" y="17">giving</tspan></text>
+                          <g id="Scene_1A" data-name="Scene 1A">
+                            <!-- Headline as foreignObject — auto-wraps to fit
+                                 the narrow mobile viewBox without hardcoded
+                                 tspan line breaks. -->
+                            <foreignObject id="mHeadline" x="11" y="105" width="408" height="160">
+                              <div xmlns="http://www.w3.org/1999/xhtml" style="color: #434343;"><div style="font: 700 18px/1.2 'Poppins', sans-serif;">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</div><div style="font: italic 400 12px/1.25 'Source Serif 4', Georgia, serif; color: #5a5a5a; margin-top: 4px;">Example: A publicly financed candidate for Montgomery County Executive</div></div>
+                            </foreignObject>
+                          </g>
+                          <text id="mAlready_Seen" transform="translate(215 257)" text-anchor="middle" fill="#5a5a5a" font-size="11" font-family="'Poppins', sans-serif" font-weight="700" letter-spacing="2.2"><tspan x="0" y="0">ALREADY SEEN</tspan></text>
+                          <rect id="mRectangle_116" width="73.5" height="73.5" rx="15" transform="translate(39.5 335.5)" fill="#fff" stroke="#2C8533" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_100" transform="translate(76.25 372.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
+                          <rect id="mRectangle_125" width="73.5" height="73.5" rx="15" transform="translate(311.5 335.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_650-2" transform="translate(348.25 372.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
+                        </g>
+                        <rect id="mRectangle_127" width="73.5" height="73.5" rx="15" transform="translate(39.5 483.5)" fill="#fff" stroke="#2C8533" stroke-linejoin="round" stroke-width="6"/>
+                        <text id="m_10" transform="translate(76.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$10</tspan></text>
+                      </g>
+                      <rect id="mRectangle_128" width="73.5" height="73.5" rx="15" transform="translate(175.5 483.5)" fill="#fff" stroke="#1979b9" stroke-linejoin="round" stroke-width="6"/>
+                      <text id="m_70" transform="translate(212.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$70</tspan></text>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+            <!-- Takeaway: foreignObject + HTML so the line breaks are
+                 automatic/responsive and the block stays centered in the
+                 viewBox at any width, instead of using hardcoded tspans
+                 that clip when the font scales up. -->
+            <foreignObject id="mTakeaway" x="20" y="755" width="390" height="135">
+              <div xmlns="http://www.w3.org/1999/xhtml" style="font: 700 19px/1.3 'Poppins', 'Poppins', sans-serif; color: #434343; text-align: center;">Because the match multiplier drops the more someone donates, multiple small matches from different residents that stay within the first matching tier can have a higher impact.</div>
+            </foreignObject>
+          </g>
+        </g>
+      </svg>
+
+    </div><!-- /.scrolly-stage -->
+  </div><!-- /.scrolly-track -->
+</div><!-- /.sbs-scrolly -->
+<!-- =========================================================================
+  WORDPRESS DROP-IN END ↑
+========================================================================= -->
+
+<!-- PREVIEW-ONLY article body (below). NOT part of the WP paste. -->
+<section class="article-body-preview">
+  <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+  <p>Consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  // Scene IDs in reveal order — innermost (1A) to outermost (1I).
+  const SCENE_IDS = ['Scene_1A','Scene_1B','Scene_1C','Scene_1D','Scene_1E','Scene_1F','Scene_1G','Scene_1H','Scene_1I'];
+  const NUM_STEPS = SCENE_IDS.length;
+
+  function tagScenesIn(svg) {
+    SCENE_IDS.forEach((id, idx) => {
+      const sceneEl = svg.querySelector('#' + id);
+      if (!sceneEl) return;
+      const step = idx + 1;
+      Array.from(sceneEl.children).forEach(child => {
+        if (child.id && /^Scene_1[A-I]$/.test(child.id)) return;
+        child.setAttribute('data-step', String(step));
+      });
+    });
+  }
+
+  function boot() {
+    const root = document.querySelector('.sbs-scrolly');
+    if (!root) return;
+    const track = document.getElementById('sbsScrollyTrack');
+    const progressBar = document.getElementById('sbsProgressBar');
+    const svgs = root.querySelectorAll('svg.scene-svg');
+    svgs.forEach(tagScenesIn);
+
+    // Cache the tagged elements grouped by step for cheap updates.
+    const elsByStep = {};
+    for (let s = 1; s <= NUM_STEPS; s++) elsByStep[s] = [];
+    root.querySelectorAll('[data-step]').forEach(el => {
+      const s = parseInt(el.getAttribute('data-step'), 10);
+      if (elsByStep[s]) elsByStep[s].push(el);
+    });
+
+    let lastStep = 0;
+    let completed = false;
+    const stage = root.querySelector('.scrolly-stage');
+
+    function update() {
+      if (completed) return;
+      const trackRect = track.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const travelable = Math.max(1, track.offsetHeight - viewportH);
+      const scrolled = -trackRect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / travelable));
+      // Map 0..1 progress → step 1..NUM_STEPS. Each step occupies an equal
+      // slice. Math.floor + clamp ensures step NUM_STEPS shows once progress
+      // has moved beyond (NUM_STEPS-1)/NUM_STEPS.
+      const stepFloat = progress * NUM_STEPS;
+      const currentStep = Math.max(1, Math.min(NUM_STEPS, Math.floor(stepFloat) + 1));
+
+      if (currentStep !== lastStep) {
+        for (let s = 1; s <= NUM_STEPS; s++) {
+          const visible = s <= currentStep;
+          elsByStep[s].forEach(el => { el.style.opacity = visible ? '1' : '0'; });
+        }
+        lastStep = currentStep;
+      }
+      if (progressBar) progressBar.style.width = (progress * 100).toFixed(2) + '%';
+
+      // Once the reader has scrolled all the way through, lock the graphic
+      // at fully-revealed and release sticky so the section becomes a
+      // normal inline element. Won't replay on subsequent scrolling.
+      if (progress >= 0.999) complete();
+    }
+
+    function complete() {
+      if (completed) return;
+      completed = true;
+      // Force every reveal element to opacity 1 (overrides CSS rule).
+      root.querySelectorAll('[data-step]').forEach(el => { el.style.opacity = '1'; });
+      // Collapse the track to the stage's actual height (which hugs the
+      // SVG's natural aspect) and release sticky so the stage sits inline
+      // at the top of the (now short) track. Using stage height instead
+      // of 100vh eliminates the empty bottom margin when the SVG aspect
+      // ratio is shorter than the viewport (e.g. portrait or narrow
+      // viewports where the 16:9 SVG doesn't fill 100vh).
+      const trackTop = track.offsetTop;
+      const stageH = stage.getBoundingClientRect().height;
+      track.style.height = stageH + 'px';
+      stage.style.position = 'relative';
+      stage.style.top = '0';
+      // Keep the user's viewport aligned with the now-static stage so
+      // they don't see a visual jump.
+      window.scrollTo(0, trackTop);
+      if (progressBar) progressBar.style.display = 'none';
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking || completed) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; update(); });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { if (!completed) update(); });
+    update();
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    boot();
+  } else {
+    window.addEventListener('DOMContentLoaded', boot);
+  }
+})();
+</script>
+
+</body>
+</html>

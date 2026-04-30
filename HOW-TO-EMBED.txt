@@ -1,0 +1,137 @@
+============================================================
+HOW TO PUT THESE IN A WORDPRESS ARTICLE
+============================================================
+
+You have TWO components to drop into your article:
+
+    interactive.html        --> the slider/chart/callouts widget
+    simplified-scrolly.html --> the scroll-driven explainer
+
+Each one goes into its own "Custom HTML" block in WordPress.
+
+Recommended order in the article:
+
+    [your normal article paragraphs]
+        |
+        v
+    [Custom HTML block #1]  <--  interactive.html
+        |
+        v
+    [more article paragraphs]
+        |
+        v
+    [Custom HTML block #2]  <--  simplified-scrolly.html
+        |
+        v
+    [more article paragraphs]
+
+
+------------------------------------------------------------
+STEP-BY-STEP, FOR EACH HTML FILE:
+------------------------------------------------------------
+
+1.  Open the file in VS Code (or any text editor).
+
+2.  Find these THREE chunks inside the file:
+
+      A. The CSS — lives between these comment markers:
+              WORDPRESS DROP-IN STYLES BEGIN
+              WORDPRESS DROP-IN STYLES END
+         (Skip the rules ABOVE the BEGIN marker — those are
+          preview-only and not needed in WordPress.)
+
+      B. The HTML markup — lives between these comment markers:
+              WORDPRESS DROP-IN BEGIN
+              WORDPRESS DROP-IN END
+
+      C. The <script>...</script> block at the bottom of the
+         file. Copy the whole thing including the <script> tags.
+
+3.  In WordPress, add a new Custom HTML block to your article.
+
+4.  Paste all three chunks into that ONE block, in this order:
+        <style> ... CSS from chunk A ... </style>
+        ... markup from chunk B ...
+        <script> ... script from chunk C ... </script>
+
+5.  Save / preview the article. You should see the component
+    appear right where you put the block.
+
+6.  Repeat steps 1-5 for the other HTML file in another Custom
+    HTML block elsewhere in the article.
+
+
+------------------------------------------------------------
+EDITING THE COPY (text changes you can make yourself in VS Code)
+------------------------------------------------------------
+
+interactive.html:
+    Office tab labels  -->  inside the <button> tags near the top
+    Headline paragraph -->  <p class="as-heading"> ... </p>
+    Eyebrow + subhead  -->  "TRY IT YOURSELF" + the <h3> below it
+    Tier labels        -->  the <td class="tier-label"> cells
+    Prohibited list    -->  the <li> items in <ul class="prohibited-list-clean">
+    Donor cap callout  -->  the first <aside class="callout"> block
+    County match cap   -->  the second <aside class="callout"> block
+    Methodology body   -->  the <section class="methodology"> at the bottom
+    Office numbers     -->  OFFICE_DATA at the top of the <script>
+                            (multipliers, $40,000, max-per-election, etc.)
+    Bar chart labels   -->  the <text> elements inside the <svg>
+
+simplified-scrolly.html:
+    All visible text   -->  edit the <tspan> contents inside each
+                            <text> element. The "Scene_1A" through
+                            "Scene_1I" group IDs drive the reveal
+                            order -- DO NOT rename them.
+    Scroll speed       -->  in the CSS, find:
+                                .sbs-scrolly .scrolly-track {
+                                    height: 800vh;
+                                }
+                            Bigger number = slower scroll. Smaller =
+                            faster. (Each step gets 1/9 of this.)
+
+
+------------------------------------------------------------
+NOTES / GOTCHAS
+------------------------------------------------------------
+
+* The two components have separate CSS scopes (.sbs-root and
+  .sbs-scrolly), so they will not conflict if you put both on
+  the same page.
+
+* The scrolly plays ONCE per page load. Once the reader scrolls
+  through to the end, it locks at fully-revealed and stops being
+  sticky. If the reader scrolls back up, they see the static
+  fully-revealed graphic -- not a reverse animation.
+
+* The scrolly uses position: sticky. If the WordPress theme
+  wraps article content in a container with overflow: hidden
+  (or overflow-x: hidden), sticky silently breaks. If the
+  scrolly does NOT pin in place when scrolling, ask the theme
+  developer to relax that overflow rule on the article wrapper.
+
+* The interactive uses Google Fonts (Source Serif 4, Inter,
+  JetBrains Mono). The <link href="..."> at the top of the
+  file's CSS chunk loads them. If your WordPress theme already
+  loads these fonts, the duplicate link is harmless.
+
+* Both components are responsive -- they automatically reflow
+  for phone screens. No extra steps needed.
+
+
+------------------------------------------------------------
+THE FILES IN THIS FOLDER
+------------------------------------------------------------
+
+    interactive.html         -- component #1 (drop-in)
+    simplified-scrolly.html  -- component #2 (drop-in)
+    mockup.html              -- a sample WordPress-style page
+                                with both components plus filler
+                                lorem ipsum, so you can see what
+                                the final layout looks like.
+                                Open this in a browser to preview.
+    HOW-TO-EMBED.txt         -- (this file)
+    components/              -- old / reference files. You don't
+                                need to look in here unless you
+                                want the original source SVGs or
+                                the legacy v3/v5 versions.
