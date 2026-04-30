@@ -41,12 +41,12 @@
   Paste all three into one Custom HTML block in WordPress, in order.
 ========================================================================= -->
 
-<!-- Editorial type stack: Source Serif 4 for headlines + body, Inter for
-     small-caps eyebrows / labels, JetBrains Mono for dollar amounts so
-     digit columns stay aligned during slider tweens. -->
+<!-- Editorial type stack (CNS style guide): Source Serif 4 for headlines
+     + body, Poppins for small-caps eyebrows, rail-header labels, and all
+     numerical/display values. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================================
@@ -65,7 +65,7 @@ html, body {
   max-width: 720px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   font-size: clamp(1rem, 1.7vw, 1.15rem);
   line-height: 1.75;
   color: #3a3a3a;
@@ -83,7 +83,7 @@ html, body {
 }
 
 .sbs-root {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   color: #2a2a2a;
   background: #fafafa;
   -webkit-font-smoothing: antialiased;
@@ -105,6 +105,15 @@ html, body {
 /* ----------------------------------------------------------------------------
    Office selector — newspaper-style horizontal tabs.
 ---------------------------------------------------------------------------- */
+/* "Section Head" from the CNS style guide — Poppins 600, black —
+   sits above the office selector as the title of the interactive. */
+.sbs-root .section-heading {
+  font: 600 36px/1.1 'Poppins', 'Poppins', sans-serif;
+  color: #000000;
+  margin: 0 0 1.25rem;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
 .sbs-root .office-selector {
   display: flex;
   gap: 0;
@@ -113,8 +122,11 @@ html, body {
   margin: 0 auto 1.5rem;
   max-width: 720px;
   background: transparent;
-  font: 600 12px/1 'Inter', sans-serif;
-  letter-spacing: 0.1em;
+  /* Rail-header typography from the CNS style guide: Poppins bold,
+     uppercase. Size scaled to ~18px so three button labels fit
+     comfortably inside the 720px max-width on desktop. */
+  font: 700 18px/1 'Poppins', 'Poppins', sans-serif;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .sbs-root .office-selector button {
@@ -135,9 +147,10 @@ html, body {
 .sbs-root .office-selector button + button { border-left: none; }
 .sbs-root .office-selector button:hover { color: #1a1a1a; background: rgba(26,26,26,0.04); }
 .sbs-root .office-selector button.active {
-  background: #1a1a1a;
-  color: #fafafa;
-  font-weight: 700;
+  /* Active state = rail header. Red banner with white bold uppercase
+     text per the CNS style guide. */
+  background: #990000;
+  color: #ffffff;
 }
 
 /* ----------------------------------------------------------------------------
@@ -153,8 +166,8 @@ html, body {
   margin: 0 12px 1rem;
   color: #1a1a1a;
 }
-.sbs-root .as-heading .accent { color: #229500; font-weight: 700; }
-.sbs-root .as-heading .accent-blue { color: #0027ff; font-weight: 700; }
+.sbs-root .as-heading .accent { color: #2C8533; font-weight: 700; }
+.sbs-root .as-heading .accent-blue { color: #1979b9; font-weight: 700; }
 .sbs-root .as-heading .office-name { font-weight: 700; }
 
 /* ----------------------------------------------------------------------------
@@ -216,20 +229,20 @@ html, body {
   padding: 0 7px;
 }
 .sbs-root .slider-label-caps {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
   font-style: normal;
 }
 .sbs-root .slider-live-val {
-  font: 700 1.35rem/1 'JetBrains Mono', ui-monospace, monospace;
+  font: 700 1.35rem/1 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
-  color: #229500;
+  color: #2C8533;
   letter-spacing: -0.02em;
 }
 .sbs-root .section-eyebrow {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
@@ -282,7 +295,7 @@ html, body {
   -webkit-appearance: none; appearance: none;
   width: 16px; height: 16px;
   border-radius: 50%;
-  background: #229500;
+  background: #2C8533;
   cursor: pointer;
   border: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -290,7 +303,7 @@ html, body {
 .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb {
   width: 16px; height: 16px;
   border-radius: 50%;
-  background: #229500;
+  background: #2C8533;
   cursor: pointer;
   border: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -319,7 +332,7 @@ html, body {
   left: 7px;
   width: 0;
   height: 4px;
-  background: #229500;
+  background: #2C8533;
   pointer-events: none;
   z-index: 2;
 }
@@ -329,7 +342,7 @@ html, body {
   font-size: 1rem;
   color: #7a7a7a;
   margin: 0 7px 0;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
 }
 .sbs-root .slider-ticks span {
@@ -344,7 +357,7 @@ html, body {
 .sbs-root .eq-table {
   border-collapse: separate;
   border-spacing: 0 2px;
-  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
 }
 .sbs-root .eq-table td {
@@ -352,14 +365,14 @@ html, body {
   white-space: nowrap;
 }
 .sbs-root .eq-table .tier-label { color: #434343; font-weight: 700; padding-right: 8px; text-align: right; min-width: 90px; font-family: 'Source Serif 4', Georgia, serif; }
-.sbs-root .eq-table .donor { color: #229500; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
-.sbs-root .eq-table .match { color: #0027ff; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
-.sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 64px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .donor { color: #2C8533; font-weight: 700; text-align: center; min-width: 56px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .match { color: #1979b9; font-weight: 700; text-align: center; min-width: 56px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .total { color: #80217f; font-weight: 700; text-align: center; min-width: 64px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
 .sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; text-align: center; min-width: 18px; padding: 0 8px; }
 .sbs-root #bigDonationValue,
 .sbs-root #bigCandidateValue,
 .sbs-root .as-heading .accent {
-  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-family: 'Poppins', sans-serif !important;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
 }
@@ -370,7 +383,7 @@ html, body {
   border-top: 2px solid #444;
 }
 .sbs-root .eq-table .total-row .tier-label { font-weight: 700; }
-.sbs-root .eq-table .not-matched { color: red; font-weight: 700; }
+.sbs-root .eq-table .not-matched { color: #de5826; font-weight: 700; }
 .sbs-root .eq-table tr { transition: opacity 0.25s ease-out; }
 .sbs-root .eq-table tr.hidden {
   visibility: collapse;
@@ -416,11 +429,11 @@ html, body {
   padding: 0;
 }
 .sbs-root .prohibited-block h3 {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #8a1f1f;
-  border-bottom: 2px solid #8a1f1f;
+  color: #de5826;
+  border-bottom: 2px solid #de5826;
   padding-bottom: 6px;
   margin-bottom: 8px;
 }
@@ -443,7 +456,7 @@ html, body {
 }
 .sbs-root .prohibited-list-clean li::before {
   content: "—";
-  color: #d92b2b;
+  color: #de5826;
   font-weight: 700;
   flex: 0 0 auto;
 }
@@ -458,7 +471,7 @@ html, body {
   margin: 0 0 1rem 0;
 }
 .sbs-root .callout-eyebrow {
-  font: 700 10px/1 'Inter', sans-serif;
+  font: 700 10px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
@@ -473,13 +486,13 @@ html, body {
   font-weight: 700;
 }
 .sbs-root .callout-value {
-  font: 700 26px/1 'JetBrains Mono', ui-monospace, monospace;
+  font: 700 26px/1 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: #1a5928;
+  color: #2C8533;
 }
 .sbs-root .callout-value.county-blue {
-  color: #0027ff;
+  color: #1979b9;
 }
 .sbs-root .callout-value-suffix {
   font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
@@ -498,7 +511,7 @@ html, body {
   padding: 1rem 0 2rem;
 }
 .sbs-root .methodology h6 {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #1a1a1a;
@@ -512,7 +525,7 @@ html, body {
 .sbs-root .methodology p.meth-todo em {
   display: block;
   margin-top: 0.3rem;
-  font: italic 12px/1.3 'Inter', sans-serif;
+  font: italic 12px/1.3 'Poppins', sans-serif;
   color: #c0392b;
   letter-spacing: 0.04em;
   font-weight: 600;
@@ -523,11 +536,11 @@ html, body {
   margin-bottom: 0.6rem;
 }
 .sbs-root .methodology p.meth-body a {
-  color: #0027ff;
+  color: #1979b9;
   text-decoration: underline;
 }
 .sbs-root .methodology p.graphics-credit {
-  font: 600 11px/1.2 'Inter', sans-serif;
+  font: 600 11px/1.2 'Poppins', sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #4a4a4a;
@@ -546,11 +559,12 @@ html, body {
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
+  .sbs-root .section-heading { font-size: 26px; }
   .sbs-root .as-heading { font-size: 1rem; line-height: 1.45; }
-  .sbs-root .office-selector button { font-size: 13px; padding: 12px 4px; }
+  .sbs-root .office-selector button { font-size: 14px; padding: 12px 4px; }
   .sbs-root .slider-wrap input[type="range"] { height: 2px; }
-  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; border-radius: 50%; background: #229500; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
-  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #229500; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
+  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
+  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
   .sbs-root .slider-ticks { font-size: 0.95rem; }
   .sbs-root .eq-table { font-size: 0.95rem; }
 }
@@ -581,6 +595,8 @@ html, body {
 <div class="sbs-root">
 <div class="after-scrolly">
 
+  <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
+
   <!-- ↓ EDIT TAB LABELS ↓
        data-office values must match the keys in OFFICE_DATA at the top of
        the <script> block. Tab text can be whatever short label fits. -->
@@ -595,7 +611,7 @@ html, body {
        name, qualifying-dollars threshold, qualifying-donors threshold. -->
   <p class="as-heading">
     Once a publicly financed candidate for
-    <span class="office-name" id="asOfficeName">County Executive</span>
+    <span class="office-name" id="asOfficeName">Montgomery County Executive</span>
     receives a combined
     <span class="accent" id="asQualifyDollars">$40,000</span>
     from at least
@@ -650,13 +666,13 @@ html, body {
     <div class="bar-chart-wrap">
       <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <!-- ↓ EDIT TOP-RIGHT BOOKEND LABELS ↓ -->
-        <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Individual&apos;s total donation</text>
-        <text id="bigDonationValue" x="420" y="162" text-anchor="middle" font-size="36" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
-        <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
-        <text id="bigCandidateValue" x="620" y="162" text-anchor="middle" font-size="36" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
+        <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
+        <text id="bigDonationValue" x="420" y="162" text-anchor="middle" font-size="36" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</text>
+        <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="620" y="162" text-anchor="middle" font-size="36" fill="#80217f" font-family="'Poppins', sans-serif" font-weight="700">$650</text>
 
         <!-- ↓ EDIT Y-AXIS LABEL ↓ ("County / matching / funds" stacked) -->
-        <text x="40" y="216" text-anchor="middle" font-size="15" fill="#0027ff" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">
+        <text x="40" y="216" text-anchor="middle" font-size="15" fill="#1979b9" font-family="'Source Serif 4', Georgia, serif" font-weight="700">
           <tspan x="40" dy="0">County</tspan>
           <tspan x="40" dy="20">matching</tspan>
           <tspan x="40" dy="20">funds</tspan>
@@ -679,15 +695,15 @@ html, body {
         </g>
         <!-- ↓ EDIT X-AXIS TICK NUMBERS ↓ -->
         <g id="chartTicks">
-          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
-          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
-          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
-          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
-          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
+          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$0</text>
+          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$50</text>
+          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$100</text>
+          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$150</text>
+          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$500</text>
         </g>
 
         <!-- ↓ EDIT X-AXIS LABEL ↓ (centered below the tick numbers) -->
-        <text x="390" y="475" text-anchor="middle" font-size="15" fill="#229500" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">Individual&apos;s total donation</text>
+        <text x="390" y="475" text-anchor="middle" font-size="15" fill="#2C8533" font-family="'Source Serif 4', Georgia, serif" font-weight="700">Individual&apos;s total donation</text>
       </svg>
     </div>
 
@@ -735,7 +751,7 @@ html, body {
            #maxOffice and #maxAmount are filled in from OFFICE_DATA. -->
       <aside class="callout">
         <div class="callout-eyebrow">County match cap</div>
-        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">County Executive</span> after it has given that candidate:</div>
+        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">Montgomery County Executive</span> after the candidate receives:</div>
         <div class="callout-value county-blue"><span id="maxAmount">$870,170</span><span class="callout-value-suffix">in matching funds</span></div>
       </aside>
     </div>
@@ -774,7 +790,11 @@ html, body {
   // ===========================================================================
   const OFFICE_DATA = {
     'executive': {
-      label: 'County Executive',
+      // Note: the office-selector buttons stay as the short form
+      // ("County Executive" / "At-Large" / "District") — the longer
+      // "Montgomery …" labels here only flow into #asOfficeName and
+      // #maxOffice in the surrounding copy.
+      label: 'Montgomery County Executive',
       // Match multipliers for the first three $50 tiers of a donation.
       // Tier 4 (donations above $150) is never matched.
       t1: 7, t2: 4, t3: 2,
@@ -785,14 +805,14 @@ html, body {
       maxPerElection: '$870,170',
     },
     'at-large': {
-      label: 'County Council – At Large',
+      label: 'Montgomery County Council – At Large',
       t1: 5, t2: 3, t3: 2,
       qualifyDollars: '$20,000',
       qualifyDonors: 250,
       maxPerElection: '$290,060',
     },
     'district': {
-      label: 'County Council – District',
+      label: 'Montgomery County Council – District',
       t1: 5, t2: 3, t3: 2,
       qualifyDollars: '$10,000',
       qualifyDonors: 125,
@@ -937,7 +957,7 @@ html, body {
         'text-anchor': opts.anchor || 'middle',
         'font-size': String(opts.size || 13),
         fill: opts.fill || '#464546',
-        'font-family': 'HelveticaNeue, Helvetica Neue',
+        'font-family': "'Poppins', sans-serif",
         'font-weight': String(opts.weight || 400),
       });
       t.textContent = text;
@@ -961,14 +981,17 @@ html, body {
       tiersG.appendChild(svgEl('rect', {
         x: String(segXStart), y: String(BASELINE_Y),
         width: String(segWidth), height: String(SEG_HEIGHT),
-        fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': '3'
+        // Fill is the same hue as the stroke (#2C8533 = rgb(44,133,51))
+        // at 0.15 alpha — bump alpha here if the green needs more presence
+        // against the white page background.
+        fill: 'rgba(44,133,51,0.15)', stroke: '#2C8533', 'stroke-width': '3'
       }));
       if (segWidth > 30) {
         tiersG.appendChild(svgText(
           segXStart + segWidth / 2,
           BASELINE_Y + SEG_HEIGHT / 2 + 5,
           fmt$(tier.donor),
-          { size: 13, fill: '#229500', weight: 700 }
+          { size: 13, fill: '#2C8533', weight: 700 }
         ));
       }
 
@@ -977,14 +1000,14 @@ html, body {
         tiersG.appendChild(svgEl('rect', {
           x: String(segXStart), y: String(BASELINE_Y - stripH),
           width: String(segWidth), height: String(stripH),
-          fill: 'rgba(217,43,43,0.10)', stroke: '#d92b2b',
+          fill: 'rgba(222,88,38,0.10)', stroke: '#de5826',
           'stroke-width': '3', 'stroke-dasharray': '8 6'
         }));
         const NOT_MATCHED_W = 150;
         if (segWidth >= NOT_MATCHED_W + 16) {
           tiersG.appendChild(svgText(
             segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
-            'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
+            'NOT MATCHED', { size: 16, fill: '#de5826', weight: 700 }
           ));
         } else {
           // Dashed leader line + label parked above-right when strip is narrow.
@@ -996,11 +1019,11 @@ html, body {
             y1: String(stripTopY + stripH / 2),
             x2: String(labelX - 4),
             y2: String(labelY + 4),
-            stroke: '#d92b2b', 'stroke-width': '2', 'stroke-dasharray': '4 4'
+            stroke: '#de5826', 'stroke-width': '2', 'stroke-dasharray': '4 4'
           }));
           tiersG.appendChild(svgText(
             labelX, labelY,
-            'NOT MATCHED', { anchor: 'start', size: 16, fill: '#d92b2b', weight: 700 }
+            'NOT MATCHED', { anchor: 'start', size: 16, fill: '#de5826', weight: 700 }
           ));
         }
       } else {
@@ -1009,12 +1032,12 @@ html, body {
           tiersG.appendChild(svgEl('rect', {
             x: String(segXStart), y: String(BASELINE_Y - colH),
             width: String(segWidth), height: String(colH),
-            fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': '3'
+            fill: 'rgba(25,121,185,0.15)', stroke: '#1979b9', 'stroke-width': '3'
           }));
           if (colH > 30 && segWidth > 35) {
             tiersG.appendChild(svgText(
               segXStart + segWidth / 2, BASELINE_Y - colH / 2 + 5,
-              fmt$(tier.match), { size: 14, fill: '#0027ff', weight: 700 }
+              fmt$(tier.match), { size: 14, fill: '#1979b9', weight: 700 }
             ));
           }
           tiersG.appendChild(svgText(

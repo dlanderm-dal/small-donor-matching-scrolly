@@ -6,7 +6,7 @@
 <title>Small-donor matching — article mockup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- =========================================================================
   ARTICLE MOCKUP — drops the two WordPress components into a fake article
@@ -35,7 +35,7 @@ body { margin: 0; }
   font-family: 'Source Serif 4', Georgia, serif;
 }
 .mockup-article-head .kicker {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #8a1f1f;
@@ -50,7 +50,7 @@ body { margin: 0; }
   letter-spacing: -0.012em;
 }
 .mockup-article-head .byline {
-  font: 600 13px/1.4 'Inter', sans-serif;
+  font: 600 13px/1.4 'Poppins', sans-serif;
   color: #4a4a4a;
 }
 .mockup-body {
@@ -73,7 +73,7 @@ body { margin: 0; }
 }
 
 .sbs-root {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Source Serif 4', Georgia, serif;
   color: #2a2a2a;
   background: #fafafa;
   -webkit-font-smoothing: antialiased;
@@ -95,6 +95,15 @@ body { margin: 0; }
 /* ----------------------------------------------------------------------------
    Office selector — newspaper-style horizontal tabs.
 ---------------------------------------------------------------------------- */
+/* "Section Head" from the CNS style guide — Poppins 600, black —
+   sits above the office selector as the title of the interactive. */
+.sbs-root .section-heading {
+  font: 600 36px/1.1 'Poppins', 'Poppins', sans-serif;
+  color: #000000;
+  margin: 0 0 1.25rem;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
 .sbs-root .office-selector {
   display: flex;
   gap: 0;
@@ -103,8 +112,11 @@ body { margin: 0; }
   margin: 0 auto 1.5rem;
   max-width: 720px;
   background: transparent;
-  font: 600 12px/1 'Inter', sans-serif;
-  letter-spacing: 0.1em;
+  /* Rail-header typography from the CNS style guide: Poppins bold,
+     uppercase. Size scaled to ~18px so three button labels fit
+     comfortably inside the 720px max-width on desktop. */
+  font: 700 18px/1 'Poppins', 'Poppins', sans-serif;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .sbs-root .office-selector button {
@@ -125,9 +137,10 @@ body { margin: 0; }
 .sbs-root .office-selector button + button { border-left: none; }
 .sbs-root .office-selector button:hover { color: #1a1a1a; background: rgba(26,26,26,0.04); }
 .sbs-root .office-selector button.active {
-  background: #1a1a1a;
-  color: #fafafa;
-  font-weight: 700;
+  /* Active state = rail header. Red banner with white bold uppercase
+     text per the CNS style guide. */
+  background: #990000;
+  color: #ffffff;
 }
 
 /* ----------------------------------------------------------------------------
@@ -143,8 +156,8 @@ body { margin: 0; }
   margin: 0 12px 1rem;
   color: #1a1a1a;
 }
-.sbs-root .as-heading .accent { color: #229500; font-weight: 700; }
-.sbs-root .as-heading .accent-blue { color: #0027ff; font-weight: 700; }
+.sbs-root .as-heading .accent { color: #2C8533; font-weight: 700; }
+.sbs-root .as-heading .accent-blue { color: #1979b9; font-weight: 700; }
 .sbs-root .as-heading .office-name { font-weight: 700; }
 
 /* ----------------------------------------------------------------------------
@@ -206,20 +219,20 @@ body { margin: 0; }
   padding: 0 7px;
 }
 .sbs-root .slider-label-caps {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
   font-style: normal;
 }
 .sbs-root .slider-live-val {
-  font: 700 1.35rem/1 'JetBrains Mono', ui-monospace, monospace;
+  font: 700 1.35rem/1 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
-  color: #229500;
+  color: #2C8533;
   letter-spacing: -0.02em;
 }
 .sbs-root .section-eyebrow {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
@@ -272,7 +285,7 @@ body { margin: 0; }
   -webkit-appearance: none; appearance: none;
   width: 16px; height: 16px;
   border-radius: 50%;
-  background: #229500;
+  background: #2C8533;
   cursor: pointer;
   border: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -280,7 +293,7 @@ body { margin: 0; }
 .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb {
   width: 16px; height: 16px;
   border-radius: 50%;
-  background: #229500;
+  background: #2C8533;
   cursor: pointer;
   border: 0;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -309,7 +322,7 @@ body { margin: 0; }
   left: 7px;
   width: 0;
   height: 4px;
-  background: #229500;
+  background: #2C8533;
   pointer-events: none;
   z-index: 2;
 }
@@ -319,7 +332,7 @@ body { margin: 0; }
   font-size: 1rem;
   color: #7a7a7a;
   margin: 0 7px 0;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
 }
 .sbs-root .slider-ticks span {
@@ -334,7 +347,7 @@ body { margin: 0; }
 .sbs-root .eq-table {
   border-collapse: separate;
   border-spacing: 0 2px;
-  font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
 }
 .sbs-root .eq-table td {
@@ -342,14 +355,14 @@ body { margin: 0; }
   white-space: nowrap;
 }
 .sbs-root .eq-table .tier-label { color: #434343; font-weight: 700; padding-right: 8px; text-align: right; min-width: 90px; font-family: 'Source Serif 4', Georgia, serif; }
-.sbs-root .eq-table .donor { color: #229500; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
-.sbs-root .eq-table .match { color: #0027ff; font-weight: 700; text-align: center; min-width: 56px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
-.sbs-root .eq-table .total { color: #7600ff; font-weight: 700; text-align: center; min-width: 64px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .donor { color: #2C8533; font-weight: 700; text-align: center; min-width: 56px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .match { color: #1979b9; font-weight: 700; text-align: center; min-width: 56px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
+.sbs-root .eq-table .total { color: #80217f; font-weight: 700; text-align: center; min-width: 64px; font-family: 'Poppins', sans-serif; font-variant-numeric: tabular-nums; }
 .sbs-root .eq-table .op { color: #4e4e4e; font-weight: 700; text-align: center; min-width: 18px; padding: 0 8px; }
 .sbs-root #bigDonationValue,
 .sbs-root #bigCandidateValue,
 .sbs-root .as-heading .accent {
-  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-family: 'Poppins', sans-serif !important;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum';
 }
@@ -360,7 +373,7 @@ body { margin: 0; }
   border-top: 2px solid #444;
 }
 .sbs-root .eq-table .total-row .tier-label { font-weight: 700; }
-.sbs-root .eq-table .not-matched { color: red; font-weight: 700; }
+.sbs-root .eq-table .not-matched { color: #de5826; font-weight: 700; }
 .sbs-root .eq-table tr { transition: opacity 0.25s ease-out; }
 .sbs-root .eq-table tr.hidden {
   visibility: collapse;
@@ -406,11 +419,11 @@ body { margin: 0; }
   padding: 0;
 }
 .sbs-root .prohibited-block h3 {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #8a1f1f;
-  border-bottom: 2px solid #8a1f1f;
+  color: #de5826;
+  border-bottom: 2px solid #de5826;
   padding-bottom: 6px;
   margin-bottom: 8px;
 }
@@ -433,7 +446,7 @@ body { margin: 0; }
 }
 .sbs-root .prohibited-list-clean li::before {
   content: "—";
-  color: #d92b2b;
+  color: #de5826;
   font-weight: 700;
   flex: 0 0 auto;
 }
@@ -448,7 +461,7 @@ body { margin: 0; }
   margin: 0 0 1rem 0;
 }
 .sbs-root .callout-eyebrow {
-  font: 700 10px/1 'Inter', sans-serif;
+  font: 700 10px/1 'Poppins', sans-serif;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #7a7a7a;
@@ -463,13 +476,13 @@ body { margin: 0; }
   font-weight: 700;
 }
 .sbs-root .callout-value {
-  font: 700 26px/1 'JetBrains Mono', ui-monospace, monospace;
+  font: 700 26px/1 'Poppins', sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
-  color: #1a5928;
+  color: #2C8533;
 }
 .sbs-root .callout-value.county-blue {
-  color: #0027ff;
+  color: #1979b9;
 }
 .sbs-root .callout-value-suffix {
   font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
@@ -488,7 +501,7 @@ body { margin: 0; }
   padding: 1rem 0 2rem;
 }
 .sbs-root .methodology h6 {
-  font: 700 11px/1 'Inter', sans-serif;
+  font: 700 11px/1 'Poppins', sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #1a1a1a;
@@ -502,7 +515,7 @@ body { margin: 0; }
 .sbs-root .methodology p.meth-todo em {
   display: block;
   margin-top: 0.3rem;
-  font: italic 12px/1.3 'Inter', sans-serif;
+  font: italic 12px/1.3 'Poppins', sans-serif;
   color: #c0392b;
   letter-spacing: 0.04em;
   font-weight: 600;
@@ -513,11 +526,11 @@ body { margin: 0; }
   margin-bottom: 0.6rem;
 }
 .sbs-root .methodology p.meth-body a {
-  color: #0027ff;
+  color: #1979b9;
   text-decoration: underline;
 }
 .sbs-root .methodology p.graphics-credit {
-  font: 600 11px/1.2 'Inter', sans-serif;
+  font: 600 11px/1.2 'Poppins', sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #4a4a4a;
@@ -536,11 +549,12 @@ body { margin: 0; }
   .sbs-root .after-scrolly { padding: 1.5rem 1rem 2rem; }
   .sbs-root .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .sbs-root .info-row { grid-template-columns: 1fr; gap: 1rem; }
+  .sbs-root .section-heading { font-size: 26px; }
   .sbs-root .as-heading { font-size: 1rem; line-height: 1.45; }
-  .sbs-root .office-selector button { font-size: 13px; padding: 12px 4px; }
+  .sbs-root .office-selector button { font-size: 14px; padding: 12px 4px; }
   .sbs-root .slider-wrap input[type="range"] { height: 2px; }
-  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; border-radius: 50%; background: #229500; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
-  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #229500; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
+  .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
+  .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
   .sbs-root .slider-ticks { font-size: 0.95rem; }
   .sbs-root .eq-table { font-size: 0.95rem; }
 }
@@ -552,7 +566,9 @@ body { margin: 0; }
   box-sizing: border-box; margin: 0; padding: 0;
 }
 .sbs-scrolly {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Body fallback — SVG text elements set their own Poppins/Droid Serif
+     fonts explicitly. */
+  font-family: 'Source Serif 4', Georgia, serif;
   color: #2a2a2a;
   background: #fafafa;
   -webkit-font-smoothing: antialiased;
@@ -616,6 +632,7 @@ body { margin: 0; }
   z-index: 5;
   pointer-events: none;
 }
+
 </style>
 </head>
 <body>
@@ -636,6 +653,8 @@ body { margin: 0; }
 <div class="sbs-root">
 <div class="after-scrolly">
 
+  <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
+
   <!-- ↓ EDIT TAB LABELS ↓
        data-office values must match the keys in OFFICE_DATA at the top of
        the <script> block. Tab text can be whatever short label fits. -->
@@ -650,7 +669,7 @@ body { margin: 0; }
        name, qualifying-dollars threshold, qualifying-donors threshold. -->
   <p class="as-heading">
     Once a publicly financed candidate for
-    <span class="office-name" id="asOfficeName">County Executive</span>
+    <span class="office-name" id="asOfficeName">Montgomery County Executive</span>
     receives a combined
     <span class="accent" id="asQualifyDollars">$40,000</span>
     from at least
@@ -705,13 +724,13 @@ body { margin: 0; }
     <div class="bar-chart-wrap">
       <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <!-- ↓ EDIT TOP-RIGHT BOOKEND LABELS ↓ -->
-        <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Individual&apos;s total donation</text>
-        <text id="bigDonationValue" x="420" y="162" text-anchor="middle" font-size="36" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</text>
-        <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="HelveticaNeue, Helvetica Neue" font-weight="400">Candidate gets</text>
-        <text id="bigCandidateValue" x="620" y="162" text-anchor="middle" font-size="36" fill="#7600ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$650</text>
+        <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
+        <text id="bigDonationValue" x="420" y="162" text-anchor="middle" font-size="36" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</text>
+        <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Candidate gets</text>
+        <text id="bigCandidateValue" x="620" y="162" text-anchor="middle" font-size="36" fill="#80217f" font-family="'Poppins', sans-serif" font-weight="700">$650</text>
 
         <!-- ↓ EDIT Y-AXIS LABEL ↓ ("County / matching / funds" stacked) -->
-        <text x="40" y="216" text-anchor="middle" font-size="15" fill="#0027ff" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">
+        <text x="40" y="216" text-anchor="middle" font-size="15" fill="#1979b9" font-family="'Source Serif 4', Georgia, serif" font-weight="700">
           <tspan x="40" dy="0">County</tspan>
           <tspan x="40" dy="20">matching</tspan>
           <tspan x="40" dy="20">funds</tspan>
@@ -734,15 +753,15 @@ body { margin: 0; }
         </g>
         <!-- ↓ EDIT X-AXIS TICK NUMBERS ↓ -->
         <g id="chartTicks">
-          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$0</text>
-          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$50</text>
-          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$100</text>
-          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$150</text>
-          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="HelveticaNeue, Helvetica Neue">$500</text>
+          <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$0</text>
+          <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$50</text>
+          <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$100</text>
+          <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$150</text>
+          <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$500</text>
         </g>
 
         <!-- ↓ EDIT X-AXIS LABEL ↓ (centered below the tick numbers) -->
-        <text x="390" y="475" text-anchor="middle" font-size="15" fill="#229500" font-family="HelveticaNeue, Helvetica Neue" font-weight="700">Individual&apos;s total donation</text>
+        <text x="390" y="475" text-anchor="middle" font-size="15" fill="#2C8533" font-family="'Source Serif 4', Georgia, serif" font-weight="700">Individual&apos;s total donation</text>
       </svg>
     </div>
 
@@ -790,7 +809,7 @@ body { margin: 0; }
            #maxOffice and #maxAmount are filled in from OFFICE_DATA. -->
       <aside class="callout">
         <div class="callout-eyebrow">County match cap</div>
-        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">County Executive</span> after it has given that candidate:</div>
+        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">Montgomery County Executive</span> after the candidate receives:</div>
         <div class="callout-value county-blue"><span id="maxAmount">$870,170</span><span class="callout-value-suffix">in matching funds</span></div>
       </aside>
     </div>
@@ -826,53 +845,74 @@ body { margin: 0; }
           <rect width="1920" height="1080" fill="#fff"/>
           <g id="Scene_1I" data-name="Scene 1I">
             <g id="Scene_1H" data-name="Scene 1H">
-              <text id="dOne_100_donor" transform="translate(629 901)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-87.156" y="0">One </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
-              <text id="dTen_10_donors" transform="translate(1419 901)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-82.92" y="0">Ten </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan><tspan y="0" fill="#0058ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
-              <text id="dvs" transform="translate(949.5 839.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <text id="dOne_100_donor" transform="translate(565 913)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-87.156" y="0">One </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="dTen_10_donors" transform="translate(1355 913)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-82.92" y="0">Ten </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan><tspan y="0" fill="#1979b9" font-family="'Poppins', sans-serif" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="dvs" transform="translate(885.5 851.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
               <g id="Scene_1G" data-name="Scene 1G">
                 <g id="Scene_1F" data-name="Scene 1F">
-                  <line id="dLine_137" x2="377" transform="translate(1190.5 679.5)" fill="none" stroke="#000" stroke-width="8"/>
-                  <text id="d10_People" transform="translate(1419 639)" fill="#434343" font-size="60" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-135.03" y="0">10 People</tspan></text>
-                  <text id="dx" transform="translate(1206.5 648.5)" stroke="#000" stroke-width="3" font-size="85" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
+                  <line id="dLine_137" x2="377" transform="translate(1126.5 691.5)" fill="none" stroke="#000" stroke-width="8"/>
+                  <text id="d10_People" transform="translate(1355 651)" fill="#434343" font-size="60" font-family="'Source Serif 4', Georgia, serif"><tspan x="-135.03" y="0">10 People</tspan></text>
+                  <text id="dx" transform="translate(1142.5 660.5)" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">×</tspan></text>
                   <g id="Scene_1E" data-name="Scene 1E">
-                    <text id="dPlus" transform="translate(774.5 533.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
-                    <text id="dEquals" transform="translate(1140.5 533.5)" fill="#a0a0a0" stroke="#000" stroke-width="3" font-size="110" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
-                    <text id="dCandidate_gets" transform="translate(1419 402)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-85.128" y="0">Candidate gets:</tspan></text>
+                    <text id="dPlus" transform="translate(710.5 545.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="dEquals" transform="translate(1076.5 545.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="110" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <text id="dCandidate_gets" transform="translate(1355 414)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-81" y="0">Candidate gets</tspan></text>
                     <g id="Scene_1D" data-name="Scene 1D">
-                      <text id="dTier_1_Matching" transform="translate(999 387)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-83.352" y="0">Tier 1 Matching</tspan><tspan x="-39.576" y="29">7 x </tspan><tspan y="29" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan></text>
+                      <text id="dTier_1_Matching" transform="translate(935 399)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-83.352" y="0">Tier 1 Matching</tspan><tspan x="-39.576" y="29">7 x </tspan><tspan y="29" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan></text>
                       <g id="Scene_1C" data-name="Scene 1C">
-                        <text id="dDonation_to_publicly_funded_candidate" transform="translate(629 387)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-110.472" y="0">Donation to publicly </tspan><tspan x="-94.032" y="29">funded candidate</tspan></text>
+                        <text id="dDonation_to_publicly_funded_candidate" transform="translate(565 399)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-110.472" y="0">Donation to publicly </tspan><tspan x="-94.032" y="29">funded candidate</tspan></text>
                         <g id="Scene_1B" data-name="Scene 1B">
-                          <text id="dArrow" transform="translate(948.5 293.5)" stroke="#000" stroke-width="3" font-size="104" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">-&gt;</tspan></text>
-                          <text id="dBecomes" transform="translate(999 216)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-50.676" y="0">Becomes</tspan></text>
-                          <text id="dIn_total_for_the_candidate" transform="translate(1419 145)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-57.78" y="0">In total for </tspan><tspan x="-73.356" y="29">the candidate</tspan></text>
-                          <text id="dOne_person_giving" transform="translate(629 163)" fill="#434343" font-size="24" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-97.8" y="0">One person giving</tspan></text>
+                          <!-- Parchment band that visually scopes the recap row
+                               (the "$100 becomes $650" pair) as content the
+                               reader has already seen. Placed first so it sits
+                               behind every other element in this scene. -->
+                          <rect id="dRecapBand" x="440" y="152" width="1040" height="214" rx="4" fill="#f6f2e8"/>
+                          <!-- Hairlines flanking the "ALREADY SEEN" eyebrow. -->
+                          <line id="dRecapRuleLeft" x1="465" y1="134" x2="868" y2="134" stroke="#c9c2b3" stroke-width="1"/>
+                          <line id="dRecapRuleRight" x1="1052" y1="134" x2="1455" y2="134" stroke="#c9c2b3" stroke-width="1"/>
+                          <!-- Block arrow horizontally aligned with the $100
+                               and $650 box centers (y=289), pointing right
+                               between them so it reads "$100 → $650". -->
+                          <path id="dArrow" d="M-40,-12 H10 V-30 L48,0 L10,30 V12 H-40 Z" transform="translate(935 289)" fill="#1a1a1a"/>
+                          <text id="dBecomes" transform="translate(935 250)" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="-50.676" y="0">Becomes</tspan></text>
+                          <text id="dIn_total_for_the_candidate" transform="translate(1355 187)" text-anchor="middle" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">In total for</tspan><tspan x="0" y="29">the candidate</tspan></text>
+                          <text id="dOne_person_giving" transform="translate(565 202)" text-anchor="middle" fill="#434343" font-size="24" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">One person giving</tspan></text>
                           <g id="Scene_1A" data-name="Scene 1A">
-                            <text id="dHeadline" transform="translate(105 66)" fill="#434343" font-size="48" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</tspan></text>
+                            <!-- Headline rendered via foreignObject so the
+                                 hard line break (<br>) shows on desktop and
+                                 the title wraps responsively on narrower
+                                 viewports without hardcoded tspan breaks. -->
+                            <foreignObject id="dHeadline" x="60" y="20" width="1800" height="160">
+                              <div xmlns="http://www.w3.org/1999/xhtml" style="color: #434343;"><div style="font: 700 42px/1.15 'Poppins', sans-serif;">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</div><div style="font: italic 400 24px/1.25 'Source Serif 4', Georgia, serif; color: #5a5a5a; margin-top: 6px;">Example: A publicly financed candidate for Montgomery County Executive</div></div>
+                            </foreignObject>
                           </g>
-                          <text id="dAlready_Seen" transform="translate(209 268)" fill="#434343" font-size="43" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
-                          <path id="dPath_1" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 200.5)" fill="#fff" stroke="#229500" stroke-width="12"/>
-                          <text id="d_100" transform="translate(585 270)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
-                          <path id="dPath_2" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 200.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
-                          <text id="d_650" transform="translate(1374 270)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                          <!-- "ALREADY SEEN" eyebrow header centered over the whole recap row.
+                               The flanking hairlines + tinted parchment band scope
+                               this row off as a "you already saw this" recap from
+                               earlier in the article. -->
+                          <text id="dAlready_Seen" transform="translate(960 140)" text-anchor="middle" fill="#5a5a5a" font-size="16" font-family="'Poppins', sans-serif" font-weight="700" letter-spacing="3.2"><tspan x="0" y="0">ALREADY SEEN</tspan></text>
+                          <path id="dPath_1" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 234.5)" fill="#fff" stroke="#2C8533" stroke-width="12"/>
+                          <text id="d_100" transform="translate(565 289)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
+                          <path id="dPath_2" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 234.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                          <text id="d_650" transform="translate(1355 289)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
                         </g>
-                        <path id="dPath_3" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 437.5)" fill="#fff" stroke="#229500" stroke-width="12"/>
-                        <text id="d_10" transform="translate(596 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$10</tspan></text>
+                        <path id="dPath_3" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 449.5)" fill="#fff" stroke="#2C8533" stroke-width="12"/>
+                        <text id="d_10" transform="translate(565 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$10</tspan></text>
                       </g>
-                      <path id="dPath_4" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(929.5 437.5)" fill="#fff" stroke="#0027ff" stroke-width="12"/>
-                      <text id="d_70" transform="translate(965 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$70</tspan></text>
+                      <path id="dPath_4" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(865.5 449.5)" fill="#fff" stroke="#1979b9" stroke-width="12"/>
+                      <text id="d_70" transform="translate(934 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$70</tspan></text>
                     </g>
-                    <path id="dPath_5" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 437.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
-                    <text id="d_80" transform="translate(1385 507)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
+                    <path id="dPath_5" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 449.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                    <text id="d_80" transform="translate(1355 504)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$80</tspan></text>
                   </g>
                 </g>
-                <path id="dPath_6" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1350.5 744.5)" fill="#fff" stroke="#7600ff" stroke-width="12"/>
-                <text id="d_800" transform="translate(1374 813)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+                <path id="dPath_6" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(1286.5 756.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+                <text id="d_800" transform="translate(1355 811)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$800</tspan></text>
               </g>
-              <path id="dPath_7" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(560.5 744.5)" fill="#fff" stroke="#b677ff" stroke-width="12"/>
-              <text id="d_650-2" transform="translate(585 813)" fill="#464546" font-size="40" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+              <path id="dPath_7" d="M21.6,0h93.6a21.6,21.6,0,0,1,21.6,21.6V87.2a21.6,21.6,0,0,1-21.6,21.6H21.6A21.6,21.6,0,0,1,0,87.2V21.6A21.6,21.6,0,0,1,21.6,0Z" transform="translate(496.5 756.5)" fill="#fff" stroke="#80217f" stroke-width="12"/>
+              <text id="d_650-2" transform="translate(565 811)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="40" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
             </g>
-            <text id="dTakeaway" transform="translate(1021 962)" fill="#434343" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-632.28" y="0">Because the match multiplier drops the more someone donates, multiple small matches </tspan><tspan x="-626.985" y="36">from different residents that stay within the first matching tier can have a higher impact.</tspan></text>
+            <text id="dTakeaway" transform="translate(957 974)" fill="#434343" font-size="30" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="-632.28" y="0">Because the match multiplier drops the more someone donates, multiple small matches </tspan><tspan x="-626.985" y="36">from different residents that stay within the first matching tier can have a higher impact.</tspan></text>
           </g>
         </g>
       </svg>
@@ -887,47 +927,65 @@ body { margin: 0; }
           <rect width="430" height="932" fill="#fff"/>
           <g id="Scene_1I" data-name="Scene 1I">
             <g id="Scene_1H" data-name="Scene 1H">
-              <text id="mOne_100_donor" transform="translate(76 720.001)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-65.367" y="0">One </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
-              <text id="mvs" transform="translate(190.5 673.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="50" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
-              <rect id="mRectangle_123" width="85.5" height="59.539" rx="15" transform="translate(33.5 625.5)" fill="#fff" stroke="#b87bff" stroke-linejoin="round" stroke-width="8"/>
-              <text id="mTen_10_donors" transform="translate(348 720.001)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-62.19" y="0">Ten </tspan><tspan y="0" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan><tspan y="0" fill="#0058ff" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
-              <text id="m_650" transform="translate(45 666)" fill="#464546" font-size="28" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+              <text id="mOne_100_donor" transform="translate(76 745)" fill="#434343" font-size="18" font-family="'Source Serif 4', Georgia, serif"><tspan x="-65.367" y="0">One </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</tspan><tspan y="0" xml:space="preserve"> donor</tspan></text>
+              <text id="mvs" transform="translate(190.5 673.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="50" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">vs</tspan></text>
+              <rect id="mRectangle_123" width="85.5" height="85.5" rx="15" transform="translate(33.5 635.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="8"/>
+              <text id="mTen_10_donors" transform="translate(348 745)" fill="#434343" font-size="18" font-family="'Source Serif 4', Georgia, serif"><tspan x="-62.19" y="0">Ten </tspan><tspan y="0" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan><tspan y="0" fill="#1979b9" font-family="'Poppins', sans-serif" font-weight="700"> </tspan><tspan y="0">donors</tspan></text>
+              <text id="m_650" transform="translate(76.25 678.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="24" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
               <g id="Scene_1G" data-name="Scene 1G">
-                <rect id="mRectangle_124" width="85.5" height="59.539" rx="15" transform="translate(305.5 625.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="8"/>
-                <text id="m_800" transform="translate(317 666)" fill="#464546" font-size="28" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$800</tspan></text>
+                <rect id="mRectangle_124" width="85.5" height="85.5" rx="15" transform="translate(305.5 635.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="8"/>
+                <text id="m_800" transform="translate(348.25 678.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="24" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$800</tspan></text>
                 <g id="Scene_1F" data-name="Scene 1F">
-                  <line id="mLine_137" x2="150.667" transform="translate(272.5 597.339)" fill="none" stroke="#000" stroke-width="5"/>
-                  <text id="mx" transform="translate(250.411 579.501)" stroke="#000" stroke-width="3" font-size="30" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">x</tspan></text>
-                  <text id="m10_People" transform="translate(348 579.001)" fill="#434343" font-size="30" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700"><tspan x="-70.275" y="0">10 People</tspan></text>
+                  <!-- Line extended left so it underlines the × symbol too,
+                       and shifted down ~18px alongside the × / "10 People"
+                       to clear the $80 box above. -->
+                  <line id="mLine_137" x2="183.167" transform="translate(240 615.339)" fill="none" stroke="#000" stroke-width="5"/>
+                  <text id="mx" transform="translate(250.411 597.501)" fill="#0a0a0a" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Source Serif 4', Georgia, serif"><tspan x="0" y="0">×</tspan></text>
+                  <text id="m10_People" transform="translate(348 597.001)" fill="#434343" font-size="30" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="-70.275" y="0">10 People</tspan></text>
                   <g id="Scene_1E" data-name="Scene 1E">
-                    <text id="mPlus" transform="translate(131.407 524.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="40" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
-                    <text id="mEquals" transform="translate(267.417 524.5)" fill="#a0a0a0" stroke="#000" stroke-width="1" font-size="40" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
-                    <rect id="mRectangle_126" width="73.5" height="51.778" rx="15" transform="translate(311.5 483.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="6"/>
-                    <text id="m_80" transform="translate(327 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$80</tspan></text>
-                    <text id="mCandidate_gets" transform="translate(348 456)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-53.205" y="0">Candidate gets:</tspan></text>
+                    <text id="mPlus" transform="translate(131.407 524.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">+</tspan></text>
+                    <text id="mEquals" transform="translate(267.417 524.5)" fill="#666666" stroke="#0a0a0a" stroke-width="1" font-size="40" font-family="'Poppins', sans-serif" font-weight="700" opacity="0.294"><tspan x="0" y="0">=</tspan></text>
+                    <rect id="mRectangle_126" width="73.5" height="73.5" rx="15" transform="translate(311.5 483.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="6"/>
+                    <text id="m_80" transform="translate(348.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$80</tspan></text>
+                    <text id="mCandidate_gets" transform="translate(348 456)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-51" y="0">Candidate gets</tspan></text>
                     <g id="Scene_1D" data-name="Scene 1D">
-                      <text id="mTier_1_Matching" transform="translate(212 449)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-52.095" y="0">Tier 1 Matching</tspan><tspan x="-24.735" y="18">7 x </tspan><tspan y="18" fill="#229500" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="700">$10</tspan></text>
+                      <text id="mTier_1_Matching" transform="translate(212 449)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-52.095" y="0">Tier 1 Matching</tspan><tspan x="-24.735" y="18">7 x </tspan><tspan y="18" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$10</tspan></text>
                       <g id="Scene_1C" data-name="Scene 1C">
-                        <text id="mDonation_to_publicly_funded_candidate" transform="translate(76 449)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-69.045" y="0">Donation to publicly </tspan><tspan x="-58.77" y="17">funded candidate</tspan></text>
+                        <text id="mDonation_to_publicly_funded_candidate" transform="translate(76 449)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-69.045" y="0">Donation to publicly </tspan><tspan x="-58.77" y="17">funded candidate</tspan></text>
                         <g id="Scene_1B" data-name="Scene 1B">
-                          <text id="mArrow" transform="translate(187.5 379.5)" stroke="#000" stroke-width="3" font-size="50" font-family="HelveticaNeue-CondensedBold, Helvetica Neue" font-weight="700"><tspan x="0" y="0">-&gt;</tspan></text>
-                          <text id="mBecomes" transform="translate(212 341.5)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-38.007" y="0">Becomes</tspan></text>
-                          <text id="mIn_total_for_the_candidate" transform="translate(348 299)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-36.112" y="0">In total for </tspan><tspan x="-45.847" y="17">the candidate</tspan></text>
-                          <text id="mOne_person_giving" transform="translate(76 299)" fill="#434343" font-size="15" font-family="HelveticaNeue, Helvetica Neue"><tspan x="-41.265" y="0">One person </tspan><tspan x="-19.86" y="17">giving</tspan></text>
+                          <!-- Parchment band that visually scopes the recap row
+                               (the "$100 becomes $650" pair) as content the
+                               reader has already seen. Placed first so it sits
+                               behind every other element in this scene. -->
+                          <rect id="mRecapBand" x="15" y="240" width="400" height="190" rx="4" fill="#f6f2e8"/>
+                          <!-- Hairlines flanking the "ALREADY SEEN" eyebrow. -->
+                          <line id="mRecapRuleLeft" x1="32" y1="254" x2="161" y2="254" stroke="#c9c2b3" stroke-width="1"/>
+                          <line id="mRecapRuleRight" x1="269" y1="254" x2="398" y2="254" stroke="#c9c2b3" stroke-width="1"/>
+                          <!-- Block arrow horizontally aligned with the $100
+                               and $650 box centers (y=372.25 on mobile). -->
+                          <path id="mArrow" d="M-22,-6 H6 V-15 L24,0 L6,15 V6 H-22 Z" transform="translate(212 372.25)" fill="#1a1a1a"/>
+                          <text id="mBecomes" transform="translate(212 341.5)" fill="#434343" font-size="14" font-family="'Source Serif 4', Georgia, serif"><tspan x="-38.007" y="0">Becomes</tspan></text>
+                          <text id="mIn_total_for_the_candidate" transform="translate(348 299)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-36.112" y="0">In total for </tspan><tspan x="-45.847" y="17">the candidate</tspan></text>
+                          <text id="mOne_person_giving" transform="translate(76 299)" fill="#434343" font-size="12" font-family="'Source Serif 4', Georgia, serif"><tspan x="-41.265" y="0">One person </tspan><tspan x="-19.86" y="17">giving</tspan></text>
                           <g id="Scene_1A" data-name="Scene 1A">
-                            <text id="mHeadline" transform="translate(11 190.838)" fill="#434343" font-size="20" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">What&#8217;s better: One person giving $100 or </tspan><tspan x="0" y="24">10 people giving $10 dollars each?</tspan></text>
+                            <!-- Headline as foreignObject — auto-wraps to fit
+                                 the narrow mobile viewBox without hardcoded
+                                 tspan line breaks. -->
+                            <foreignObject id="mHeadline" x="11" y="105" width="408" height="160">
+                              <div xmlns="http://www.w3.org/1999/xhtml" style="color: #434343;"><div style="font: 700 18px/1.2 'Poppins', sans-serif;">What&#8217;s better: One person giving $100 or 10 people giving $10 dollars each?</div><div style="font: italic 400 12px/1.25 'Source Serif 4', Georgia, serif; color: #5a5a5a; margin-top: 4px;">Example: A publicly financed candidate for Montgomery County Executive</div></div>
+                            </foreignObject>
                           </g>
-                          <text id="mAlready_Seen" transform="translate(21 264.5)" fill="#434343" font-size="18" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">Already Seen:</tspan></text>
-                          <rect id="mRectangle_116" width="73.5" height="51.778" rx="15" transform="translate(39.5 335.5)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="6"/>
-                          <text id="m_100" transform="translate(48 371)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$100</tspan></text>
-                          <rect id="mRectangle_125" width="73.5" height="51.778" rx="15" transform="translate(311.5 335.5)" fill="#fff" stroke="#7600ff" stroke-linejoin="round" stroke-width="6"/>
-                          <text id="m_650-2" transform="translate(320 371)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$650</tspan></text>
+                          <text id="mAlready_Seen" transform="translate(215 257)" text-anchor="middle" fill="#5a5a5a" font-size="11" font-family="'Poppins', sans-serif" font-weight="700" letter-spacing="2.2"><tspan x="0" y="0">ALREADY SEEN</tspan></text>
+                          <rect id="mRectangle_116" width="73.5" height="73.5" rx="15" transform="translate(39.5 335.5)" fill="#fff" stroke="#2C8533" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_100" transform="translate(76.25 372.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$100</tspan></text>
+                          <rect id="mRectangle_125" width="73.5" height="73.5" rx="15" transform="translate(311.5 335.5)" fill="#fff" stroke="#80217f" stroke-linejoin="round" stroke-width="6"/>
+                          <text id="m_650-2" transform="translate(348.25 372.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$650</tspan></text>
                         </g>
-                        <rect id="mRectangle_127" width="73.5" height="51.778" rx="15" transform="translate(39.5 483.5)" fill="#fff" stroke="#229500" stroke-linejoin="round" stroke-width="6"/>
-                        <text id="m_10" transform="translate(55 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$10</tspan></text>
+                        <rect id="mRectangle_127" width="73.5" height="73.5" rx="15" transform="translate(39.5 483.5)" fill="#fff" stroke="#2C8533" stroke-linejoin="round" stroke-width="6"/>
+                        <text id="m_10" transform="translate(76.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$10</tspan></text>
                       </g>
-                      <rect id="mRectangle_128" width="73.5" height="51.778" rx="15" transform="translate(175.5 483.5)" fill="#fff" stroke="#003bff" stroke-linejoin="round" stroke-width="6"/>
-                      <text id="m_70" transform="translate(191 519)" fill="#464546" font-size="25" font-family="HelveticaNeue, Helvetica Neue"><tspan x="0" y="0">$70</tspan></text>
+                      <rect id="mRectangle_128" width="73.5" height="73.5" rx="15" transform="translate(175.5 483.5)" fill="#fff" stroke="#1979b9" stroke-linejoin="round" stroke-width="6"/>
+                      <text id="m_70" transform="translate(212.25 520.25)" text-anchor="middle" dominant-baseline="central" fill="#464546" font-size="20" font-family="'Poppins', sans-serif" font-weight="700"><tspan x="0" y="0">$70</tspan></text>
                     </g>
                   </g>
                 </g>
@@ -938,7 +996,7 @@ body { margin: 0; }
                  viewBox at any width, instead of using hardcoded tspans
                  that clip when the font scales up. -->
             <foreignObject id="mTakeaway" x="20" y="755" width="390" height="135">
-              <div xmlns="http://www.w3.org/1999/xhtml" style="font: 700 19px/1.3 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #434343; text-align: center;">Because the match multiplier drops the more someone donates, multiple small matches from different residents that stay within the first matching tier can have a higher impact.</div>
+              <div xmlns="http://www.w3.org/1999/xhtml" style="font: 700 19px/1.3 'Poppins', 'Poppins', sans-serif; color: #434343; text-align: center;">Because the match multiplier drops the more someone donates, multiple small matches from different residents that stay within the first matching tier can have a higher impact.</div>
             </foreignObject>
           </g>
         </g>
@@ -967,7 +1025,11 @@ body { margin: 0; }
   // ===========================================================================
   const OFFICE_DATA = {
     'executive': {
-      label: 'County Executive',
+      // Note: the office-selector buttons stay as the short form
+      // ("County Executive" / "At-Large" / "District") — the longer
+      // "Montgomery …" labels here only flow into #asOfficeName and
+      // #maxOffice in the surrounding copy.
+      label: 'Montgomery County Executive',
       // Match multipliers for the first three $50 tiers of a donation.
       // Tier 4 (donations above $150) is never matched.
       t1: 7, t2: 4, t3: 2,
@@ -978,14 +1040,14 @@ body { margin: 0; }
       maxPerElection: '$870,170',
     },
     'at-large': {
-      label: 'County Council – At Large',
+      label: 'Montgomery County Council – At Large',
       t1: 5, t2: 3, t3: 2,
       qualifyDollars: '$20,000',
       qualifyDonors: 250,
       maxPerElection: '$290,060',
     },
     'district': {
-      label: 'County Council – District',
+      label: 'Montgomery County Council – District',
       t1: 5, t2: 3, t3: 2,
       qualifyDollars: '$10,000',
       qualifyDonors: 125,
@@ -1130,7 +1192,7 @@ body { margin: 0; }
         'text-anchor': opts.anchor || 'middle',
         'font-size': String(opts.size || 13),
         fill: opts.fill || '#464546',
-        'font-family': 'HelveticaNeue, Helvetica Neue',
+        'font-family': "'Poppins', sans-serif",
         'font-weight': String(opts.weight || 400),
       });
       t.textContent = text;
@@ -1154,14 +1216,17 @@ body { margin: 0; }
       tiersG.appendChild(svgEl('rect', {
         x: String(segXStart), y: String(BASELINE_Y),
         width: String(segWidth), height: String(SEG_HEIGHT),
-        fill: 'rgba(34,149,0,0.15)', stroke: '#229500', 'stroke-width': '3'
+        // Fill is the same hue as the stroke (#2C8533 = rgb(44,133,51))
+        // at 0.15 alpha — bump alpha here if the green needs more presence
+        // against the white page background.
+        fill: 'rgba(44,133,51,0.15)', stroke: '#2C8533', 'stroke-width': '3'
       }));
       if (segWidth > 30) {
         tiersG.appendChild(svgText(
           segXStart + segWidth / 2,
           BASELINE_Y + SEG_HEIGHT / 2 + 5,
           fmt$(tier.donor),
-          { size: 13, fill: '#229500', weight: 700 }
+          { size: 13, fill: '#2C8533', weight: 700 }
         ));
       }
 
@@ -1170,14 +1235,14 @@ body { margin: 0; }
         tiersG.appendChild(svgEl('rect', {
           x: String(segXStart), y: String(BASELINE_Y - stripH),
           width: String(segWidth), height: String(stripH),
-          fill: 'rgba(217,43,43,0.10)', stroke: '#d92b2b',
+          fill: 'rgba(222,88,38,0.10)', stroke: '#de5826',
           'stroke-width': '3', 'stroke-dasharray': '8 6'
         }));
         const NOT_MATCHED_W = 150;
         if (segWidth >= NOT_MATCHED_W + 16) {
           tiersG.appendChild(svgText(
             segXStart + segWidth / 2, BASELINE_Y - stripH / 2 + 5,
-            'NOT MATCHED', { size: 16, fill: '#d92b2b', weight: 700 }
+            'NOT MATCHED', { size: 16, fill: '#de5826', weight: 700 }
           ));
         } else {
           // Dashed leader line + label parked above-right when strip is narrow.
@@ -1189,11 +1254,11 @@ body { margin: 0; }
             y1: String(stripTopY + stripH / 2),
             x2: String(labelX - 4),
             y2: String(labelY + 4),
-            stroke: '#d92b2b', 'stroke-width': '2', 'stroke-dasharray': '4 4'
+            stroke: '#de5826', 'stroke-width': '2', 'stroke-dasharray': '4 4'
           }));
           tiersG.appendChild(svgText(
             labelX, labelY,
-            'NOT MATCHED', { anchor: 'start', size: 16, fill: '#d92b2b', weight: 700 }
+            'NOT MATCHED', { anchor: 'start', size: 16, fill: '#de5826', weight: 700 }
           ));
         }
       } else {
@@ -1202,12 +1267,12 @@ body { margin: 0; }
           tiersG.appendChild(svgEl('rect', {
             x: String(segXStart), y: String(BASELINE_Y - colH),
             width: String(segWidth), height: String(colH),
-            fill: 'rgba(0,39,255,0.15)', stroke: '#0027ff', 'stroke-width': '3'
+            fill: 'rgba(25,121,185,0.15)', stroke: '#1979b9', 'stroke-width': '3'
           }));
           if (colH > 30 && segWidth > 35) {
             tiersG.appendChild(svgText(
               segXStart + segWidth / 2, BASELINE_Y - colH / 2 + 5,
-              fmt$(tier.match), { size: 14, fill: '#0027ff', weight: 700 }
+              fmt$(tier.match), { size: 14, fill: '#1979b9', weight: 700 }
             ));
           }
           tiersG.appendChild(svgText(
@@ -1296,12 +1361,15 @@ body { margin: 0; }
       completed = true;
       // Force every reveal element to opacity 1 (overrides CSS rule).
       root.querySelectorAll('[data-step]').forEach(el => { el.style.opacity = '1'; });
-      // Collapse the track to a single viewport and release sticky so the
-      // stage sits inline at the top of the (now short) track. The user
-      // can scroll past it normally and scrolling back up just shows the
-      // static, fully-revealed graphic — no reverse animation.
+      // Collapse the track to the stage's actual height (which hugs the
+      // SVG's natural aspect) and release sticky so the stage sits inline
+      // at the top of the (now short) track. Using stage height instead
+      // of 100vh eliminates the empty bottom margin when the SVG aspect
+      // ratio is shorter than the viewport (e.g. portrait or narrow
+      // viewports where the 16:9 SVG doesn't fill 100vh).
       const trackTop = track.offsetTop;
-      track.style.height = window.innerHeight + 'px';
+      const stageH = stage.getBoundingClientRect().height;
+      track.style.height = stageH + 'px';
       stage.style.position = 'relative';
       stage.style.top = '0';
       // Keep the user's viewport aligned with the now-static stage so
