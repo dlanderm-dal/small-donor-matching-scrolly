@@ -175,12 +175,21 @@ html, body {
 ---------------------------------------------------------------------------- */
 .sbs-root .as-grid {
   display: grid;
-  grid-template-columns: minmax(360px, 1.6fr) minmax(280px, 1fr);
+  /* Equation column min-width 400px ensures the 6-col table (~398px of
+     content) never gets clipped on the right. Combined with the 360px
+     chart min and 1rem gap, the side-by-side layout needs ~776px before
+     the @media below collapses it. */
+  grid-template-columns: minmax(360px, 1.6fr) minmax(400px, 1fr);
   gap: 1rem;
   align-items: start;
 }
-@media (max-width: 768px) {
+/* Stack at ≤820px so the equation never has to squeeze below its
+   natural ~400px width (which would cut off the rightmost total cell). */
+@media (max-width: 820px) {
   .sbs-root .as-grid { grid-template-columns: 1fr; }
+  /* When stacked under the chart, center the equation in its row
+     instead of letting it sit flush-left. */
+  .sbs-root .eq-table { margin: 0 auto; }
 }
 
 /* ----------------------------------------------------------------------------
