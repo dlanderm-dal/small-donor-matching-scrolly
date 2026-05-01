@@ -103,6 +103,35 @@
       margin: 0 0 2.5rem;
     }
 
+    .story-container .lead-image {
+      position: relative;
+      margin: 0 0 2rem;
+      text-align: left;
+    }
+    .story-container .lead-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    /* Caption sits over the bottom-left of the image in a translucent
+       dark bar (matches CNS Maryland article style). On phone widths the
+       bar can wrap to multiple lines and still hugs the bottom-left. */
+    .story-container .lead-image figcaption {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 0.55rem 0.9rem;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font: 400 0.95rem/1.4 'Poppins', sans-serif;
+    }
+    .story-container .lead-image figcaption a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
     /* Section heading inside the narrative body — CNS spec: Poppins
        Weight 600, 45pt (~3.75rem), #000, UPPERCASE. Clamped so it
        scales down on narrow viewports. Distinct from the widget-scoped
@@ -957,7 +986,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div id="nav-logo">
       <a class="navbar-brand" href="https://cnsmaryland.org/">
-        <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" id="logo" alt="CNS Maryland">
+        <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" id="logo" alt="Capital News Service Maryland">
       </a>
     </div>
   </nav>
@@ -971,6 +1000,11 @@
   <div class="story-container">
     <p class="hed">SAMPLE REPLACE</p>
     <p class="byline">By David Landerman</p>
+
+    <figure class="lead-image">
+      <img src="54535537893_fb1ba41c71_k.jpg" alt="">
+      <figcaption>The Montgomery County Council Office Building at 100 Maryland Avenue in Rockville. (Benjamin Sky Brandt/Montgomery County Council, <a href="https://creativecommons.org/licenses/by-nc/2.0/deed.en" target="_blank" rel="noopener license">CC BY-NC 2.0</a>)</figcaption>
+    </figure>
 
     <h2 class="story-section-head">Section 1abc</h2>
 
@@ -987,7 +1021,7 @@
        replace the <div class="flourish-embed"> line (loader + noscript
        included) to point at a different visualization. -->
   <div class="embed-slot">
-    <div class="flourish-embed flourish-map" data-src="visualisation/28778081"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28778081/thumbnail" width="100%" alt="map visualization" /></noscript></div>
+    <div class="flourish-embed flourish-map" data-src="visualisation/28778081"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28778081/thumbnail" width="100%" alt="Choropleth map of Maryland with every county shaded by population (toggleable to registered voters). The six jurisdictions that offer candidates the option to use public financing for campaigns — the five most populous counties and Baltimore City — are marked with a green dot and a bold outline." /></noscript></div>
   </div>
 
   <div class="story-container">
@@ -1004,7 +1038,7 @@
        INTERACTIVE WIDGET — slider + chart + equation + callouts.
   ==================================================================== -->
   <div class="embed-slot">
-    <div class="sbs-root">
+    <div class="sbs-root" role="region" aria-label="Interactive calculator showing how Montgomery County's small-donor matching program multiplies a contribution. Pick a public office (County Executive, At-Large, or District), then drag the slider to set a donation between $1 and $500 and see the county's tiered match update in the equation below.">
       <div class="after-scrolly">
 
         <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
@@ -1163,7 +1197,7 @@
                   <td class="op">=</td>
                   <td class="total">$0</td>
                 </tr>
-                <tr class="total-row" id="eqTotal">
+                <tr class="total-row" id="eqTotal" aria-live="polite" aria-atomic="true">
                   <td class="tier-label">Total</td>
                   <td class="donor" id="eqTotalDonor">$50</td>
                   <td class="op">+</td>
@@ -1619,7 +1653,7 @@
        vertical spacing the same way the interactive widget above
        does, so no <br> hacks needed. -->
   <div class="embed-slot">
-    <div class="flourish-embed flourish-chart" data-src="visualisation/28758160"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28758160/thumbnail" width="100%" alt="chart visualization" /></noscript></div>
+    <div class="flourish-embed flourish-chart" data-src="visualisation/28758160"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28758160/thumbnail" width="100%" alt="Line chart of Larry Hogan's cumulative donations from spring 2014 through January 2015. The campaign-period line tops out near $1.14 million on Election Day, then a second line tracking donations between Election Day and his swearing-in climbs sharply to about $1.38 million — more in two months than he raised during the entire publicly-financed campaign." /></noscript></div>
   </div>
 
   <div class="story-container">
@@ -1628,6 +1662,8 @@
 
     <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Maecenas nec odio et ante tincidunt tempus.
       Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Praesent ac sem eget est egestas volutpat.</p>
+
+    <p><i>To see the code and data for this story see the linked <a href="https://github.com/dlanderm-dal/gubernatorial_public_financing" target="_blank" rel="noopener">github repo</a>.</i></p>
   </div>
 
 
