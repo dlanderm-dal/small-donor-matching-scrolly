@@ -156,8 +156,8 @@ body { margin: 0; }
   margin: 0 12px 1rem;
   color: #1a1a1a;
 }
-.sbs-root .as-heading .accent { color: #2C8533; font-weight: 700; }
-.sbs-root .as-heading .accent-blue { color: #1979b9; font-weight: 700; }
+.sbs-root .accent { color: #2C8533; font-weight: 700; }
+.sbs-root .accent-blue { color: #1979b9; font-weight: 700; }
 .sbs-root .as-heading .office-name { font-weight: 700; }
 
 /* ----------------------------------------------------------------------------
@@ -172,6 +172,47 @@ body { margin: 0; }
   grid-template-columns: minmax(360px, 1.6fr) minmax(400px, 1fr);
   gap: 1rem;
   align-items: start;
+  /* Animated alongside .over-max-warning to absorb the warning's height
+     into the chart's natural top whitespace, so its appearance doesn't
+     push the chart down disruptively. */
+  margin-top: 0;
+  transition: margin-top 250ms ease;
+}
+/* Allow grid children to shrink below their content's intrinsic width
+   on small screens, so the equation table can compress instead of
+   forcing the whole grid wider than the viewport. */
+.sbs-root .as-grid > * { min-width: 0; }
+/* Red warning that appears between slider and chart when the user enters
+   a donation > $500. Uses the grid-template-rows 0fr→1fr trick for a
+   smooth height transition from collapsed to natural content height. */
+.sbs-root .over-max-warning {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms ease;
+  margin: 0 12px;
+}
+.sbs-root .over-max-warning > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.sbs-root .over-max-warning-text {
+  font: 700 11px/1.4 'Poppins', sans-serif;
+  color: #de5826;
+  text-align: center;
+  padding: 4px 0;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.sbs-root .over-max-warning.is-active {
+  grid-template-rows: 1fr;
+}
+.sbs-root .over-max-warning.is-active .over-max-warning-text {
+  opacity: 1;
+}
+/* When the warning is active, pull the chart up so it absorbs most of
+   the warning's added height into its existing top whitespace. */
+.sbs-root .over-max-warning.is-active + .as-grid {
+  margin-top: -1.5rem;
 }
 /* Stack at ≤820px so the equation never has to squeeze below its
    natural ~400px width (which would cut off the rightmost total cell). */
@@ -239,6 +280,38 @@ body { margin: 0; }
   font-variant-numeric: tabular-nums;
   color: #2C8533;
   letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: baseline;
+}
+.sbs-root .slider-live-prefix {
+  /* Static "$" — sits flush against the input. */
+  margin-right: 1px;
+}
+.sbs-root #donationInput {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  font-variant-numeric: inherit;
+  /* Always-visible faint green tint signals "this is editable" without
+     adding a border or underline that would extend past the value. */
+  background-color: rgba(44, 133, 51, 0.1);
+  border: 0;
+  outline: none;
+  padding: 1px 3px 2px;
+  margin: 0;
+  text-align: center;
+  width: 4.25ch;
+  cursor: text;
+  transition: background-color 150ms ease;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+}
+.sbs-root #donationInput:hover {
+  background-color: rgba(44, 133, 51, 0.18);
+}
+.sbs-root #donationInput:focus {
+  background-color: rgba(44, 133, 51, 0.22);
 }
 .sbs-root .section-eyebrow {
   font: 700 11px/1 'Poppins', sans-serif;
@@ -338,7 +411,9 @@ body { margin: 0; }
 .sbs-root .slider-ticks {
   position: relative;
   height: 1.4em;
-  font-size: 1rem;
+  /* Fluid font-size: shrinks on narrow viewports so adjacent labels
+     ($0/$50/$100/$150) don't overlap, caps at 1rem on desktop. */
+  font-size: clamp(0.65rem, 2.4vw, 1rem);
   color: #7a7a7a;
   margin: 0 7px 0;
   font-family: 'Poppins', sans-serif;
@@ -357,7 +432,11 @@ body { margin: 0; }
   border-collapse: separate;
   border-spacing: 0 2px;
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
+  /* Fluid font-size: stays at full 1rem above ~470px viewport so the
+     table fills its column on most phones and tablets; only shrinks
+     down to 0.88rem on the narrowest devices (≤470px) so it still
+     fits without overflowing .sbs-root's overflow-x: clip. */
+  font-size: clamp(0.88rem, 3.4vw, 1rem);
 }
 .sbs-root .eq-table td {
   padding: 4px 8px;
@@ -460,6 +539,18 @@ body { margin: 0; }
   flex: 0 0 auto;
 }
 .sbs-root .prohibited-list-clean li:last-child { border-bottom: none; }
+/* The li uses display: flex (for the "—" prefix), which would normally
+   turn an inner <span class="accent"> into its own flex item — splitting
+   "$500" onto its own line on narrow widths. display: contents removes
+   the span's box but lets its color/font-weight inherit through to the
+   "$500" text, so it stays inline with the rest of the sentence. */
+.sbs-root .prohibited-list-clean .accent { display: contents; }
+/* Supporting note that sits under the prohibited-donors list. */
+.sbs-root .prohibited-note {
+  font: 400 16px/1.4 'Source Serif 4', Georgia, serif;
+  color: #1a1a1a;
+  margin: 12px 0 0;
+}
 
 /* Callout — left-rule pull-quote (donor cap, county match cap). */
 .sbs-root .callout {
@@ -564,8 +655,17 @@ body { margin: 0; }
   .sbs-root .slider-wrap input[type="range"] { height: 2px; }
   .sbs-root .slider-wrap input[type="range"]::-webkit-slider-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
   .sbs-root .slider-wrap input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2C8533; border: 0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18); }
-  .sbs-root .slider-ticks { font-size: 0.95rem; }
-  .sbs-root .eq-table { font-size: 0.95rem; }
+}
+/* Tighter overrides for phones (≤ 500px). The eq-table's default
+   min-widths and 8px cell padding push it past most phone viewports;
+   compress those + drop min-width floors so cell content drives width. */
+@media (max-width: 500px) {
+  .sbs-root .eq-table td { padding: 4px 3px; }
+  .sbs-root .eq-table .tier-label { min-width: 0; padding-right: 4px; }
+  .sbs-root .eq-table .donor,
+  .sbs-root .eq-table .match,
+  .sbs-root .eq-table .total { min-width: 0; }
+  .sbs-root .eq-table .op { min-width: 0; padding: 0 2px; }
 }
 
 /* ============================================================================
@@ -695,7 +795,18 @@ body { margin: 0; }
   <div class="slider-wrap">
     <div class="slider-label-row">
       <label for="donationSlider" class="slider-label-caps">Donation<span class="sr-only" id="donationValue">100</span></label>
-      <span class="slider-live-val" id="sliderLiveVal">$100</span>
+      <span class="slider-live-val">
+        <span class="slider-live-prefix" aria-hidden="true">$</span>
+        <input type="text"
+               id="donationInput"
+               value="100"
+               maxlength="5"
+               inputmode="numeric"
+               pattern="[0-9]*"
+               autocomplete="off"
+               aria-label="Donation amount in dollars"
+        >
+      </span>
     </div>
     <!-- Slider min is 1 (not 0) so the chart never shows the empty state.
          Default value $100 crosses two tier boundaries so first-time
@@ -725,6 +836,15 @@ body { margin: 0; }
       <span style="left:20%">$100</span>
       <span style="left:30%">$150</span>
       <span style="left:100%">$500</span>
+    </div>
+  </div>
+
+  <!-- Red over-max warning. Hidden (height 0) by default; receives
+       .is-active when the input is committed with a value > $500.
+       Hides on the next slider move or input commit. -->
+  <div class="over-max-warning" id="overMaxWarning" aria-live="polite">
+    <div>
+      <div class="over-max-warning-text">Publicly funded candidates are prohibited from accepting more than $500 per donor per election</div>
     </div>
   </div>
 
@@ -801,24 +921,25 @@ body { margin: 0; }
         <li>Labor Unions</li>
         <li>LLCs</li>
         <li>State or local central committees of a political party</li>
-        <li>Donors who have already given $500</li>
+        <li>Donors who have already given <span class="accent">$500</span></li>
       </ul>
+      <p class="prohibited-note">If a publicly financed candidate in Montgomery County receives money from any of these sources, they need to return it</p>
     </section>
 
     <div class="info-minor-stack">
       <!-- ↓ EDIT DONOR CAP CALLOUT ↓ -->
       <aside class="callout">
         <div class="callout-eyebrow">Donor caps</div>
-        <div class="callout-label">County stops matching after a donor has given a specific candidate:</div>
+        <div class="callout-label">County stops <span class="accent-blue">matching</span> after a donor has given a specific candidate:</div>
         <div class="callout-value">$150<span class="callout-value-suffix">per election</span></div>
-        <div class="callout-label" style="margin-top: 12px;">Donors themselves can&rsquo;t give any public candidate more than</div>
+        <div class="callout-label" style="margin-top: 22px;">Donors themselves can&rsquo;t give any public candidate more than</div>
         <div class="callout-value">$500<span class="callout-value-suffix">per election</span></div>
       </aside>
       <!-- ↓ EDIT COUNTY MATCH CAP CALLOUT ↓
            #maxOffice and #maxAmount are filled in from OFFICE_DATA. -->
       <aside class="callout">
         <div class="callout-eyebrow">County match cap</div>
-        <div class="callout-label">The county stops matching all donations to a candidate for <span id="maxOffice">Montgomery County Executive</span> after the candidate receives:</div>
+        <div class="callout-label">The county stops <span class="accent-blue">matching</span> all donations to a candidate for <span id="maxOffice">Montgomery County Executive</span> after the candidate receives:</div>
         <div class="callout-value county-blue"><span id="maxAmount">$870,170</span><span class="callout-value-suffix">in matching funds</span></div>
       </aside>
     </div>
@@ -1068,7 +1189,12 @@ body { margin: 0; }
   let currentOffice = 'executive';
 
   const slider = document.getElementById('donationSlider');
+  const donationInput = document.getElementById('donationInput');
+  const overMaxWarning = document.getElementById('overMaxWarning');
   const officeButtons = document.querySelectorAll('#officeSelector button');
+  // True while the user is editing the input — suppresses the slider→input
+  // mirror so we don't clobber what they're typing.
+  let inputFocused = false;
 
   officeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1077,7 +1203,61 @@ body { margin: 0; }
       renderAfterScrolly();
     });
   });
-  slider.addEventListener('input', renderAfterScrolly);
+  // Slider drag: any movement hides the over-max warning and re-renders.
+  slider.addEventListener('input', () => {
+    overMaxWarning.classList.remove('is-active');
+    renderAfterScrolly();
+  });
+
+  // Donation input — accepts arbitrary typing, sanitizes + commits on
+  // Enter or blur. Slider, chart, and warning only update on commit.
+  donationInput.addEventListener('focus', () => {
+    inputFocused = true;
+    // Select all so the user can immediately type a fresh value.
+    donationInput.select();
+  });
+  donationInput.addEventListener('blur', () => {
+    inputFocused = false;
+    commitDonationInput();
+  });
+  donationInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      donationInput.blur(); // triggers commitDonationInput
+    }
+  });
+
+  function commitDonationInput() {
+    // Sanitize: strip everything except digits, decimal point, minus sign.
+    // (User may type "$1,500" or "150.7" — we accept all of it.)
+    const raw = (donationInput.value || '').replace(/[^0-9.\-]/g, '');
+    let n = parseFloat(raw);
+    if (isNaN(n)) {
+      // Empty or unparseable — restore from current slider value.
+      donationInput.value = slider.value;
+      syncInputWidth();
+      return;
+    }
+    // Round to nearest integer (no decimals allowed).
+    n = Math.round(n);
+    // Over-max → clamp to 500 and show the red warning.
+    const overMax = n > 500;
+    if (overMax) n = 500;
+    // Negative or below min → clamp to 1.
+    if (n < 1) n = 1;
+    slider.value = String(n);
+    donationInput.value = String(n);
+    syncInputWidth();
+    overMaxWarning.classList.toggle('is-active', overMax);
+    renderAfterScrolly();
+  }
+
+  // Auto-grow the input so the static "$" prefix stays adjacent to the
+  // value as it changes length (e.g., $5 → $10000).
+  function syncInputWidth() {
+    const len = Math.max(3, (donationInput.value || '').length);
+    donationInput.style.width = (len + 1.25) + 'ch';
+  }
 
   function tierBreakdown(donation, office) {
     const d = OFFICE_DATA[office];
@@ -1123,8 +1303,12 @@ body { margin: 0; }
     const tb = tierBreakdown(donation, currentOffice);
 
     document.getElementById('donationValue').textContent = donation;
-    const liveVal = document.getElementById('sliderLiveVal');
-    if (liveVal) liveVal.textContent = '$' + donation.toLocaleString();
+    // Mirror slider value to input — but skip while the user is typing,
+    // so we don't overwrite their in-progress entry.
+    if (!inputFocused) {
+      donationInput.value = String(donation);
+      syncInputWidth();
+    }
     document.getElementById('asOfficeName').textContent = office.label;
     document.getElementById('asQualifyDollars').textContent = office.qualifyDollars;
     document.getElementById('asQualifyDonors').textContent = office.qualifyDonors;
