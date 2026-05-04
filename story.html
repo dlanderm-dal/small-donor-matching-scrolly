@@ -92,6 +92,23 @@
       letter-spacing: -0.01em;
     }
 
+    /* Deck/subhead — mirrors the CNS Maryland .deck-head rule
+       (1.25em, #000, dotted-bottom rule). Scoped under .story-container
+       so it outranks the body-paragraph rule. */
+    .story-container .subhead {
+      font-size: 1.25em;
+      color: #000;
+      line-height: 1.4;
+      padding-bottom: 15px;
+      border-bottom: 1px dotted #a8a8a8;
+      margin: 0 0 18px;
+    }
+    @media (max-width: 500px) {
+      .story-container .subhead {
+        font-size: 1em;
+      }
+    }
+
     /* Same scoping reason as .hed — without .story-container the
        body-paragraph rule wins on specificity and forces Source Serif. */
     .story-container .byline {
@@ -174,6 +191,15 @@
       max-width: 1200px;
       margin: 2rem auto 2.5rem;
       padding: 0 1rem;
+    }
+
+    /* Wrapper for the Flourish map that we scale down (not crop) so the
+       rendered iframe never exceeds 80% of the viewport height. The actual
+       scaling is applied by JS at the bottom of the page — see the
+       fitFlourishMap IIFE. The wrapper just provides a hook + a place for
+       JS to write the collapsed height back. */
+    .flourish-map-fit {
+      transform-origin: top center;
     }
 
     .footer {
@@ -998,7 +1024,8 @@
        and scrollytelling components are dropped in via .embed-slot wrappers.
   ==================================================================== -->
   <div class="story-container">
-    <p class="hed">SAMPLE REPLACE</p>
+    <p class="hed">Five most populous Maryland counties have candidates running campaigns aided by public money</p>
+    <p class="subhead">Attempts to counter monied interests in Maryland elections makes slow progress.</p>
     <p class="byline">By David Landerman</p>
 
     <figure class="lead-image">
@@ -1006,31 +1033,65 @@
       <figcaption>The Montgomery County Council Office Building at 100 Maryland Avenue in Rockville. (Benjamin Sky Brandt/Montgomery County Council, <a href="https://creativecommons.org/licenses/by-nc/2.0/deed.en" target="_blank" rel="noopener license">CC BY-NC 2.0</a>)</figcaption>
     </figure>
 
-    <h2 class="story-section-head">Section 1abc</h2>
+    
 
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-      magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-      consequat.</p>
+    <p>Candidates whose elections were largely financed by small donations and county matching-funds now hold the majority of Montgomery County council seats and the powerful county executive position.</p>
 
-    <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est
-      eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
-      Duis ac tellus et risus vulputate vehicula.</p>
+    <p>Montgomery was the first local jurisdiction in Maryland to implement an alternative to private campaign funding eight years ago. The experiment, now in its third election cycle, has made progress in pushing big money out of local politics, according to interviews and a recent report by the non-profit Maryland Public Interest Research Group.</p>
   </div>
 
   <!-- Flourish map drop-in. Same swap pattern as the chart embed below:
        replace the <div class="flourish-embed"> line (loader + noscript
        included) to point at a different visualization. -->
-  <div class="embed-slot">
+  <div class="embed-slot flourish-map-fit">
     <div class="flourish-embed flourish-map" data-src="visualisation/28778081"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28778081/thumbnail" width="100%" alt="Choropleth map of Maryland with every county shaded by population (toggleable to registered voters). The six jurisdictions that offer candidates the option to use public financing for campaigns — the five most populous counties and Baltimore City — are marked with a green dot and a bold outline." /></noscript></div>
   </div>
 
   <div class="story-container">
-    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-      sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <p>Publicly-funded candidates received 96% of their contributions from small donors giving less than $250 in the last council election in 2022, the report said. Candidates who only relied on private donors, corporations and special interest groups raised only 2% from small donors. The private funders each gave an average of $2,948.</p>
 
-    <p>Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet velit hendrerit
-      rutrum. Ut leo. Ut a nisl id ante tempus hendrerit. Proin pretium, leo ac pellentesque mollis, felis nunc
-      ultrices eros, sed gravida augue augue mollis justo.</p>
+<p>The Maryland General Assembly voted in 2013 to allow counties or incorporated cities to pay part of local candidates’ campaigns from their budgets, in lieu of having to raise money only from private donors. Since the program is voluntary, publicly funded candidates, who must agree to many restrictions, may find themselves competing with privately-financed opponents who have fewer restrictions.</p>
+
+<p>The option was implemented out of concern that the current campaign financing system often favors candidates who can attract wealthy donors and corporations whose interests don’t always align with residents’ priorities. The public financing option is meant to attract more small donors who live in the county and to help unlikely candidates who might have a fundraising disadvantage to be more competitive.</p>
+
+<p>Emily Scarr, a longtime advocate for these programs from the Maryland PIRG, said the goal is to ensure “that access to money or independent wealth or name recognition, none of those things are a barrier to someone.”</p>
+
+<p>In the 13 years since it became state law, five of Maryland’s 23 counties and Baltimore have adopted a publicly funded campaign option. </p>
+
+<p>In Montgomery County, the option "has kind of limited a lot of corporate interest in what we're doing," said Cecily Thorne, chief of staff for District 4 Councilmember Kate Stewart who used the public finance option to win her seat in 2022.</p>
+
+<p>Its success cost the county $3.7 million in the last election cycle in 2022, according to a report by the Montgomery County Office of Legislative Oversight.</p>
+
+
+<p>In Howard County, which first adopted the option for its 2022 election, three of its five councilmembers were elected using it. Those candidates received 97% of their donations from small donors, while those who used the traditional system received only 8%, the report noted.</p>
+
+<p>In Baltimore, only one of the 15 city councilmembers, Zac Blanchard, was elected using public financing.</p>
+
+<p>Publicly financed candidates are running for the first time this year in Prince George's, Anne Arundel, and Baltimore counties. </p>
+
+<p>At the state level, the legislature has enacted a voluntary public option only for candidates for governor and lieutenant governor. The law was passed in 1974, in the midst of a Maryland financial scandal that ended with the resignation of Vice President Spiro Agnew, a former Maryland governor, as well as the Watergate investigation, which forced President Richard Nixon from office. </p>
+
+<p>The General Assembly has never seriously considered passing legislation to give candidates for the House of Delegates and the state Senate the public-financing option. Monied special interests plays a large role in many state races today (hyperlink to Dinners).</p>
+
+<p>"The leadership just didn't want it,” said Paul Pinsky, a former Democratic state senator representing Prince George’s and a longtime advocate for public financing.“If you're an incumbent, why give an opportunity to the challengers?”</p>
+
+<p>Instead, all candidates for state senate and delegate seats use the traditional system that, in Maryland, allows an individual, political action committee, corporation, and other groups to donate up to $6,000 per candidate.</p>
+
+<h2 class="story-section-head">How it works</h2>
+
+<p>Not just anyone who files the required paperwork can instantly start receiving public money. Candidates first have to declare their intent to use public funds and then obtain a certain amount of money from a certain number of donors to qualify. </p>
+
+<p>For instance, a candidate for county executive in Montgomery County needs to raise $40,000 from at least 500 county residents to qualify.</p>
+
+<p>Candidates also have to agree to other restrictions. They cannot accept donations from individuals over a cap set by the county. In Montgomery County, the cap is $500. They also cannot accept money from political action committees, labor unions or corporations. </p>
+
+<p>Qualifying for the program is no small task. "It's very stressful," said Stewart, who is again using public financing for her reelection campaign. </p>
+
+<p>Publicly-funded candidates also can't receive county funds if there isn't a challenger. In Montgomery County, money can't be distributed until one year before the primary.</p>
+
+<p>Once qualified, a tiered matching-fund mechanism, set by each county, kicks in. It advantages candidates who solicit many small donations rather than a few large ones by progressively lowering the matching ratio as a donation amount increases. </p>
+
+  
   </div>
 
 
@@ -1262,23 +1323,13 @@
        MORE STORY BODY between the components.
   ==================================================================== -->
   <div class="story-container">
-    <h2 class="story-section-head">Section 2abc</h2>
 
-    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-      aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+    <p>For example, in Montgomery County, donors can give up to $500 to a candidate, but the match equation stops at $150. Any money given between $150 and $500 by the individual is not matched. Also, the match equation differs depending on which office the candidate is running for.</p>
 
-    <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-      eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
-      consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam
-      quaerat voluptatem.</p>
+<p>Oversight is carried out by the Maryland State Board of Elections.</p>
 
-    <p>Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa.
-      Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam.
-      Vivamus pretium ornare est.</p>
 
-    <p>Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam
-      egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien
-      ullamcorper pharetra.</p>
+    
   </div>
 
 
@@ -1636,32 +1687,29 @@
        CLOSING BODY.
   ==================================================================== -->
   <div class="story-container">
-    <h2 class="story-section-head">Section 3abc</h2>
+    <h2 class="story-section-head">Hogan elected governor with public funds</h2>
 
-    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque
-      corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
-      qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+    <p>Republican Larry Hogan is the only candidate for governor in Maryland to have successfully run using the public option.</p>
 
-    <p>Quisque ut nisi. Donec mi odio, faucibus at, scelerisque quis, convallis in, nisi. Suspendisse non nisl sit amet
-      velit hendrerit rutrum. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum aenean imperdiet etiam
-      ultricies nisi vel augue.</p>
+<p>The program allowed Hogan to be competitive as a challenger when confidence was low that a Republican could win Maryland, said Steve Crim, who was his campaign manager. </p>
+
+<p>Crim said he believed that if the campaign could “aggressively raise enough small-dollar donors to guarantee to have a certain amount of money in the general election, we can really focus our efforts on talking and listening and advocating for the silent majority in Maryland that was really upset and sick and tired of the politics as usual at Annapolis."</p>
+
+<p>But immediately after he was elected, in the two and a half months before he was even sworn in, Hogan took $1.4 million in private donations for his reelection campaign four years down the road, according to CNS analysis of election data.</p>
+
+<p>“Donors who had given millions of dollars to the majority party were now wanting to give money to the new governor," said Crim.</p>
+
+<p>At the time, this was legal, but would not be for long. "That was fixed," chuckled Jared DeMarinis, who then was director of the elections board, as he referred to the loophole. DeMarinis is now the state administrator of elections.</p>
+
+<p>"Winding down a campaign and then, you know, ramping up another campaign simultaneously is not in the spirit of public financing," said DeMarinis. Hogan, as governor, signed the bill closing the loophole. </p>
+
+<p>Hogan declined requests for an interview. He did not use public financing for his successful reelection campaign in 2018, for which he and his running mate raised a combined $20 million.</p>
+
+<p>The next governor, Wes Moore, and his running mate, Aruna Miller, are not using public financing either. Moore collected $16.3 million in private donations during his first run. He has more than $8 million in the bank for his reelection campaign as of March 17th, according to elections board data. Two challengers running in 2026 have pledged to use public campaign funds if they qualify.</p>
   </div>
 
-  <!-- Flourish chart drop-in. Self-contained: swap the whole block by
-       replacing the <div class="flourish-embed"> contents (including
-       its loader <script>). The .embed-slot wrapper handles width +
-       vertical spacing the same way the interactive widget above
-       does, so no <br> hacks needed. -->
-  <div class="embed-slot">
-    <div class="flourish-embed flourish-chart" data-src="visualisation/28758160"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28758160/thumbnail" width="100%" alt="Line chart of Larry Hogan's cumulative donations from spring 2014 through January 2015. The campaign-period line tops out near $1.14 million on Election Day, then a second line tracking donations between Election Day and his swearing-in climbs sharply to about $1.38 million — more in two months than he raised during the entire publicly-financed campaign." /></noscript></div>
-  </div>
 
   <div class="story-container">
-    <p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
-      cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est.</p>
-
-    <p>Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Maecenas nec odio et ante tincidunt tempus.
-      Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Praesent ac sem eget est egestas volutpat.</p>
 
     <p><i>To see the code and data for this story see the linked <a href="https://github.com/dlanderm-dal/gubernatorial_public_financing" target="_blank" rel="noopener">github repo</a>.</i></p>
   </div>
@@ -2068,6 +2116,51 @@
       } else {
         window.addEventListener('DOMContentLoaded', boot);
       }
+    })();
+  </script>
+
+  <script>
+    /* Scale the Flourish map down (proportionally) so it always fits both
+       the available width AND 80% of the viewport height — never clips.
+
+       We pin the iframe to a fixed render width (BASE_W) so Flourish renders
+       its content at a comfortable size, then CSS-scale the iframe via
+       transform to fit the slot. Layout box is collapsed to the scaled
+       visual size so surrounding elements sit flush. */
+    (function () {
+      var slot = document.querySelector('.flourish-map-fit');
+      if (!slot) return;
+      var wrap = slot.querySelector('.flourish-embed');
+      if (!wrap) return;
+
+      var BASE_W = 900;
+
+      function fit() {
+        var iframe = wrap.querySelector('iframe');
+        if (!iframe) return;
+        iframe.style.width = BASE_W + 'px';
+        iframe.style.transformOrigin = 'top left';
+
+        // Defer the read so Flourish has a frame to recompute its iframe
+        // height after we pinned the width.
+        requestAnimationFrame(function () {
+          var natural = iframe.offsetHeight;
+          if (!natural) return;
+          var availW = slot.clientWidth - 32; /* .embed-slot padding 0 1rem */
+          var capH = window.innerHeight * 0.8;
+          var s = Math.min(availW / BASE_W, capH / natural, 1);
+          iframe.style.transform = 'scale(' + s + ')';
+          wrap.style.width = (BASE_W * s) + 'px';
+          wrap.style.height = (natural * s) + 'px';
+          wrap.style.margin = '0 auto';
+        });
+      }
+
+      window.addEventListener('resize', fit);
+      window.addEventListener('load', fit);
+      setTimeout(fit, 500);
+      setTimeout(fit, 1500);
+      setTimeout(fit, 3000);
     })();
   </script>
 
