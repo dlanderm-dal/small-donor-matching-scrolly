@@ -149,18 +149,22 @@
       text-decoration: underline;
     }
 
-    /* Section heading inside the narrative body — CNS spec: Poppins
-       Weight 600, 45pt (~3.75rem), #000, UPPERCASE. Clamped so it
-       scales down on narrow viewports. Distinct from the widget-scoped
+    /* Section heading inside the narrative body — matches the live CNS
+       Maryland article rendering (GoodLife theme h2): system sans-serif,
+       weight 600 (700 with the inner <b>), ~22–34px responsive, sentence
+       case, tight letter-spacing. Distinct from the widget-scoped
        .sbs-root .section-heading. */
     .story-section-head {
-      font: 600 clamp(1.875rem, 6vw, 45pt)/1.05 'Poppins', sans-serif;
-      color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.375rem, 3vw, 2.125rem);
+      line-height: 1.15;
+      color: #080808;
+      letter-spacing: -0.03em;
       text-align: left;
-      text-transform: uppercase;
+      text-transform: none;
       max-width: 720px;
-      margin: 2.5rem auto 0.75rem;
-      letter-spacing: 0.01em;
+      margin: 2.5rem auto 20px;
     }
 
     /* Body copy — CNS spec: Source Serif Regular 13pt (~1.083rem) #080808.
@@ -2092,8 +2096,13 @@
           completed = true;
           root.querySelectorAll('[data-step]').forEach(el => { el.style.opacity = '1'; });
           const trackTop = track.offsetTop;
-          const stageH = stage.getBoundingClientRect().height;
-          track.style.height = stageH + 'px';
+          // Drop sticky and let the track auto-size to the (now in-flow)
+          // stage. Locking track.style.height to a snapshot pixel value
+          // breaks if the viewport resizes later (e.g. find bar, devtools)
+          // because the stage's max-height: 100vh recalculates and the
+          // stage overflows the locked-shorter track, painting over the
+          // next paragraph.
+          track.style.height = 'auto';
           stage.style.position = 'relative';
           stage.style.top = '0';
           window.scrollTo(0, trackTop);
@@ -2120,13 +2129,17 @@
   </script>
 
   <script>
-    /* Scale the Flourish map down (proportionally) so it always fits both
-       the available width AND 80% of the viewport height — never clips.
+    /* Scale the Flourish embed (iframe + the "Made with Flourish"
+       attribution Flourish appends as a sibling) so it fits both the
+       available width AND 80% of the viewport height — never clips.
 
-       We pin the iframe to a fixed render width (BASE_W) so Flourish renders
-       its content at a comfortable size, then CSS-scale the iframe via
-       transform to fit the slot. Layout box is collapsed to the scaled
-       visual size so surrounding elements sit flush. */
+       Approach: pin the wrap to BASE_W, absolutely position it centered
+       inside the slot, then scale the whole wrap via CSS transform. We
+       collapse the slot's height to the scaled visual height so the next
+       paragraph sits flush. We MUST scale the wrap (not just the iframe)
+       so the attribution that Flourish injects below the iframe scales
+       and collapses with it — otherwise it lays out at the unscaled
+       iframe-bottom and ends up paragraphs below the visible map. */
     (function () {
       var slot = document.querySelector('.flourish-map-fit');
       if (!slot) return;
@@ -2135,24 +2148,34 @@
 
       var BASE_W = 900;
 
+      // Slot becomes the positioning + clipping context. Wrap is absolutely
+      // centered inside it.
+      slot.style.position = 'relative';
+      slot.style.overflow = 'hidden';
+      wrap.style.position = 'absolute';
+      wrap.style.top = '0';
+      wrap.style.left = '50%';
+      wrap.style.marginLeft = (-BASE_W / 2) + 'px';
+      wrap.style.width = BASE_W + 'px';
+      wrap.style.transformOrigin = 'top center';
+
       function fit() {
         var iframe = wrap.querySelector('iframe');
         if (!iframe) return;
-        iframe.style.width = BASE_W + 'px';
-        iframe.style.transformOrigin = 'top left';
+        // Make sure iframe fills the pinned wrap width.
+        iframe.style.width = '100%';
+        // Reset transform so we measure the natural (unscaled) wrap height,
+        // which includes iframe + attribution.
+        wrap.style.transform = '';
 
-        // Defer the read so Flourish has a frame to recompute its iframe
-        // height after we pinned the width.
         requestAnimationFrame(function () {
-          var natural = iframe.offsetHeight;
-          if (!natural) return;
-          var availW = slot.clientWidth - 32; /* .embed-slot padding 0 1rem */
+          var naturalH = wrap.offsetHeight;
+          if (!naturalH) return;
+          var availW = slot.clientWidth; /* slot padding-box; centering uses 50% of this */
           var capH = window.innerHeight * 0.8;
-          var s = Math.min(availW / BASE_W, capH / natural, 1);
-          iframe.style.transform = 'scale(' + s + ')';
-          wrap.style.width = (BASE_W * s) + 'px';
-          wrap.style.height = (natural * s) + 'px';
-          wrap.style.margin = '0 auto';
+          var s = Math.min(availW / BASE_W, capH / naturalH, 1);
+          wrap.style.transform = 'scale(' + s + ')';
+          slot.style.height = (naturalH * s) + 'px';
         });
       }
 
