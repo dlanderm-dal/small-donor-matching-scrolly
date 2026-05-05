@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Margin mockup — intro paragraph above the infographic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+  /* ============ Page chrome ============ */
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    margin: 0;
+    padding: 0 24px 64px;
+    background: #f0f0f0;
+    color: #080808;
+  }
+  h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    margin: 32px auto 4px;
+    max-width: 1240px;
+  }
+  .page-intro {
+    font-family: 'Poppins', sans-serif;
+    color: #4a4a4a;
+    font-size: 14px;
+    margin: 0 auto 24px;
+    max-width: 1240px;
+  }
+  .option-block {
+    background: #fff;
+    padding: 24px;
+    margin: 24px auto;
+    max-width: 1240px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+  .option-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #990000;
+    margin: 0 0 6px;
+  }
+  .option-desc {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 18px;
+    line-height: 1.4;
+  }
+
+  /* ============ Body p that precedes the infographic — mirrors .story-container > p ============ */
+  .story-container-mock {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+  }
+  .story-container-mock > p.body-p {
+    text-align: left;
+    line-height: 1.75;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1rem, 1.7vw, 13pt);
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    color: #080808;
+  }
+
+  /* ============ Mock infographic — mirrors .sbs-root ============ */
+  .mock-infographic, .mock-infographic *, .mock-infographic *::before, .mock-infographic *::after {
+    box-sizing: border-box;
+  }
+  .mock-infographic {
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: #2a2a2a;
+    background: #fafafa;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    font-size: 16px;
+    text-align: left;
+    padding: 1.25rem 1rem 1.75rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .mock-infographic .section-heading {
+    font: 600 36px/1.1 'Poppins', sans-serif;
+    color: #000;
+    margin: 0 0 1.25rem;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+  .mock-infographic .office-selector {
+    display: flex;
+    border-top: 2px solid #1a1a1a;
+    border-bottom: 1px solid #c9c2b3;
+    margin: 0 auto 1.5rem;
+    max-width: 720px;
+    background: transparent;
+    font: 700 18px/1 'Poppins', sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .mock-infographic .office-selector button {
+    flex: 1;
+    padding: 14px 8px;
+    border: 0;
+    border-right: 1px solid #c9c2b3;
+    background: transparent;
+    color: #4a4a4a;
+    font: inherit;
+    cursor: default;
+    line-height: 1.2;
+    text-align: center;
+    letter-spacing: inherit;
+    text-transform: inherit;
+  }
+  .mock-infographic .office-selector button:last-child { border-right: none; }
+  .mock-infographic .office-selector button + button { border-left: none; }
+  .mock-infographic .office-selector button.active {
+    background: #990000;
+    color: #fff;
+  }
+
+  .mock-infographic .accent { color: #2C8533; font-weight: 700; }
+  .mock-infographic .accent-blue { color: #1979b9; font-weight: 700; }
+  .mock-infographic .as-heading .office-name { font-weight: 700; }
+
+  /* Default .as-heading (Option A — current live story.html: body-p
+     typography but with the original widget left/right margins). */
+  .mock-infographic .as-heading {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1rem, 1.7vw, 13pt);
+    font-weight: 400;
+    line-height: 1.75;
+    margin: 0 12px 1rem;
+    color: #1a1a1a;
+  }
+
+  .mock-infographic .section-eyebrow {
+    font: 700 11px/1 'Poppins', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7a7a7a;
+    border-top: 2px solid #1a1a1a;
+    padding-top: 0.6rem;
+    margin: 1.5rem 12px 0.4rem;
+  }
+  .mock-infographic .section-subhead {
+    font: 700 1.25rem/1.2 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    margin: 0 12px 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---- slider ---- */
+  .mock-infographic .slider-wrap {
+    margin-bottom: 0.75rem;
+    padding: 0 5px;
+  }
+  .mock-infographic .slider-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+    padding: 0 7px;
+  }
+  .mock-infographic .slider-label-caps {
+    font: 700 11px/1 'Poppins', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7a7a7a;
+  }
+  .mock-infographic .slider-live-val {
+    font: 700 1.35rem/1 'Poppins', sans-serif;
+    font-variant-numeric: tabular-nums;
+    color: #2C8533;
+    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .mock-infographic .slider-live-prefix { margin-right: 1px; }
+  .mock-infographic .slider-live-val .donation-amount {
+    background-color: rgba(44, 133, 51, 0.1);
+    padding: 1px 3px 2px;
+    border-radius: 3px;
+  }
+  .mock-infographic .slider-track-wrap {
+    position: relative;
+    height: 26px;
+  }
+  .mock-infographic .slider-track-bg {
+    position: absolute;
+    top: 12px;
+    left: 7px;
+    right: 7px;
+    height: 2px;
+    background: #1a1a1a;
+  }
+  .mock-infographic .slider-progress {
+    position: absolute;
+    top: 11px;
+    left: 7px;
+    width: 19%;  /* $100 of $500 = 20%, minus thumb radius */
+    height: 4px;
+    background: #2C8533;
+  }
+  .mock-infographic .slider-tickmarks {
+    position: absolute;
+    top: 12px;
+    left: 7px;
+    right: 7px;
+    height: 2px;
+  }
+  .mock-infographic .slider-tickmarks span {
+    position: absolute;
+    top: -4px;
+    width: 2px;
+    height: 10px;
+    background: #1a1a1a;
+    transform: translateX(-50%);
+  }
+  .mock-infographic .slider-thumb {
+    position: absolute;
+    top: 5px;
+    left: 20%;  /* $100 of $500 */
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2C8533;
+    transform: translateX(-50%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+  .mock-infographic .slider-ticks {
+    position: relative;
+    height: 1.4em;
+    font-size: clamp(0.65rem, 2.4vw, 1rem);
+    color: #7a7a7a;
+    margin: 0 7px;
+    font-family: 'Poppins', sans-serif;
+    font-variant-numeric: tabular-nums;
+  }
+  .mock-infographic .slider-ticks span {
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  /* ---- chart + equation grid ---- */
+  .mock-infographic .as-grid {
+    display: grid;
+    grid-template-columns: minmax(360px, 1.6fr) minmax(400px, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+  .mock-infographic .as-grid > * { min-width: 0; }
+  .mock-infographic .bar-chart-wrap { position: relative; }
+  .mock-infographic .bar-chart-wrap svg { display: block; width: 100%; height: auto; }
+
+  .mock-infographic .eq-table {
+    border-collapse: separate;
+    border-spacing: 0 2px;
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.88rem, 3.4vw, 1rem);
+  }
+  .mock-infographic .eq-table td { padding: 4px 8px; white-space: nowrap; }
+  .mock-infographic .eq-table .tier-label {
+    color: #434343; font-weight: 700; padding-right: 8px;
+    text-align: right; min-width: 90px;
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+  .mock-infographic .eq-table .donor { color: #2C8533; font-weight: 700; text-align: center; min-width: 56px; font-variant-numeric: tabular-nums; }
+  .mock-infographic .eq-table .match { color: #1979b9; font-weight: 700; text-align: center; min-width: 56px; font-variant-numeric: tabular-nums; }
+  .mock-infographic .eq-table .total { color: #80217f; font-weight: 700; text-align: center; min-width: 64px; font-variant-numeric: tabular-nums; }
+  .mock-infographic .eq-table .op { color: #4e4e4e; font-weight: 700; text-align: center; min-width: 18px; padding: 0 8px; }
+  .mock-infographic .eq-table .total-row td { padding-top: 14px; }
+  .mock-infographic .eq-table .total-row td.donor,
+  .mock-infographic .eq-table .total-row td.match,
+  .mock-infographic .eq-table .total-row td.total { border-top: 2px solid #444; }
+  .mock-infographic .eq-table .not-matched { color: #de5826; font-weight: 700; }
+
+  /* ---- info-row (prohibited + callouts) ---- */
+  .mock-infographic .info-row {
+    display: grid;
+    grid-template-columns: minmax(360px, 1.4fr) minmax(220px, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+  .mock-infographic .info-minor-stack { display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .mock-infographic .prohibited-block { background: transparent; border: 0; padding: 0; }
+  .mock-infographic .prohibited-block h3 {
+    font: 700 11px/1 'Poppins', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #de5826;
+    border-bottom: 2px solid #de5826;
+    padding-bottom: 6px;
+    margin: 0 0 8px;
+  }
+  .mock-infographic .prohibited-list-clean {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+  .mock-infographic .prohibited-list-clean li {
+    font: 400 16px/1.4 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    padding: 8px 0;
+    border-bottom: 1px solid #c9c2b3;
+    break-inside: avoid;
+    display: flex;
+    gap: 8px;
+  }
+  .mock-infographic .prohibited-list-clean li::before {
+    content: "—";
+    color: #de5826;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+  .mock-infographic .prohibited-list-clean li:last-child { border-bottom: none; }
+  .mock-infographic .prohibited-list-clean .accent { display: contents; }
+  .mock-infographic .prohibited-note {
+    font: 400 16px/1.4 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    margin: 12px 0 0;
+  }
+
+  .mock-infographic .callout {
+    background: transparent;
+    border: 0;
+    border-left: 3px solid #1a1a1a;
+    padding: 6px 14px;
+    margin: 0 0 1rem 0;
+  }
+  .mock-infographic .callout-eyebrow {
+    font: 700 10px/1 'Poppins', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7a7a7a;
+    margin-bottom: 4px;
+  }
+  .mock-infographic .callout-label {
+    font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .mock-infographic .callout-value {
+    font: 700 26px/1 'Poppins', sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: #2C8533;
+  }
+  .mock-infographic .callout-value.county-blue { color: #1979b9; }
+  .mock-infographic .callout-value-suffix {
+    font: 400 16px/1.3 'Source Serif 4', Georgia, serif;
+    font-variant-numeric: normal;
+    letter-spacing: normal;
+    color: #1a1a1a;
+    margin-left: 8px;
+  }
+
+  .mock-infographic .methodology {
+    border-top: 2px solid #1a1a1a;
+    margin: 2.5rem 0 0;
+    padding: 1rem 0 0.5rem;
+  }
+  .mock-infographic .methodology h6 {
+    font: 700 11px/1 'Poppins', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+  }
+  .mock-infographic .methodology p.meth-body {
+    font: 400 14px/1.55 'Source Serif 4', Georgia, serif;
+    color: #1a1a1a;
+    margin: 0 0 0.6rem;
+  }
+  .mock-infographic .methodology p.meth-body a {
+    color: #1979b9;
+    text-decoration: underline;
+  }
+  .mock-infographic .methodology p.graphics-credit {
+    font: 600 11px/1.2 'Poppins', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #4a4a4a;
+    margin: 1.25rem 0 0;
+    padding-top: 0.6rem;
+    border-top: 1px solid #c9c2b3;
+  }
+  .mock-infographic .methodology p.graphics-credit strong { color: #1a1a1a; }
+
+
+  /* ============ Variant overrides — only the .as-heading paragraph ============ */
+  /* Option B — body-p typography AND body-p margins (centered, 720px) */
+  [data-variant="B"] .mock-infographic .as-heading {
+    text-align: left;
+    line-height: 1.75;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1rem, 1.7vw, 13pt);
+    color: #080808;
+    font-weight: 400;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+  }
+
+  /* Option C — Option B paragraph + the whole infographic narrowed */
+  [data-variant="C"] .mock-infographic .as-heading {
+    text-align: left;
+    line-height: 1.75;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1rem, 1.7vw, 13pt);
+    color: #080808;
+    font-weight: 400;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+  }
+  [data-variant="C"] .mock-infographic { max-width: 760px; }
+  [data-variant="C"] .mock-infographic .office-selector { max-width: 100%; }
+  [data-variant="C"] .mock-infographic .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  [data-variant="C"] .mock-infographic .info-row { grid-template-columns: 1fr; gap: 1rem; }
+
+  /* Center the running equation under the chart in Option C. Mirrors
+     the story.html fix: a hidden right-side .tier-mirror column makes
+     the table symmetric (so margin: 0 auto centers the visual equation),
+     padding is stripped on both label columns to tighten things up,
+     and a small nudge aligns the equation centroid with the SVG x-axis
+     label which is hand-placed at SVG x=390/740 of cell width. */
+  [data-variant="C"] .mock-infographic .eq-table .tier-mirror {
+    visibility: hidden;
+    color: #434343;
+    font-weight: 700;
+    text-align: left;
+    font-family: 'Source Serif 4', Georgia, serif;
+    display: table-cell;
+    padding-left: 0;
+    padding-right: 0;
+    min-width: 0;
+  }
+  [data-variant="C"] .mock-infographic .eq-table .tier-label {
+    padding-left: 0;
+    padding-right: 0;
+    min-width: 0;
+  }
+  [data-variant="C"] .mock-infographic .eq-table {
+    margin: 0 auto;
+    /* Cell caps at ~728px (760 max-width minus padding), so 0.027·cell
+       ≈ 20px of shift to align centroids. min() also scales it down on
+       viewports narrower than the cap. */
+    transform: translateX(min(20px, 2.7vw));
+    margin-top: 2rem;
+  }
+
+
+  /* ============ Responsive — mirrors the live widget's 768px tweaks ============ */
+  @media (max-width: 820px) {
+    .mock-infographic .as-grid { grid-template-columns: 1fr; }
+    .mock-infographic .eq-table { margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    .mock-infographic { padding: 1.5rem 1rem 2rem; }
+    .mock-infographic .as-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .mock-infographic .info-row { grid-template-columns: 1fr; gap: 1rem; }
+    .mock-infographic .section-heading { font-size: 26px; }
+    .mock-infographic .office-selector button { font-size: 14px; padding: 12px 4px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Intro-paragraph margin mockup</h1>
+<p class="page-intro">
+  Same intro paragraph + the same static infographic, four margin treatments. Sliders/chart values are frozen at $100.
+</p>
+
+<!-- ============================================================ Reusable infographic markup is repeated per option so each option carries its own .as-heading variant. -->
+
+<!-- ============================================================ OPTION A -->
+<section class="option-block" data-variant="A">
+  <p class="option-label">Option A — current (live story.html)</p>
+  <p class="option-desc">
+    Current <code>.as-heading</code>: body-p typography (Source Serif, font-size <code>clamp(1rem, 1.7vw, 13pt)</code>, line-height <code>1.75</code>) but with the original widget left/right margins (<code>0&nbsp;12px&nbsp;1rem</code>). Paragraph still stretches almost the full 1200px frame width, but reads at body-text scale.
+  </p>
+
+  <div class="story-container-mock">
+    <p class="body-p">Once qualified, a tiered matching-fund mechanism, set by each county, kicks in. It advantages candidates who solicit many small donations rather than a few large ones by progressively lowering the matching ratio as a donation amount increases.</p>
+  </div>
+
+  <div class="mock-infographic">
+    <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
+    <div class="office-selector">
+      <button class="active">County Executive</button>
+      <button>At-Large</button>
+      <button>District</button>
+    </div>
+
+    <p class="as-heading">
+      Once a publicly financed candidate for
+      <span class="office-name">Montgomery County Executive</span>
+      receives a combined <span class="accent">$40,000</span> from at least
+      <span class="accent">500</span> residents in their jurisdiction, the matching kicks in.
+      The county only matches donors from the candidate&rsquo;s jurisdiction.
+      As a donor contributes to a candidate over the course of an election, their money falls
+      progressively into tiers with different matching ratios.<br>
+      <strong>For instance,</strong> the first <span class="accent">$50</span> is matched
+      <span class="accent-blue">seven times</span> over in tier 1, the second
+      <span class="accent">$50</span> falls into tier 2 and is matched
+      <span class="accent-blue">four times</span> over.
+    </p>
+
+    <div class="section-eyebrow">Try it yourself</div>
+    <h3 class="section-subhead">Drag the slider to see how a donor&rsquo;s money gets matched by the county</h3>
+
+    <div class="slider-wrap">
+      <div class="slider-label-row">
+        <span class="slider-label-caps">Donation</span>
+        <span class="slider-live-val">
+          <span class="slider-live-prefix">$</span><span class="donation-amount">100</span>
+        </span>
+      </div>
+      <div class="slider-track-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-progress"></div>
+        <div class="slider-tickmarks">
+          <span style="left:0%"></span>
+          <span style="left:10%"></span>
+          <span style="left:20%"></span>
+          <span style="left:30%"></span>
+          <span style="left:100%"></span>
+        </div>
+        <div class="slider-thumb"></div>
+      </div>
+      <div class="slider-ticks">
+        <span style="left:0%">$0</span>
+        <span style="left:10%">$50</span>
+        <span style="left:20%">$100</span>
+        <span style="left:30%">$150</span>
+        <span style="left:100%">$500</span>
+      </div>
+    </div>
+
+    <div class="as-grid">
+      <div class="bar-chart-wrap">
+        <!-- Static snapshot of the bar chart at donation = $100 -->
+        <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343"
+                font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
+          <text x="420" y="162" text-anchor="middle" font-size="36" fill="#2C8533"
+                font-family="'Poppins', sans-serif" font-weight="700">$100</text>
+          <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343"
+                font-family="'Source Serif 4', Georgia, serif" font-weight="400">Candidate gets</text>
+          <text x="620" y="162" text-anchor="middle" font-size="36" fill="#80217f"
+                font-family="'Poppins', sans-serif" font-weight="700">$650</text>
+
+          <text x="40" y="216" text-anchor="middle" font-size="15" fill="#1979b9"
+                font-family="'Source Serif 4', Georgia, serif" font-weight="700">
+            <tspan x="40" dy="0">County</tspan>
+            <tspan x="40" dy="20">matching</tspan>
+            <tspan x="40" dy="20">funds</tspan>
+          </text>
+
+          <line x1="80" y1="380" x2="700" y2="380" stroke="#707070" stroke-width="3" />
+          <line x1="80" y1="380" x2="80" y2="100" stroke="#707070" stroke-width="2" />
+
+          <!-- Tier 1: donor $50 (x=80-142), match 7x → 280px tall -->
+          <rect x="80" y="100" width="62" height="280" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="80" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="111" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+
+          <!-- Tier 2: donor $50 (x=142-204), match 4x → 160px tall -->
+          <rect x="142" y="220" width="62" height="160" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="142" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="173" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+
+          <g>
+            <line x1="80" y1="412" x2="80" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="142.4" y1="412" x2="142.4" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="204.8" y1="412" x2="204.8" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="267.2" y1="412" x2="267.2" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="700" y1="412" x2="700" y2="422" stroke="#707070" stroke-width="2" />
+          </g>
+          <g>
+            <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$0</text>
+            <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$50</text>
+            <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$100</text>
+            <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$150</text>
+            <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$500</text>
+          </g>
+
+          <text x="390" y="475" text-anchor="middle" font-size="15" fill="#2C8533"
+                font-family="'Source Serif 4', Georgia, serif" font-weight="700">Individual&apos;s total donation</text>
+        </svg>
+      </div>
+
+      <div>
+        <table class="eq-table">
+          <tbody>
+            <tr><td class="tier-label">Tier 1</td><td class="donor">$50</td><td class="op">+</td><td class="match">$350</td><td class="op">=</td><td class="total">$400</td></tr>
+            <tr><td class="tier-label">Tier 2</td><td class="donor">$50</td><td class="op">+</td><td class="match">$200</td><td class="op">=</td><td class="total">$250</td></tr>
+            <tr><td class="tier-label">Tier 3</td><td class="donor">$0</td><td class="op">+</td><td class="match">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+            <tr><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="match not-matched">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+            <tr class="total-row"><td class="tier-label">Total</td><td class="donor">$100</td><td class="op">+</td><td class="match">$550</td><td class="op">=</td><td class="total">$650</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <section class="prohibited-block">
+        <h3>Prohibited donors</h3>
+        <ul class="prohibited-list-clean">
+          <li>Political Action Committees (PACs)</li>
+          <li>Corporations</li>
+          <li>Labor Unions</li>
+          <li>LLCs</li>
+          <li>State or local central committees of a political party</li>
+          <li>Donors who have already given <span class="accent">$500</span></li>
+        </ul>
+        <p class="prohibited-note">If a publicly financed candidate in Montgomery County receives money from any of these sources, they need to return it</p>
+      </section>
+
+      <div class="info-minor-stack">
+        <aside class="callout">
+          <div class="callout-eyebrow">Donor caps</div>
+          <div class="callout-label">County stops <span class="accent-blue">matching</span> after a donor has given a specific candidate:</div>
+          <div class="callout-value">$150<span class="callout-value-suffix">per election</span></div>
+          <div class="callout-label" style="margin-top: 22px;">Donors themselves can&rsquo;t give any public candidate more than</div>
+          <div class="callout-value">$500<span class="callout-value-suffix">per election</span></div>
+        </aside>
+        <aside class="callout">
+          <div class="callout-eyebrow">County match cap</div>
+          <div class="callout-label">The county stops <span class="accent-blue">matching</span> all donations to a candidate for <strong>Montgomery County Executive</strong> after the candidate receives:</div>
+          <div class="callout-value county-blue">$870,170<span class="callout-value-suffix">in matching funds</span></div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="methodology">
+      <h6>About this data</h6>
+      <p class="meth-body">The above information was primarily gathered from the Montgomery County Public Election Fund Summary Guide and clarified through interviews with county staff. The report is available on the state board of elections website, <a href="#">here</a>.</p>
+      <p class="graphics-credit">Graphics by <strong>David Landerman</strong></p>
+    </section>
+  </div>
+</section>
+
+
+<!-- ============================================================ OPTION B -->
+<section class="option-block" data-variant="B">
+  <p class="option-label">Option B — body-p typography AND body-p margins</p>
+  <p class="option-desc">
+    Same typography as Option A, but also matches the body <code>p</code>'s <code>max-width: 720px; margin: 0 auto 1.5rem</code>. Paragraph reads as a single centered text column inside the still-1200px-wide infographic frame. Inline highlights are unchanged.
+  </p>
+
+  <div class="story-container-mock">
+    <p class="body-p">Once qualified, a tiered matching-fund mechanism, set by each county, kicks in. It advantages candidates who solicit many small donations rather than a few large ones by progressively lowering the matching ratio as a donation amount increases.</p>
+  </div>
+
+  <div class="mock-infographic">
+    <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
+    <div class="office-selector">
+      <button class="active">County Executive</button>
+      <button>At-Large</button>
+      <button>District</button>
+    </div>
+
+    <p class="as-heading">
+      Once a publicly financed candidate for
+      <span class="office-name">Montgomery County Executive</span>
+      receives a combined <span class="accent">$40,000</span> from at least
+      <span class="accent">500</span> residents in their jurisdiction, the matching kicks in.
+      The county only matches donors from the candidate&rsquo;s jurisdiction.
+      As a donor contributes to a candidate over the course of an election, their money falls
+      progressively into tiers with different matching ratios.<br>
+      <strong>For instance,</strong> the first <span class="accent">$50</span> is matched
+      <span class="accent-blue">seven times</span> over in tier 1, the second
+      <span class="accent">$50</span> falls into tier 2 and is matched
+      <span class="accent-blue">four times</span> over.
+    </p>
+
+    <div class="section-eyebrow">Try it yourself</div>
+    <h3 class="section-subhead">Drag the slider to see how a donor&rsquo;s money gets matched by the county</h3>
+
+    <div class="slider-wrap">
+      <div class="slider-label-row">
+        <span class="slider-label-caps">Donation</span>
+        <span class="slider-live-val"><span class="slider-live-prefix">$</span><span class="donation-amount">100</span></span>
+      </div>
+      <div class="slider-track-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-progress"></div>
+        <div class="slider-tickmarks">
+          <span style="left:0%"></span><span style="left:10%"></span><span style="left:20%"></span><span style="left:30%"></span><span style="left:100%"></span>
+        </div>
+        <div class="slider-thumb"></div>
+      </div>
+      <div class="slider-ticks">
+        <span style="left:0%">$0</span><span style="left:10%">$50</span><span style="left:20%">$100</span><span style="left:30%">$150</span><span style="left:100%">$500</span>
+      </div>
+    </div>
+
+    <div class="as-grid">
+      <div class="bar-chart-wrap">
+        <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
+          <text x="420" y="162" text-anchor="middle" font-size="36" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</text>
+          <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Candidate gets</text>
+          <text x="620" y="162" text-anchor="middle" font-size="36" fill="#80217f" font-family="'Poppins', sans-serif" font-weight="700">$650</text>
+          <text x="40" y="216" text-anchor="middle" font-size="15" fill="#1979b9" font-family="'Source Serif 4', Georgia, serif" font-weight="700"><tspan x="40" dy="0">County</tspan><tspan x="40" dy="20">matching</tspan><tspan x="40" dy="20">funds</tspan></text>
+          <line x1="80" y1="380" x2="700" y2="380" stroke="#707070" stroke-width="3" />
+          <line x1="80" y1="380" x2="80" y2="100" stroke="#707070" stroke-width="2" />
+          <rect x="80" y="100" width="62" height="280" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="80" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="111" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+          <rect x="142" y="220" width="62" height="160" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="142" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="173" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+          <g>
+            <line x1="80" y1="412" x2="80" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="142.4" y1="412" x2="142.4" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="204.8" y1="412" x2="204.8" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="267.2" y1="412" x2="267.2" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="700" y1="412" x2="700" y2="422" stroke="#707070" stroke-width="2" />
+          </g>
+          <g>
+            <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$0</text>
+            <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$50</text>
+            <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$100</text>
+            <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$150</text>
+            <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$500</text>
+          </g>
+          <text x="390" y="475" text-anchor="middle" font-size="15" fill="#2C8533" font-family="'Source Serif 4', Georgia, serif" font-weight="700">Individual&apos;s total donation</text>
+        </svg>
+      </div>
+      <div>
+        <table class="eq-table">
+          <tbody>
+            <tr><td class="tier-label">Tier 1</td><td class="donor">$50</td><td class="op">+</td><td class="match">$350</td><td class="op">=</td><td class="total">$400</td></tr>
+            <tr><td class="tier-label">Tier 2</td><td class="donor">$50</td><td class="op">+</td><td class="match">$200</td><td class="op">=</td><td class="total">$250</td></tr>
+            <tr><td class="tier-label">Tier 3</td><td class="donor">$0</td><td class="op">+</td><td class="match">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+            <tr><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="match not-matched">$0</td><td class="op">=</td><td class="total">$0</td></tr>
+            <tr class="total-row"><td class="tier-label">Total</td><td class="donor">$100</td><td class="op">+</td><td class="match">$550</td><td class="op">=</td><td class="total">$650</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <section class="prohibited-block">
+        <h3>Prohibited donors</h3>
+        <ul class="prohibited-list-clean">
+          <li>Political Action Committees (PACs)</li>
+          <li>Corporations</li>
+          <li>Labor Unions</li>
+          <li>LLCs</li>
+          <li>State or local central committees of a political party</li>
+          <li>Donors who have already given <span class="accent">$500</span></li>
+        </ul>
+        <p class="prohibited-note">If a publicly financed candidate in Montgomery County receives money from any of these sources, they need to return it</p>
+      </section>
+
+      <div class="info-minor-stack">
+        <aside class="callout">
+          <div class="callout-eyebrow">Donor caps</div>
+          <div class="callout-label">County stops <span class="accent-blue">matching</span> after a donor has given a specific candidate:</div>
+          <div class="callout-value">$150<span class="callout-value-suffix">per election</span></div>
+          <div class="callout-label" style="margin-top: 22px;">Donors themselves can&rsquo;t give any public candidate more than</div>
+          <div class="callout-value">$500<span class="callout-value-suffix">per election</span></div>
+        </aside>
+        <aside class="callout">
+          <div class="callout-eyebrow">County match cap</div>
+          <div class="callout-label">The county stops <span class="accent-blue">matching</span> all donations to a candidate for <strong>Montgomery County Executive</strong> after the candidate receives:</div>
+          <div class="callout-value county-blue">$870,170<span class="callout-value-suffix">in matching funds</span></div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="methodology">
+      <h6>About this data</h6>
+      <p class="meth-body">The above information was primarily gathered from the Montgomery County Public Election Fund Summary Guide and clarified through interviews with county staff. The report is available on the state board of elections website, <a href="#">here</a>.</p>
+      <p class="graphics-credit">Graphics by <strong>David Landerman</strong></p>
+    </section>
+  </div>
+</section>
+
+
+<!-- ============================================================ OPTION C -->
+<section class="option-block" data-variant="C">
+  <p class="option-label">Option C — Option B + bring the whole infographic in</p>
+  <p class="option-desc">
+    Same as Option B, but the infographic frame itself is also pulled in to ~760px so the chart / slider / callouts align with the paragraph's text column instead of stretching wider. Inline highlights are unchanged. (Stacks chart-above-equation and prohibited-above-callouts since the column is narrow.)
+  </p>
+
+  <div class="story-container-mock">
+    <p class="body-p">Once qualified, a tiered matching-fund mechanism, set by each county, kicks in. It advantages candidates who solicit many small donations rather than a few large ones by progressively lowering the matching ratio as a donation amount increases.</p>
+  </div>
+
+  <div class="mock-infographic">
+    <h2 class="section-heading">Montgomery County Small Donor Matching</h2>
+    <div class="office-selector">
+      <button class="active">County Executive</button>
+      <button>At-Large</button>
+      <button>District</button>
+    </div>
+
+    <p class="as-heading">
+      Once a publicly financed candidate for
+      <span class="office-name">Montgomery County Executive</span>
+      receives a combined <span class="accent">$40,000</span> from at least
+      <span class="accent">500</span> residents in their jurisdiction, the matching kicks in.
+      The county only matches donors from the candidate&rsquo;s jurisdiction.
+      As a donor contributes to a candidate over the course of an election, their money falls
+      progressively into tiers with different matching ratios.<br>
+      <strong>For instance,</strong> the first <span class="accent">$50</span> is matched
+      <span class="accent-blue">seven times</span> over in tier 1, the second
+      <span class="accent">$50</span> falls into tier 2 and is matched
+      <span class="accent-blue">four times</span> over.
+    </p>
+
+    <div class="section-eyebrow">Try it yourself</div>
+    <h3 class="section-subhead">Drag the slider to see how a donor&rsquo;s money gets matched by the county</h3>
+
+    <div class="slider-wrap">
+      <div class="slider-label-row">
+        <span class="slider-label-caps">Donation</span>
+        <span class="slider-live-val"><span class="slider-live-prefix">$</span><span class="donation-amount">100</span></span>
+      </div>
+      <div class="slider-track-wrap">
+        <div class="slider-track-bg"></div>
+        <div class="slider-progress"></div>
+        <div class="slider-tickmarks">
+          <span style="left:0%"></span><span style="left:10%"></span><span style="left:20%"></span><span style="left:30%"></span><span style="left:100%"></span>
+        </div>
+        <div class="slider-thumb"></div>
+      </div>
+      <div class="slider-ticks">
+        <span style="left:0%">$0</span><span style="left:10%">$50</span><span style="left:20%">$100</span><span style="left:30%">$150</span><span style="left:100%">$500</span>
+      </div>
+    </div>
+
+    <div class="as-grid">
+      <div class="bar-chart-wrap">
+        <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
+          <text x="420" y="162" text-anchor="middle" font-size="36" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$100</text>
+          <text x="620" y="118" text-anchor="middle" font-size="14" fill="#434343" font-family="'Source Serif 4', Georgia, serif" font-weight="400">Candidate gets</text>
+          <text x="620" y="162" text-anchor="middle" font-size="36" fill="#80217f" font-family="'Poppins', sans-serif" font-weight="700">$650</text>
+          <text x="40" y="216" text-anchor="middle" font-size="15" fill="#1979b9" font-family="'Source Serif 4', Georgia, serif" font-weight="700"><tspan x="40" dy="0">County</tspan><tspan x="40" dy="20">matching</tspan><tspan x="40" dy="20">funds</tspan></text>
+          <line x1="80" y1="380" x2="700" y2="380" stroke="#707070" stroke-width="3" />
+          <line x1="80" y1="380" x2="80" y2="100" stroke="#707070" stroke-width="2" />
+          <rect x="80" y="100" width="62" height="280" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="80" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="111" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+          <rect x="142" y="220" width="62" height="160" fill="rgba(25,121,185,0.15)" stroke="#1979b9" stroke-width="3" />
+          <rect x="142" y="380" width="62" height="30" fill="rgba(44,133,51,0.15)" stroke="#2C8533" stroke-width="3" />
+          <text x="173" y="400" text-anchor="middle" font-size="13" fill="#2C8533" font-family="'Poppins', sans-serif" font-weight="700">$50</text>
+          <g>
+            <line x1="80" y1="412" x2="80" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="142.4" y1="412" x2="142.4" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="204.8" y1="412" x2="204.8" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="267.2" y1="412" x2="267.2" y2="422" stroke="#707070" stroke-width="2" />
+            <line x1="700" y1="412" x2="700" y2="422" stroke="#707070" stroke-width="2" />
+          </g>
+          <g>
+            <text x="80" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$0</text>
+            <text x="142.4" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$50</text>
+            <text x="204.8" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$100</text>
+            <text x="267.2" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$150</text>
+            <text x="700" y="442" text-anchor="middle" font-size="13" fill="#888" font-family="'Poppins', sans-serif">$500</text>
+          </g>
+          <text x="390" y="475" text-anchor="middle" font-size="15" fill="#2C8533" font-family="'Source Serif 4', Georgia, serif" font-weight="700">Individual&apos;s total donation</text>
+        </svg>
+      </div>
+      <div>
+        <table class="eq-table">
+          <tbody>
+            <tr><td class="tier-label">Tier 1</td><td class="donor">$50</td><td class="op">+</td><td class="match">$350</td><td class="op">=</td><td class="total">$400</td><td class="tier-mirror" aria-hidden="true">NOT MATCHED</td></tr>
+            <tr><td class="tier-label">Tier 2</td><td class="donor">$50</td><td class="op">+</td><td class="match">$200</td><td class="op">=</td><td class="total">$250</td><td class="tier-mirror" aria-hidden="true">NOT MATCHED</td></tr>
+            <tr><td class="tier-label">Tier 3</td><td class="donor">$0</td><td class="op">+</td><td class="match">$0</td><td class="op">=</td><td class="total">$0</td><td class="tier-mirror" aria-hidden="true">NOT MATCHED</td></tr>
+            <tr><td class="tier-label not-matched">NOT MATCHED</td><td class="donor">$0</td><td class="op">+</td><td class="match not-matched">$0</td><td class="op">=</td><td class="total">$0</td><td class="tier-mirror" aria-hidden="true">NOT MATCHED</td></tr>
+            <tr class="total-row"><td class="tier-label">Total</td><td class="donor">$100</td><td class="op">+</td><td class="match">$550</td><td class="op">=</td><td class="total">$650</td><td class="tier-mirror" aria-hidden="true">NOT MATCHED</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <section class="prohibited-block">
+        <h3>Prohibited donors</h3>
+        <ul class="prohibited-list-clean">
+          <li>Political Action Committees (PACs)</li>
+          <li>Corporations</li>
+          <li>Labor Unions</li>
+          <li>LLCs</li>
+          <li>State or local central committees of a political party</li>
+          <li>Donors who have already given <span class="accent">$500</span></li>
+        </ul>
+        <p class="prohibited-note">If a publicly financed candidate in Montgomery County receives money from any of these sources, they need to return it</p>
+      </section>
+
+      <div class="info-minor-stack">
+        <aside class="callout">
+          <div class="callout-eyebrow">Donor caps</div>
+          <div class="callout-label">County stops <span class="accent-blue">matching</span> after a donor has given a specific candidate:</div>
+          <div class="callout-value">$150<span class="callout-value-suffix">per election</span></div>
+          <div class="callout-label" style="margin-top: 22px;">Donors themselves can&rsquo;t give any public candidate more than</div>
+          <div class="callout-value">$500<span class="callout-value-suffix">per election</span></div>
+        </aside>
+        <aside class="callout">
+          <div class="callout-eyebrow">County match cap</div>
+          <div class="callout-label">The county stops <span class="accent-blue">matching</span> all donations to a candidate for <strong>Montgomery County Executive</strong> after the candidate receives:</div>
+          <div class="callout-value county-blue">$870,170<span class="callout-value-suffix">in matching funds</span></div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="methodology">
+      <h6>About this data</h6>
+      <p class="meth-body">The above information was primarily gathered from the Montgomery County Public Election Fund Summary Guide and clarified through interviews with county staff. The report is available on the state board of elections website, <a href="#">here</a>.</p>
+      <p class="graphics-credit">Graphics by <strong>David Landerman</strong></p>
+    </section>
+  </div>
+</section>
+
+</body>
+</html>
