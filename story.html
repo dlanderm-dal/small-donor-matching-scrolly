@@ -149,7 +149,7 @@
       text-decoration: underline;
     }
 
-    /* Section heading inside the narrative body — matches the live CNS
+/* Section heading inside the narrative body — matches the live CNS
        Maryland article rendering (GoodLife theme h2): system sans-serif,
        weight 600 (700 with the inner <b>), ~22–34px responsive, sentence
        case, tight letter-spacing. Distinct from the widget-scoped
@@ -160,7 +160,7 @@
       font-size: clamp(1.375rem, 3vw, 2.125rem);
       line-height: 1.15;
       color: #080808;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.03em;      
       text-align: left;
       text-transform: none;
       max-width: 720px;
@@ -391,6 +391,7 @@
       .sbs-root .eq-table {
         margin: 0 auto;
       }
+
     }
 
     .sbs-root .slider-wrap {
@@ -606,6 +607,51 @@
       text-align: right;
       min-width: 90px;
       font-family: 'Source Serif 4', Georgia, serif;
+    }
+
+    /* Right-side mirror of .tier-label, hidden by default and revealed
+       at the ≤820px stacked breakpoint to symmetrize the table so the
+       visual equation lands at the table's geometric center. Same
+       typography/padding/min-width as .tier-label so its content sizes
+       the column identically. */
+    .sbs-root .eq-table .tier-mirror {
+      visibility: hidden;
+      color: #434343;
+      font-weight: 700;
+      padding-left: 8px;
+      text-align: left;
+      min-width: 90px;
+      font-family: 'Source Serif 4', Georgia, serif;
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      .sbs-root .eq-table .tier-mirror {
+        display: table-cell;
+      }
+
+      /* Strip outer horizontal padding off both .tier-label and its
+         right-side .tier-mirror so the table is symmetric AND narrower,
+         keeping the visual equation closer to true table-center. */
+      .sbs-root .eq-table .tier-label,
+      .sbs-root .eq-table .tier-mirror {
+        padding-left: 0;
+        padding-right: 0;
+        min-width: 0;
+      }
+
+      /* The chart's x-axis label is hand-placed at SVG x=390/740 — i.e.
+         ~2.7% of cell width right of cell center, because it sits over
+         the chart plot area (x=80..700), not over the SVG midpoint.
+         Shift the equation table by ~the same amount so its centroid
+         lines up with the chart label centroid. */
+      .sbs-root .eq-table {
+        transform: translateX(2.5vw);
+        /* Push the equation away from the chart's x-axis title so the
+           green "Individual's total donation" reads as a child of the
+           chart above, not as a header for the equation below. */
+        margin-top: 2rem;
+      }
     }
 
     .sbs-root .eq-table .donor {
@@ -1052,17 +1098,17 @@
   </div>
 
   <div class="story-container">
-    <p>Publicly-funded candidates received 96% of their contributions from small donors giving less than $250 in the last council election in 2022, the report said. Candidates who only relied on private donors, corporations and special interest groups raised only 2% from small donors. The private funders each gave an average of $2,948.</p>
+    <p>Publicly funded candidates in Montgomery County received 96% of their contributions from small donors giving less than $250 in the last council election in 2022, the report said. Candidates who only relied on private donors, corporations and special interest groups raised only 2% from small donors. The private funders each gave an average of $2,948.</p>
 
-<p>The Maryland General Assembly voted in 2013 to allow counties or incorporated cities to pay part of local candidates’ campaigns from their budgets, in lieu of having to raise money only from private donors. Since the program is voluntary, publicly funded candidates, who must agree to many restrictions, may find themselves competing with privately-financed opponents who have fewer restrictions.</p>
+<p>The Maryland General Assembly voted in 2013 to allow counties or incorporated cities to pay part of local candidates’ campaigns from their budgets, in lieu of having to raise money only from private donors. Since the program is voluntary, publicly funded candidates, who must agree to many restrictions, may find themselves competing with privately financed opponents who have fewer restrictions.</p>
 
-<p>The option was implemented out of concern that the current campaign financing system often favors candidates who can attract wealthy donors and corporations whose interests don’t always align with residents’ priorities. The public financing option is meant to attract more small donors who live in the county and to help unlikely candidates who might have a fundraising disadvantage to be more competitive.</p>
+<p>The option was implemented out of concern that the current campaign financing system often favors candidates who can attract wealthy donors and corporations, whose interests don’t always align with residents’ priorities. The public financing option is meant to attract more small donors who live in the county and to help unlikely candidates who might have a fundraising disadvantage to be more competitive.</p>
 
-<p>Emily Scarr, a longtime advocate for these programs from the Maryland PIRG, said the goal is to ensure “that access to money or independent wealth or name recognition, none of those things are a barrier to someone.”</p>
+<p>Emily Scarr, a longtime advocate for these programs from Maryland PIRG, said the goal is to ensure “that access to money or independent wealth or name recognition, none of those things are a barrier to someone.”</p>
 
 <p>In the 13 years since it became state law, five of Maryland’s 23 counties and Baltimore have adopted a publicly funded campaign option. </p>
 
-<p>In Montgomery County, the option "has kind of limited a lot of corporate interest in what we're doing," said Cecily Thorne, chief of staff for District 4 Councilmember Kate Stewart who used the public finance option to win her seat in 2022.</p>
+<p>In Montgomery County, the option "has kind of limited a lot of corporate interest in what we're doing," said Cecily Thorne, chief of staff for District 4 Councilmember Kate Stewart, who used the public finance option to win her seat in 2022.</p>
 
 <p>Its success cost the county $3.7 million in the last election cycle in 2022, according to a report by the Montgomery County Office of Legislative Oversight.</p>
 
@@ -1237,6 +1283,7 @@
                   <td class="match">$350</td>
                   <td class="op">=</td>
                   <td class="total">$400</td>
+                  <td class="tier-mirror" aria-hidden="true">NOT MATCHED</td>
                 </tr>
                 <tr id="eqTier2">
                   <td class="tier-label">Tier 2</td>
@@ -1245,6 +1292,7 @@
                   <td class="match">$200</td>
                   <td class="op">=</td>
                   <td class="total">$250</td>
+                  <td class="tier-mirror" aria-hidden="true">NOT MATCHED</td>
                 </tr>
                 <tr id="eqTier3">
                   <td class="tier-label">Tier 3</td>
@@ -1253,6 +1301,7 @@
                   <td class="match">$100</td>
                   <td class="op">=</td>
                   <td class="total">$150</td>
+                  <td class="tier-mirror" aria-hidden="true">NOT MATCHED</td>
                 </tr>
                 <tr id="eqTier4">
                   <td class="tier-label not-matched">NOT MATCHED</td>
@@ -1261,6 +1310,7 @@
                   <td class="match not-matched">$0</td>
                   <td class="op">=</td>
                   <td class="total">$0</td>
+                  <td class="tier-mirror" aria-hidden="true">NOT MATCHED</td>
                 </tr>
                 <tr class="total-row" id="eqTotal" aria-live="polite" aria-atomic="true">
                   <td class="tier-label">Total</td>
@@ -1269,6 +1319,7 @@
                   <td class="match" id="eqTotalMatch">$350</td>
                   <td class="op">=</td>
                   <td class="total" id="eqTotalTotal">$400</td>
+                  <td class="tier-mirror" aria-hidden="true">NOT MATCHED</td>
                 </tr>
               </tbody>
             </table>
@@ -1709,7 +1760,7 @@
 
 <p>Hogan declined requests for an interview. He did not use public financing for his successful reelection campaign in 2018, for which he and his running mate raised a combined $20 million.</p>
 
-<p>The next governor, Wes Moore, and his running mate, Aruna Miller, are not using public financing either. Moore collected $16.3 million in private donations during his first run. He has more than $8 million in the bank for his reelection campaign as of March 17th, according to elections board data. Two challengers running in 2026 have pledged to use public campaign funds if they qualify.</p>
+<p>The next governor, Wes Moore, and his running mate, Aruna Miller, are not using public financing either. Moore collected $16.3 million in private donations during his first run. He has more than $8 million in the bank for his reelection campaign as of March 17, according to elections board data. Two challengers running in 2026 have pledged to use public campaign funds if they qualify.</p>
   </div>
 
 
