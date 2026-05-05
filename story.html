@@ -74,34 +74,43 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 0 1rem;
-      text-align: center;
+      text-align: left;
     }
 
-    /* Article headline — CNS spec: Poppins Bold 38pt (~3.17rem) #080808.
-       Clamped so it scales down gracefully on phone widths. Scoped under
-       .story-container so it outranks the .story-container>p body rule
-       (which is otherwise more specific and would override font-size /
-       font-family / color here). */
+    /* Article headline — matches CNS Maryland's .post .post-title h1:
+       Poppins 600, responsive 24/30/38px (mobile/tablet/desktop), tight
+       -0.04em tracking. With a deck head below, drops the dotted rule
+       (mirrors .post.blog-post .entry-title.title-with-deck-head). */
     .story-container .hed {
-      font-size: clamp(2rem, 5.5vw, 38pt);
+      font-size: 24px;
       font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      line-height: 1.15;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.2;
       color: #080808;
-      margin: 2rem 0 0.5rem;
-      letter-spacing: -0.01em;
+      max-width: 720px;
+      margin: 2rem auto 0;
+      padding-bottom: 10px;
+      word-break: break-word;
+    }
+    @media only screen and (min-width: 48.063em) {
+      .story-container .hed { font-size: 30px; }
+    }
+    @media only screen and (min-width: 64.063em) {
+      .story-container .hed { font-size: 38px; }
     }
 
-    /* Deck/subhead — mirrors the CNS Maryland .deck-head rule
-       (1.25em, #000, dotted-bottom rule). Scoped under .story-container
-       so it outranks the body-paragraph rule. */
+    /* Deck/subhead — mirrors CNS .post.blog-post .deck-head: 1.25em
+       (1em on phones), #000, dotted-bottom rule, inherits article body
+       serif font. */
     .story-container .subhead {
       font-size: 1.25em;
       color: #000;
       line-height: 1.4;
       padding-bottom: 15px;
       border-bottom: 1px dotted #a8a8a8;
-      margin: 0 0 18px;
+      max-width: 720px;
+      margin: 0 auto 18px;
     }
     @media (max-width: 500px) {
       .story-container .subhead {
@@ -117,13 +126,14 @@
       letter-spacing: 0.06em;
       font-family: 'Poppins', sans-serif;
       color: #4a4a4a;
-      margin: 0 0 2.5rem;
+      max-width: 720px;
+      margin: 0 auto 2.5rem;
     }
 
     .story-container .lead-image {
       position: relative;
-      margin: 0 0 2rem;
-      text-align: left;
+      max-width: 720px;
+      margin: 0 auto 2rem;
     }
     .story-container .lead-image img {
       display: block;
@@ -147,6 +157,17 @@
     .story-container .lead-image figcaption a {
       color: inherit;
       text-decoration: underline;
+    }
+
+    /* Mirror live CNS Maryland behavior: at ≤640px the caption pops out
+       of its absolute overlay and flows below the image as a full-width
+       dark bar with white text, so it doesn't crowd the image on phone
+       screens. */
+    @media (max-width: 640px) {
+      .story-container .lead-image figcaption {
+        position: static;
+        max-width: none;
+      }
     }
 
 /* Section heading inside the narrative body — matches the live CNS
