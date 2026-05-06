@@ -614,6 +614,9 @@
       /* Fluid font-size: stays at full 1rem above ~470px viewport;
          shrinks to 0.88rem on narrowest devices so it still fits. */
       font-size: clamp(0.88rem, 3.4vw, 1rem);
+      /* Small top inset so the first equation row clears the
+         over-max warning when it appears between slider and grid. */
+      margin-top: 15px;
     }
 
     .sbs-root .eq-table td {
