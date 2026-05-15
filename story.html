@@ -624,12 +624,22 @@
       white-space: nowrap;
     }
 
+    /* Manual tabular figures: Poppins has no tnum feature, so each digit
+       is boxed into a constant 1ch slot. Equal-length values now render
+       at identical widths and the equation stops shifting on slider drag. */
+    .sbs-root .eq-table .eqd {
+      display: inline-block;
+      width: 1ch;
+      text-align: center;
+    }
+
     .sbs-root .eq-table .tier-label {
       color: #434343;
       font-weight: 700;
       padding-right: 8px;
       text-align: right;
-      min-width: 90px;
+      box-sizing: content-box;
+      min-width: 7.6em;
       font-family: 'Source Serif 4', Georgia, serif;
     }
 
@@ -644,7 +654,8 @@
       font-weight: 700;
       padding-left: 8px;
       text-align: left;
-      min-width: 90px;
+      box-sizing: content-box;
+      min-width: 7.6em;
       font-family: 'Source Serif 4', Georgia, serif;
       display: none;
     }
@@ -661,7 +672,6 @@
       .sbs-root .eq-table .tier-mirror {
         padding-left: 0;
         padding-right: 0;
-        min-width: 0;
       }
 
       /* The chart's x-axis label is hand-placed at SVG x=390/740 — i.e.
@@ -678,11 +688,16 @@
       }
     }
 
+    /* content-box so the min-width is the actual glyph budget regardless
+       of padding/box-sizing; sized (em, scales with the fluid font) to the
+       widest possible value so the column never resizes as the slider
+       changes the number of digits. Paired with the .eqd tabular slots. */
     .sbs-root .eq-table .donor {
       color: #2C8533;
       font-weight: 700;
       text-align: center;
-      min-width: 56px;
+      box-sizing: content-box;
+      min-width: 2.8em;
       font-variant-numeric: tabular-nums;
     }
 
@@ -690,7 +705,8 @@
       color: #1979b9;
       font-weight: 700;
       text-align: center;
-      min-width: 56px;
+      box-sizing: content-box;
+      min-width: 2.8em;
       font-variant-numeric: tabular-nums;
     }
 
@@ -698,7 +714,8 @@
       color: #80217f;
       font-weight: 700;
       text-align: center;
-      min-width: 64px;
+      box-sizing: content-box;
+      min-width: 3.7em;
       font-variant-numeric: tabular-nums;
     }
 
@@ -969,26 +986,19 @@
       }
     }
 
-    /* Tighter overrides for phones (≤ 500px). Compress eq-table cell
-       padding + drop min-width floors so the table fits. */
+    /* Tighter overrides for phones (≤ 500px): compress eq-table cell
+       padding. Column min-widths stay (they're content-box em values on
+       the base rules) so the equation never reflows as digits change. */
     @media (max-width: 500px) {
       .sbs-root .eq-table td {
         padding: 4px 3px;
       }
 
       .sbs-root .eq-table .tier-label {
-        min-width: 0;
         padding-right: 4px;
       }
 
-      .sbs-root .eq-table .donor,
-      .sbs-root .eq-table .match,
-      .sbs-root .eq-table .total {
-        min-width: 0;
-      }
-
       .sbs-root .eq-table .op {
-        min-width: 0;
         padding: 0 2px;
       }
     }
@@ -1585,7 +1595,7 @@
           aria-label="Comparison: one $100 donor versus ten $10 donors. The ten small donors yield $800 in matched funds, more than the single donor's $650.">
           <g id="miPhone_14_Pro_Max_1" data-name="iPhone 14 Pro Max – 1">
             <rect width="430" height="932" fill="#fff" />
-            <g id="Scene_1I" data-name="Scene 1I" transform="translate(0 -26)">
+            <g id="Scene_1I" data-name="Scene 1I" transform="translate(0 -42)">
               <g id="Scene_1H" data-name="Scene 1H">
                 <text id="mOne_100_donor" transform="translate(76 745)" fill="#434343" font-size="18"
                   font-family="'Source Serif 4', Georgia, serif">
@@ -1685,7 +1695,7 @@
                               <tspan x="-41.265" y="0">One person </tspan>
                               <tspan x="-19.86" y="17">giving</tspan>
                             </text>
-                            <g id="Scene_1A" data-name="Scene 1A" transform="translate(0 26)">
+                            <g id="Scene_1A" data-name="Scene 1A" transform="translate(0 42)">
                               <foreignObject id="mHeadline" x="11" y="105" width="408" height="160">
                                 <div xmlns="http://www.w3.org/1999/xhtml" style="color: #434343;">
                                   <div style="font: 700 18px/1.2 'Poppins', sans-serif;">What&#8217;s better: One person
@@ -1910,6 +1920,12 @@
       }
 
       function fmt$(n) { return '$' + n.toLocaleString(); }
+      // Poppins ships no tabular figures, so font-variant-numeric is a
+      // no-op and proportional digits make equal-length values render at
+      // different widths (e.g. $331 vs $334), shifting the centered
+      // equation as the slider moves. Box every digit into a constant
+      // 1ch slot to emulate tabular figures. Input is digits/$/',' only.
+      function tnum(s) { return String(s).replace(/[0-9]/g, '<span class="eqd">$&</span>'); }
       function numToWord(n) {
         return ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] || String(n);
       }
@@ -1957,25 +1973,25 @@
           row.classList.toggle('hidden', !visible);
           const cells = row.querySelectorAll('td');
           if (rowId === 'eqTier1') {
-            cells[1].textContent = fmt$(tb.t1.donor);
-            cells[3].textContent = fmt$(tb.t1.match);
-            cells[5].textContent = fmt$(tb.t1.total);
+            cells[1].innerHTML = tnum(fmt$(tb.t1.donor));
+            cells[3].innerHTML = tnum(fmt$(tb.t1.match));
+            cells[5].innerHTML = tnum(fmt$(tb.t1.total));
           } else if (rowId === 'eqTier2') {
-            cells[1].textContent = fmt$(tb.t2.donor);
-            cells[3].textContent = fmt$(tb.t2.match);
-            cells[5].textContent = fmt$(tb.t2.total);
+            cells[1].innerHTML = tnum(fmt$(tb.t2.donor));
+            cells[3].innerHTML = tnum(fmt$(tb.t2.match));
+            cells[5].innerHTML = tnum(fmt$(tb.t2.total));
           } else if (rowId === 'eqTier3') {
-            cells[1].textContent = fmt$(tb.t3.donor);
-            cells[3].textContent = fmt$(tb.t3.match);
-            cells[5].textContent = fmt$(tb.t3.total);
+            cells[1].innerHTML = tnum(fmt$(tb.t3.donor));
+            cells[3].innerHTML = tnum(fmt$(tb.t3.match));
+            cells[5].innerHTML = tnum(fmt$(tb.t3.total));
           } else if (rowId === 'eqTier4') {
-            cells[1].textContent = fmt$(tb.t4.donor);
-            cells[3].textContent = '$0';
-            cells[5].textContent = fmt$(tb.t4.total);
+            cells[1].innerHTML = tnum(fmt$(tb.t4.donor));
+            cells[3].innerHTML = tnum('$0');
+            cells[5].innerHTML = tnum(fmt$(tb.t4.total));
           } else if (rowId === 'eqTotal') {
-            document.getElementById('eqTotalDonor').textContent = fmt$(tb.totalDonor);
-            document.getElementById('eqTotalMatch').textContent = fmt$(tb.totalMatch);
-            document.getElementById('eqTotalTotal').textContent = fmt$(tb.totalTotal);
+            document.getElementById('eqTotalDonor').innerHTML = tnum(fmt$(tb.totalDonor));
+            document.getElementById('eqTotalMatch').innerHTML = tnum(fmt$(tb.totalMatch));
+            document.getElementById('eqTotalTotal').innerHTML = tnum(fmt$(tb.totalTotal));
           }
         }
         setRow('eqTier1'); setRow('eqTier2'); setRow('eqTier3'); setRow('eqTier4'); setRow('eqTotal');
