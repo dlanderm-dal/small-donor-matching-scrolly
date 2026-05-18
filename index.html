@@ -1213,10 +1213,31 @@
     .cns-mobile-toggle { display: none; }
 
     @media (max-width: 1024px) {
+      /* Main navbar + sticky bar both collapse to: hamburger | logo | search.
+         The .cns-subheader-scoped selectors below carry extra specificity so
+         they win over the base .cns-subheader-desktop/-mobile rules, which
+         sit later in the stylesheet. */
       .cns-menu { display: none; }
-      .cns-nav-inner {
+      .cns-subheader .cns-subheader-desktop { display: none; }
+      .cns-subheader .cns-progress { display: none; }
+
+      .cns-nav-inner,
+      .cns-subheader-mobile {
         position: relative;
         justify-content: center;
+      }
+      .cns-subheader .cns-subheader-mobile {
+        display: flex;
+        flex: 1;
+        align-items: center;
+      }
+      .cns-subheader-mobile .logolink {
+        display: inline-block;
+        line-height: 1;
+      }
+      .cns-subheader-mobile .logoimg {
+        max-height: 21px;
+        display: block;
       }
       .cns-mobile-toggle {
         display: inline-flex;
@@ -1243,6 +1264,14 @@
       .cns-mobile-toggle span:nth-child(1) { top: 9px; }
       .cns-mobile-toggle span:nth-child(2) { top: 14px; }
       .cns-mobile-toggle span:nth-child(3) { top: 19px; }
+      .cns-nav-inner > .cns-search,
+      .cns-subheader-mobile .cns-search {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0;
+      }
       .cns-nav .navbar-brand { padding: 16px 0; }
     }
 
@@ -1544,6 +1573,15 @@
       align-items: center;
       justify-content: space-between;
     }
+    /* Desktop vs mobile variants of the sticky bar */
+    .cns-subheader-desktop {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    .cns-subheader-mobile { display: none; }
     .cns-subheader-logo {
       display: flex;
       align-items: center;
@@ -1676,19 +1714,17 @@
         <li class="cns-social"><a target="_blank" rel="noopener" href="https://www.facebook.com/MarylandCNS/" aria-label="CNS Maryland on Facebook"><i class="fa fa-facebook"></i></a></li>
         <li class="cns-social"><a target="_blank" rel="noopener" href="http://x.com/CNSmd" aria-label="CNS Maryland on X"><i class="fa-brands fa-x-twitter"></i></a></li>
         <li class="cns-social"><a target="_blank" rel="noopener" href="https://www.instagram.com/cnsmd/" aria-label="CNS Maryland on Instagram"><i class="fa fa-instagram"></i></a></li>
-        <li class="cns-search-li">
-          <div class="cns-search">
-            <a href="#" class="cns-search-toggle" role="button" aria-label="Toggle search"></a>
-            <svg class="cns-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" aria-hidden="true">
-              <path d="M18.96,16.896l-4.973-4.926c1.02-1.255,1.633-2.846,1.633-4.578c0-4.035-3.312-7.317-7.385-7.317S0.849,3.358,0.849,7.393c0,4.033,3.313,7.316,7.386,7.316c1.66,0,3.188-0.552,4.422-1.471l4.998,4.95c0.181,0.179,0.416,0.268,0.652,0.268c0.235,0,0.472-0.089,0.652-0.268C19.32,17.832,19.32,17.253,18.96,16.896z M2.693,7.393c0-3.027,2.485-5.489,5.542-5.489c3.054,0,5.541,2.462,5.541,5.489c0,3.026-2.486,5.489-5.541,5.489C5.179,12.882,2.693,10.419,2.693,7.393z"/>
-            </svg>
-            <form method="get" class="cns-searchform" role="search" action="https://cnsmaryland.org/">
-              <input name="s" type="text" class="s" aria-label="Search cnsmaryland.org" placeholder="Search">
-              <input type="submit" value="Search">
-            </form>
-          </div>
-        </li>
       </ul>
+      <div class="cns-search">
+        <a href="#" class="cns-search-toggle" role="button" aria-label="Toggle search"></a>
+        <svg class="cns-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" aria-hidden="true">
+          <path d="M18.96,16.896l-4.973-4.926c1.02-1.255,1.633-2.846,1.633-4.578c0-4.035-3.312-7.317-7.385-7.317S0.849,3.358,0.849,7.393c0,4.033,3.313,7.316,7.386,7.316c1.66,0,3.188-0.552,4.422-1.471l4.998,4.95c0.181,0.179,0.416,0.268,0.652,0.268c0.235,0,0.472-0.089,0.652-0.268C19.32,17.832,19.32,17.253,18.96,16.896z M2.693,7.393c0-3.027,2.485-5.489,5.542-5.489c3.054,0,5.541,2.462,5.541,5.489c0,3.026-2.486,5.489-5.541,5.489C5.179,12.882,2.693,10.419,2.693,7.393z"/>
+        </svg>
+        <form method="get" class="cns-searchform" role="search" action="https://cnsmaryland.org/">
+          <input name="s" type="text" class="s" aria-label="Search cnsmaryland.org" placeholder="Search">
+          <input type="submit" value="Search">
+        </form>
+      </div>
     </div>
   </nav>
 
@@ -1725,17 +1761,42 @@
   ==================================================================== -->
   <div class="cns-subheader" id="cnsSubheader" aria-hidden="true">
     <div class="cns-subheader-row">
-      <div class="cns-subheader-logo">
+
+      <!-- Mobile: hamburger | logo | search (matches .mobile-fixed-header) -->
+      <div class="cns-subheader-mobile">
+        <button type="button" class="cns-mobile-toggle" aria-label="Open menu" aria-controls="cns-mobile-menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
         <a href="https://cnsmaryland.org/" class="logolink">
           <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" class="logoimg" alt="CNS Maryland">
         </a>
-        <span class="page-title">Publicly Funded Candidates</span>
+        <div class="cns-search">
+          <a href="#" class="cns-search-toggle" role="button" aria-label="Toggle search"></a>
+          <svg class="cns-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" aria-hidden="true">
+            <path d="M18.96,16.896l-4.973-4.926c1.02-1.255,1.633-2.846,1.633-4.578c0-4.035-3.312-7.317-7.385-7.317S0.849,3.358,0.849,7.393c0,4.033,3.313,7.316,7.386,7.316c1.66,0,3.188-0.552,4.422-1.471l4.998,4.95c0.181,0.179,0.416,0.268,0.652,0.268c0.235,0,0.472-0.089,0.652-0.268C19.32,17.832,19.32,17.253,18.96,16.896z M2.693,7.393c0-3.027,2.485-5.489,5.542-5.489c3.054,0,5.541,2.462,5.541,5.489c0,3.026-2.486,5.489-5.541,5.489C5.179,12.882,2.693,10.419,2.693,7.393z"/>
+          </svg>
+          <form method="get" class="cns-searchform" role="search" action="https://cnsmaryland.org/">
+            <input name="s" type="text" class="s" aria-label="Search cnsmaryland.org" placeholder="Search">
+            <input type="submit" value="Search">
+          </form>
+        </div>
       </div>
-      <div class="cns-share">
-        <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html" class="facebook social" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fa fab fa-facebook"></i></a>
-        <a href="https://x.com/intent/tweet?text=Publicly%20Funded%20Candidates&url=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html&via=CNSMd" class="x-twitter social" target="_blank" rel="noopener" aria-label="Share on X"><i class="fa fab fa-x-twitter"></i></a>
-        <a href="https://www.linkedin.com/cws/share?url=https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" class="linkedin social" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><i class="fa fab fa-linkedin"></i></a>
+
+      <!-- Desktop: logo + article title | share buttons | progress bar -->
+      <div class="cns-subheader-desktop">
+        <div class="cns-subheader-logo">
+          <a href="https://cnsmaryland.org/" class="logolink">
+            <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" class="logoimg" alt="CNS Maryland">
+          </a>
+          <span class="page-title">Publicly Funded Candidates</span>
+        </div>
+        <div class="cns-share">
+          <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html" class="facebook social" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fa fab fa-facebook"></i></a>
+          <a href="https://x.com/intent/tweet?text=Publicly%20Funded%20Candidates&url=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html&via=CNSMd" class="x-twitter social" target="_blank" rel="noopener" aria-label="Share on X"><i class="fa fab fa-x-twitter"></i></a>
+          <a href="https://www.linkedin.com/cws/share?url=https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" class="linkedin social" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><i class="fa fab fa-linkedin"></i></a>
+        </div>
       </div>
+
       <span class="cns-progress" id="cnsProgress"></span>
     </div>
   </div>
@@ -2995,23 +3056,31 @@
     (function () {
       'use strict';
 
-      /* Nav search: toggle the slide-in form, close on outside click. */
-      var search = document.querySelector('.cns-search');
-      if (search) {
-        var openClose = function (e) {
-          e.preventDefault();
-          search.classList.toggle('active');
-          if (search.classList.contains('active')) {
-            var input = search.querySelector('.s');
-            if (input) input.focus();
-          }
-        };
-        var toggle = search.querySelector('.cns-search-toggle');
-        var icon = search.querySelector('.cns-search-icon');
-        if (toggle) toggle.addEventListener('click', openClose);
-        if (icon) icon.addEventListener('click', openClose);
+      /* Nav search: each .cns-search (desktop nav + mobile sticky bar)
+         toggles its own slide-in form. Opening one closes the others;
+         an outside click closes all. */
+      var searches = document.querySelectorAll('.cns-search');
+      if (searches.length) {
+        searches.forEach(function (search) {
+          var openClose = function (e) {
+            e.preventDefault();
+            var willOpen = !search.classList.contains('active');
+            searches.forEach(function (s) { s.classList.remove('active'); });
+            if (willOpen) {
+              search.classList.add('active');
+              var input = search.querySelector('.s');
+              if (input) input.focus();
+            }
+          };
+          var toggle = search.querySelector('.cns-search-toggle');
+          var icon = search.querySelector('.cns-search-icon');
+          if (toggle) toggle.addEventListener('click', openClose);
+          if (icon) icon.addEventListener('click', openClose);
+        });
         document.addEventListener('click', function (e) {
-          if (!search.contains(e.target)) search.classList.remove('active');
+          if (!e.target.closest('.cns-search')) {
+            searches.forEach(function (s) { s.classList.remove('active'); });
+          }
         });
       }
 
@@ -3086,18 +3155,22 @@
       /* Mobile menu: hamburger opens a slide-in drawer with a dark
          backdrop. Closes on backdrop click, link tap, Escape, or when
          the viewport grows back to desktop width. */
-      var mToggle = document.getElementById('cnsMobileToggle');
+      var mToggles = document.querySelectorAll('.cns-mobile-toggle');
       var mMenu = document.getElementById('cns-mobile-menu');
       var mBackdrop = document.getElementById('cnsMenuBackdrop');
-      if (mToggle && mMenu) {
+      if (mToggles.length && mMenu) {
         var setMenu = function (open) {
           document.body.classList.toggle('cns-menu-open', open);
-          mToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-          mToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          mToggles.forEach(function (t) {
+            t.setAttribute('aria-expanded', open ? 'true' : 'false');
+            t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          });
           mMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
         };
-        mToggle.addEventListener('click', function () {
-          setMenu(!document.body.classList.contains('cns-menu-open'));
+        mToggles.forEach(function (t) {
+          t.addEventListener('click', function () {
+            setMenu(!document.body.classList.contains('cns-menu-open'));
+          });
         });
         if (mBackdrop) mBackdrop.addEventListener('click', function () { setMenu(false); });
         mMenu.addEventListener('click', function (e) {
