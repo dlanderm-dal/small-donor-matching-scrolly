@@ -39,7 +39,7 @@
   <meta property="og:url" content="https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html">
 
   <!-- Article metadata (values copied verbatim from the page) -->
-  <meta property="article:published_time" content="2026-05-18T00:00:00-04:00">
+  <meta property="article:published_time" content="2026-05-18T08:00:00-04:00">
   <meta property="article:author" content="https://cnsmaryland.org/author/dlanderm/">
   <meta property="article:section" content="Maryland">
   <meta property="article:tag" content="Campaign Finance">
@@ -65,8 +65,8 @@
     "headline": "Five most populous Maryland counties offer public financing in campaigns",
     "description": "Attempts to counter monied interests in Maryland elections make slow progress.",
     "image": "https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/54535537893_a016b7d9d7_o.jpg",
-    "datePublished": "2026-05-18T00:00:00-04:00",
-    "dateModified": "2026-05-18T00:00:00-04:00",
+    "datePublished": "2026-05-18T08:00:00-04:00",
+    "dateModified": "2026-05-18T08:00:00-04:00",
     "articleSection": "Maryland",
     "keywords": "Campaign Finance, Public Financing, Montgomery County, Elections, Maryland",
     "author": {
@@ -107,7 +107,7 @@
   <meta name="parsely-title" content="Publicly Funded Candidates" />
   <meta name="parsely-link" content="https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" />
   <meta name="parsely-type" content="post" />
-  <meta name="parsely-pub-date" content="2026-05-18T00:00:00-04:00" />
+  <meta name="parsely-pub-date" content="2026-05-18T08:00:00-04:00" />
   <meta name="parsely-section" content="Investigations" />
   <meta name="parsely-author" content="CNS Maryland" />
   <meta name="parsely-tags" content="investigative journalism, interactives" />
@@ -1931,7 +1931,7 @@
     <a href="https://cnsmaryland.org/category/maryland/" class="single-category-title" title="Maryland">Maryland</a>
     <p class="hed">Five most populous Maryland counties offer public financing in campaigns </p>
     <p class="subhead">Attempts to counter monied interests in Maryland elections make slow progress.</p>
-    <p class="byline">By <a href="https://cnsmaryland.org/author/dlanderm/" class="author url fn" rel="author" title="Posts by David Landerman">David Landerman</a>&nbsp;-&nbsp;<time class="byline-time" datetime="2026-05-18T00:00:00-04:00" itemprop="datePublished">May 18, 2026</time></p>
+    <p class="byline">By <a href="https://cnsmaryland.org/author/dlanderm/" class="author url fn" rel="author" title="Posts by David Landerman">David Landerman</a>&nbsp;-&nbsp;<time class="byline-time" datetime="2026-05-18T08:00:00-04:00" itemprop="datePublished">May 18, 2026</time></p>
 
     <figure class="lead-image">
       <img src="54535537893_a016b7d9d7_o.jpg" alt="">
@@ -3314,30 +3314,26 @@
         var then = dtAttr ? new Date(dtAttr) : null;
         if (then && !isNaN(then.getTime())) {
           var diff = Math.floor((Date.now() - then.getTime()) / 1000);
+          var fullDate = then.toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric'
+          });
           var rel;
           if (diff < 60) {
             rel = 'just now';
-          } else {
-            var units = [
-              ['year', 31536000],
-              ['month', 2592000],
-              ['week', 604800],
-              ['day', 86400],
-              ['hour', 3600],
-              ['minute', 60]
-            ];
-            for (var i = 0; i < units.length; i++) {
-              var n = Math.floor(diff / units[i][1]);
-              if (n >= 1) {
-                rel = n + ' ' + units[i][0] + (n > 1 ? 's' : '') + ' ago';
-                break;
-              }
-            }
+          } else if (diff < 3600) {            // under 1 hour -> minutes
+            var m = Math.floor(diff / 60);
+            rel = m + (m > 1 ? ' minutes ago' : ' minute ago');
+          } else if (diff < 86400) {           // under 24 hours -> hours
+            var h = Math.floor(diff / 3600);
+            rel = h + (h > 1 ? ' hours ago' : ' hour ago');
+          } else if (diff < 2592000) {         // 24 hours to 30 days -> days
+            var d = Math.floor(diff / 86400);
+            rel = d + (d > 1 ? ' days ago' : ' day ago');
+          } else {                             // 30+ days -> publish date
+            rel = fullDate;
           }
-          if (rel) bt.textContent = rel;
-          bt.title = then.toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-          });
+          bt.textContent = rel;
+          bt.title = fullDate;
         }
       }
     })();
