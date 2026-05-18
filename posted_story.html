@@ -1398,6 +1398,113 @@
       text-align: center;
     }
 
+    /* --- Sticky sub-header (theme .subheader.fixed.dark) -------------- */
+    .cns-subheader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 30;
+      background: #080808;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      transform: translateY(-100%);
+      opacity: 1;
+      transition: transform .3s ease, opacity .35s ease;
+    }
+    .cns-subheader.is-stuck { transform: translateY(0); }
+    .cns-subheader.is-faded {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .cns-subheader-row {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cns-subheader-logo {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+    .cns-subheader-logo .logolink {
+      display: inline-block;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .cns-subheader-logo .logoimg {
+      max-height: 21px;
+      display: block;
+    }
+    .cns-subheader-logo .page-title {
+      position: relative;
+      display: inline-block;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      padding-left: 34px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 600px;
+    }
+    .cns-subheader-logo .page-title:before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 16px;
+      background: rgba(255,255,255,.25);
+    }
+    .cns-share {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .cns-share .social {
+      width: 38px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      border-radius: 3px;
+      font-size: 13px;
+      margin-left: 7px;
+      color: #fff;
+      background: rgba(255,255,255,.2);
+      text-decoration: none;
+      transition: background .2s ease;
+    }
+    .cns-share .social.facebook:hover { background: #3b5998; }
+    .cns-share .social.x-twitter:hover { background: #00aced; }
+    .cns-share .social.linkedin:hover { background: #007bb6; }
+    .cns-progress {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: #649fd6;
+      transform: scaleX(0);
+      transform-origin: 0 100%;
+      will-change: transform;
+    }
+    @media (max-width: 540px) {
+      .cns-subheader-logo .page-title {
+        padding-left: 26px;
+        font-size: 11px;
+        max-width: 56vw;
+      }
+      .cns-subheader-logo .page-title:before { left: 12px; }
+      .cns-share .social { width: 34px; font-size: 12px; }
+    }
+
     /* --- Back-to-top (theme #scroll_totop) ---------------------------- */
     #scroll_totop {
       display: block;
@@ -1463,6 +1570,28 @@
       </ul>
     </div>
   </nav>
+
+  <!-- ====================================================================
+       STICKY SUB-HEADER — bare-bones bar that slides in once the main nav
+       scrolls away (matches CNS .subheader.fixed). Fades out during the
+       scrollytelling so it never overlays the pinned SVG, fades back after.
+  ==================================================================== -->
+  <div class="cns-subheader" id="cnsSubheader" aria-hidden="true">
+    <div class="cns-subheader-row">
+      <div class="cns-subheader-logo">
+        <a href="https://cnsmaryland.org/" class="logolink">
+          <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" class="logoimg" alt="CNS Maryland">
+        </a>
+        <span class="page-title">Publicly Funded Candidates</span>
+      </div>
+      <div class="cns-share">
+        <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html" class="facebook social" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fa fab fa-facebook"></i></a>
+        <a href="https://x.com/intent/tweet?text=Publicly%20Funded%20Candidates&url=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html&via=CNSMd" class="x-twitter social" target="_blank" rel="noopener" aria-label="Share on X"><i class="fa fab fa-x-twitter"></i></a>
+        <a href="https://www.linkedin.com/cws/share?url=https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" class="linkedin social" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><i class="fa fab fa-linkedin"></i></a>
+      </div>
+      <span class="cns-progress" id="cnsProgress"></span>
+    </div>
+  </div>
 
 
   <!-- ====================================================================
@@ -2770,6 +2899,41 @@
         window.addEventListener('scroll', refresh, { passive: true });
         window.addEventListener('resize', refresh);
         refresh();
+      }
+
+      /* Sticky sub-header: slides in once the main nav has scrolled out
+         of view (it "replaces" the full nav), carries a reading-progress
+         bar, and fades out while the scrollytelling owns the viewport so
+         it never overlays the pinned SVG — fading back in afterward. */
+      var sub = document.getElementById('cnsSubheader');
+      if (sub) {
+        var mainNav = document.querySelector('.cns-nav');
+        var progress = document.getElementById('cnsProgress');
+        var scrolly = document.querySelector('.sbs-scrolly');
+
+        var syncSub = function () {
+          var pastNav = mainNav
+            ? mainNav.getBoundingClientRect().bottom <= 0
+            : window.scrollY > 240;
+          sub.classList.toggle('is-stuck', pastNav);
+          sub.setAttribute('aria-hidden', pastNav ? 'false' : 'true');
+
+          if (scrolly) {
+            var r = scrolly.getBoundingClientRect();
+            var overlaps = r.top < window.innerHeight && r.bottom > 0;
+            sub.classList.toggle('is-faded', overlaps);
+          }
+
+          if (progress) {
+            var max = document.documentElement.scrollHeight - window.innerHeight;
+            var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+            progress.style.transform = 'scaleX(' + p + ')';
+          }
+        };
+
+        window.addEventListener('scroll', syncSub, { passive: true });
+        window.addEventListener('resize', syncSub);
+        syncSub();
       }
     })();
   </script>
