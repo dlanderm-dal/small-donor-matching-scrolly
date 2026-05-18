@@ -1200,10 +1200,116 @@
     }
     .cns-searchform input[type="submit"]:hover { background: rgba(100,159,214,.24); }
 
-    @media (max-width: 860px) {
+    @media (min-width: 1025px) and (max-width: 1180px) {
       .cns-menu { gap: 0 1rem; }
       .cns-menu>li>a { font-size: 12px; }
     }
+
+    /* --- Mobile nav: hamburger + slide-in drawer (theme #mobile-menu) -
+       Switches at 64em (~1024px), the same breakpoint cnsmaryland.org
+       uses. The drawer overlays content with a backdrop rather than
+       pushing it sideways, so the scrollytelling's sticky layout is
+       untouched. */
+    .cns-mobile-toggle { display: none; }
+
+    @media (max-width: 1024px) {
+      .cns-menu { display: none; }
+      .cns-nav-inner {
+        position: relative;
+        justify-content: center;
+      }
+      .cns-mobile-toggle {
+        display: inline-flex;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        margin: 0;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+      .cns-mobile-toggle span {
+        position: absolute;
+        left: 5px;
+        width: 20px;
+        height: 2px;
+        background: #fff;
+        border-radius: 1px;
+      }
+      .cns-mobile-toggle span:nth-child(1) { top: 9px; }
+      .cns-mobile-toggle span:nth-child(2) { top: 14px; }
+      .cns-mobile-toggle span:nth-child(3) { top: 19px; }
+      .cns-nav .navbar-brand { padding: 16px 0; }
+    }
+
+    .cns-menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .25);
+      z-index: 1099;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .35s cubic-bezier(.25,.46,.45,.94), visibility .35s;
+    }
+    body.cns-menu-open .cns-menu-backdrop { opacity: 1; visibility: visible; }
+
+    .cns-mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 280px;
+      max-width: 84vw;
+      background: #fff;
+      z-index: 1100;
+      padding: 20px 10px 20px 20px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      visibility: hidden;
+      transform: translateX(-100%);
+      transition: transform .35s cubic-bezier(.25,.46,.45,.94), visibility .35s;
+    }
+    body.cns-menu-open .cns-mobile-menu {
+      visibility: visible;
+      transform: translateX(0);
+    }
+    body.cns-menu-open { overflow: hidden; }
+    .cns-mobile-menu .mobile-menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 10px 0 0;
+    }
+    .cns-mobile-menu .mobile-menu li { margin: 0; }
+    .cns-mobile-menu .mobile-menu li a {
+      display: block;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+      color: #080808;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 19px 0 16px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: color .2s ease;
+    }
+    .cns-mobile-menu .mobile-menu li a:hover { color: #649fd6; }
+    .cns-mobile-menu .social-links {
+      padding: 30px 15px 25px;
+      text-align: center;
+    }
+    .cns-mobile-menu .social-links a {
+      color: #080808;
+      margin: 0 7px;
+      font-size: 17px;
+      text-decoration: none;
+      transition: color .2s ease;
+    }
+    .cns-mobile-menu .social-links a:hover { color: #649fd6; }
 
     /* --- Category eyebrow above the headline (theme .single_category_title) */
     .story-container .single-category-title {
@@ -1553,6 +1659,9 @@
   ==================================================================== -->
   <nav class="navbar navbar-dark bg-dark cns-nav">
     <div class="cns-nav-inner">
+      <button type="button" class="cns-mobile-toggle" id="cnsMobileToggle" aria-label="Open menu" aria-controls="cns-mobile-menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <a class="navbar-brand" href="https://cnsmaryland.org/">
         <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" id="logo" alt="Capital News Service Maryland">
       </a>
@@ -1580,6 +1689,32 @@
           </div>
         </li>
       </ul>
+    </div>
+  </nav>
+
+  <!-- ====================================================================
+       MOBILE MENU — slide-in drawer + backdrop (matches CNS #mobile-menu).
+       Drawer overlays content (does NOT push it) so the scrollytelling's
+       sticky positioning stays intact.
+  ==================================================================== -->
+  <div class="cns-menu-backdrop" id="cnsMenuBackdrop"></div>
+  <nav id="cns-mobile-menu" class="cns-mobile-menu" aria-label="Site menu" aria-hidden="true">
+    <ul class="mobile-menu">
+      <li><a href="https://cnsmaryland.org/app-homepage/">Home</a></li>
+      <li><a href="https://cnsmaryland.org/category/annapolis/">Annapolis</a></li>
+      <li><a href="https://cnsmaryland.org/category/washington/">D.C.</a></li>
+      <li><a href="https://cnsmaryland.org/category/cns-data-lab/">Data</a></li>
+      <li><a href="https://cnsmaryland.org/category/cns-tv/">Video</a></li>
+      <li><a href="https://cnsmaryland.org/category/maryland/">Maryland</a></li>
+      <li><a href="https://cnsmaryland.org/the-howard-center-for-investigative-journalism/">Howard Center / Investigations</a></li>
+      <li><a href="https://cnsmaryland.org/category/povich-sports/">Povich Center / Sports</a></li>
+      <li><a href="https://cnsmaryland.org/local-news-network/">The Local News Network</a></li>
+      <li><a href="https://cnsmaryland.org/about-capital-news-service/">About CNS</a></li>
+    </ul>
+    <div class="social-links">
+      <a target="_blank" rel="noopener" href="https://www.facebook.com/MarylandCNS/" aria-label="CNS Maryland on Facebook"><i class="fa fa-facebook"></i></a>
+      <a target="_blank" rel="noopener" href="http://x.com/CNSmd" aria-label="CNS Maryland on X"><i class="fa-brands fa-x-twitter"></i></a>
+      <a target="_blank" rel="noopener" href="https://www.instagram.com/cnsmd/" aria-label="CNS Maryland on Instagram"><i class="fa fa-instagram"></i></a>
     </div>
   </nav>
 
@@ -2946,6 +3081,34 @@
         window.addEventListener('scroll', syncSub, { passive: true });
         window.addEventListener('resize', syncSub);
         syncSub();
+      }
+
+      /* Mobile menu: hamburger opens a slide-in drawer with a dark
+         backdrop. Closes on backdrop click, link tap, Escape, or when
+         the viewport grows back to desktop width. */
+      var mToggle = document.getElementById('cnsMobileToggle');
+      var mMenu = document.getElementById('cns-mobile-menu');
+      var mBackdrop = document.getElementById('cnsMenuBackdrop');
+      if (mToggle && mMenu) {
+        var setMenu = function (open) {
+          document.body.classList.toggle('cns-menu-open', open);
+          mToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          mToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          mMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+        };
+        mToggle.addEventListener('click', function () {
+          setMenu(!document.body.classList.contains('cns-menu-open'));
+        });
+        if (mBackdrop) mBackdrop.addEventListener('click', function () { setMenu(false); });
+        mMenu.addEventListener('click', function (e) {
+          if (e.target.closest('a')) setMenu(false);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') setMenu(false);
+        });
+        window.addEventListener('resize', function () {
+          if (window.innerWidth > 1024) setMenu(false);
+        });
       }
     })();
   </script>
