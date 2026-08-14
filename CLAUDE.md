@@ -45,13 +45,19 @@ Two things live in this folder:
   County Executive should read **$830**, At-Large **$680**.
 
 ## ▶︎ YOU ARE HERE  (read at session start, rewritten at session end)
-- **Goal right now:** David works through Lessons 1→24, writing his own explanation into each
-  `MY ANSWER:` blank in `DATAVIZFINAL MARKUP.html`.
-- **Done + verified:** All 24 placeholders inserted; page still runs clean (no console errors,
-  slider math correct, 70 scrolly elements tagged). Tracker verified against real edits —
-  red / amber / green all fire correctly. Backup saved to `Dataviz lessons/originals/`.
-- **Next step:** Lesson 1. He reads the questions in the file (or the tracker card), writes his
-  answer over the underscores, saves. Claude's job is to quiz, not to answer.
-- **Watch out for:** Don't let him paste a Claude-written explanation into a blank. If he asks
-  "just tell me," give him a narrower question instead.
-- *Lineage: first anchor for this project — 2026-08-11. Nothing superseded.*
+- **Goal right now:** David works through 25 lessons, **overwriting** each `LESSON n` block in
+  `DATAVIZFINAL MARKUP.html` with his own `DL NOTE n` comment. His note to his professor at
+  line 3 explains that only "DL NOTE" comments are his submission. Don't fight this convention.
+- **Done + verified:** DL NOTES 1–3 written (3 of 25). Lesson 25 (accessibility) added at his
+  request. Page re-verified after every edit: $180 → $830 Executive / $680 At-Large, 20 chart
+  elements, 70 scrolly steps, no console errors.
+- **Next step:** Lesson 4 — the `(function () { ... })()` wrapper, ~line 2769.
+- **Watch out for:**
+  - **Syntax questions get straight answers.** He said so directly, and got genuinely lost when
+    I stacked pseudo-elements → scoping → `!important` → specificity notation. One concept at a
+    time. Socratic mode is for "what does this code do and why," not for "what does `*` mean."
+  - Don't let him paste a Claude-written explanation into a DL NOTE.
+  - **Verify claims before asserting them.** My Lesson 2 question assumed the textbook answer
+    (unscoping `*` wrecks the page) and testing disproved it. See PROGRESS.md.
+- *Lineage: replaces the 2026-08-11 setup anchor. Lesson count 24 → 25; the `MY ANSWER:` blank
+  model is superseded by his DL NOTE overwrite model.*

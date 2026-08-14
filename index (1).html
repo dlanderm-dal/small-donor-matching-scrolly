@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<!--HEY JON THIS IS MY MARKED UP DATAVIZ FINAL PROJECT OF MY ARTICLE FOR DANA PRIESTS CLASS. THE PAGE IS ONE FILE AND IS ABSOLUTELY ENORMOUS AS YOU CAN UNDOUBTEDLY SEE. I HAD CLAUDE LEAVE COMMENTS THROUGHOUT THE DEVELOPMENT OF THE PAGE IN GENERAL AND I WANT TO BE CLEAR THOSE COMMENTS ARE NOT MY SUBMISSION TO YOUR SIMPLE STIPULATION FOR MY ASSIGNEMNT WHICH IS TO JUST EXPLAIN HOW THE CODE WORKS. So the only comments you should consider to be written by me for my assignment will all start with "DL NOTE" feel free to command+F that. Just want to stay above board here. Also I had claude leave lessons for me in the code so I can learn sequentially what the heck its doing, I am overwriting those lessons as I go so the DL Notes will be sequentially labeled but not sequentially arranged.-->
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,81 +9,6 @@
   <meta name="description"
     content="An interactive explainer of how Montgomery County matches small political donations.">
   <meta name="author" content="CNS Maryland">
-
-  <!-- Link-share card (mirrors story.html) + CNS-logo thumbnail. The
-       image is cnsmaryland.org's existing favicon/touch-icon — the same
-       asset the live cnsmaryland.org link preview falls back to — so no
-       new image needs to be hosted. -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="@cnsmaryland">
-  <meta name="twitter:title" content="Publicly Funded Candidates">
-  <meta name="twitter:description"
-    content="An interactive explainer of how Montgomery County matches small political donations.">
-  <meta name="twitter:creator" content="@cnsmaryland">
-  <meta name="twitter:image" content="https://cnsmaryland.org/wp-content/uploads/2017/02/cns_favion-1.png">
-
-  <meta property="og:title" content="Publicly Funded Candidates">
-  <meta property="og:type" content="article">
-  <meta property="og:description"
-    content="An interactive explainer of how Montgomery County matches small political donations.">
-  <meta property="og:site_name" content="CNS Maryland">
-  <meta property="og:image" content="https://cnsmaryland.org/wp-content/uploads/2017/02/cns_favion-1.png">
-  <meta property="og:image:width" content="96">
-  <meta property="og:image:height" content="96">
-  <meta property="og:image:alt" content="Capital News Service Maryland">
-
-  <!-- Canonical: this story lives on cnsmaryland.org; og:url + canonical
-       point there so shares show that domain and link equity / social
-       counts aggregate to the published article (not any preview host). -->
-  <link rel="canonical" href="https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html">
-  <meta property="og:url" content="https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html">
-
-  <!-- Article metadata (values copied verbatim from the page) -->
-  <meta property="article:published_time" content="2026-05-18T08:00:00-04:00">
-  <meta property="article:author" content="https://cnsmaryland.org/author/dlanderm/">
-  <meta property="article:section" content="Maryland">
-  <meta property="article:tag" content="Campaign Finance">
-  <meta property="article:tag" content="Public Financing">
-  <meta property="article:tag" content="Montgomery County">
-  <meta property="article:tag" content="Elections">
-  <meta property="article:tag" content="Maryland">
-
-  <link rel="icon" href="https://cnsmaryland.org/wp-content/uploads/2017/02/cns_favion-1.png" sizes="96x96">
-  <link rel="apple-touch-icon" href="https://cnsmaryland.org/wp-content/uploads/2017/02/cns_favion-1.png">
-
-  <!-- NewsArticle structured data. Every string is taken verbatim from
-       the article (headline = hed, description = deck, author = byline,
-       date = publish date); nothing here is summarized. -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html"
-    },
-    "headline": "Five most populous Maryland counties offer public financing in campaigns",
-    "description": "Attempts to counter monied interests in Maryland elections make slow progress.",
-    "image": "https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/54535537893_a016b7d9d7_o.jpg",
-    "datePublished": "2026-05-18T08:00:00-04:00",
-    "dateModified": "2026-05-18T08:00:00-04:00",
-    "articleSection": "Maryland",
-    "keywords": "Campaign Finance, Public Financing, Montgomery County, Elections, Maryland",
-    "author": {
-      "@type": "Person",
-      "name": "David Landerman",
-      "url": "https://cnsmaryland.org/author/dlanderm/"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Capital News Service",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://cnsmaryland.org/wp-content/uploads/2017/02/cns_favion-1.png"
-      }
-    }
-  }
-  </script>
 
   <!-- Bootstrap CSS (matches CNS story template) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -96,18 +21,13 @@
     href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Poppins:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
-  <!-- Font Awesome (same build CNS Maryland's site uses) for nav/footer
-       social icons and the back-to-top chevron. -->
-  <link rel="stylesheet"
-    href="https://cnsmaryland.org/wp-content/themes/goodlife-wp/assets/css/font-awesome.min.css?ver=6.7.2">
-
-
+  
 
 <!-- METRICS -->
   <meta name="parsely-title" content="Publicly Funded Candidates" />
   <meta name="parsely-link" content="https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" />
   <meta name="parsely-type" content="post" />
-  <meta name="parsely-pub-date" content="2026-05-18T08:00:00-04:00" />
+  <meta name="parsely-pub-date" content="2026-05-15T00:00:00Z" />
   <meta name="parsely-section" content="Investigations" />
   <meta name="parsely-author" content="CNS Maryland" />
   <meta name="parsely-tags" content="investigative journalism, interactives" />
@@ -208,15 +128,6 @@
       max-width: 720px;
       margin: 0 auto 2.5rem;
     }
-    /* Author link — CNS brand red, mirrors a.author.url.fn on cnsmaryland.org */
-    .story-container .byline a {
-      color: #990000;
-      text-decoration: none;
-    }
-    .story-container .byline a:hover { text-decoration: underline; }
-    /* Relative publish time, e.g. "6 hours ago" — inherits the muted
-       byline style; JS recomputes it on load from the datetime attr. */
-    .story-container .byline .byline-time { white-space: nowrap; }
 
     .story-container .lead-image {
       position: relative;
@@ -289,20 +200,14 @@
       color: #080808;
     }
 
-    /* Body links — exact match to cnsmaryland.org .post-content p a:
-       near-black text sitting on a pale-blue (#DDEAF6) highlighter band
-       that fills the whole link on hover (marker-swipe effect). */
-    .story-container>p:not(.byline) a {
-      color: #080808;
+    .story-container>p a {
+      color: #991b1e;
       text-decoration: none;
-      border-bottom: 2px solid #DDEAF6;
-      box-shadow: inset 0 -5px 0 #DDEAF6;
-      transition: background-color .25s ease, color .25s ease;
+      border-bottom: 1px solid currentColor;
     }
 
-    .story-container>p:not(.byline) a:hover {
-      background: #DDEAF6;
-      color: #080808;
+    .story-container>p a:hover {
+      color: #555;
     }
 
     /* Embed slot — full-width interactives sit outside the 720px text column. */
@@ -321,13 +226,23 @@
       transform-origin: top center;
     }
 
+    .footer {
+      background: #000;
+      min-height: 100px;
+      padding: 25px 0;
+      margin-top: 4rem;
+    }
+
+    .footer p {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      margin: 0;
+      text-align: center;
+    }
+
     /* ========================================================================
        INTERACTIVE WIDGET styles (scoped under .sbs-root).
     ======================================================================== */
-    /* ================================================================
-       DL NOTE 2
-       the following style rules target sbs-root, thats the class given to the div of the entire Montgomery County Small Donor Matching main infographic, the * reaches into all the items contained within the div
-       ================================================================ */
     .sbs-root,
     .sbs-root *,
     .sbs-root *::before,
@@ -838,10 +753,6 @@
       font-weight: 700;
     }
 
-    /* ================================================================
-       DL NOTE 15
-       See the visibility collapse, it hides what is supposed to be hidden based on the class the last note provided
-       ================================================================ */
     .sbs-root .eq-table tr {
       transition: opacity 0.25s ease-out;
     }
@@ -1113,11 +1024,6 @@
       overflow-x: clip;
     }
 
-    /* ================================================================
-       DL NOTE 20
-       This height, 800vh is basically how long the scrolly telling takes to unfold. If you make the 800 into say 10000 you'd have to scroll so much longer to make things appear.
-       The rest of this governs the scrollytelling main behavior
-       ================================================================ */
     .sbs-scrolly .scrolly-track {
       position: relative;
       height: 800vh;
@@ -1178,764 +1084,21 @@
       z-index: 5;
       pointer-events: none;
     }
-
-    /* ========================================================================
-       CNS SITE CHROME — nav menu, category eyebrow, article tags, author box,
-       related news and sub-footer. Self-contained re-creation of the
-       cnsmaryland.org GoodLife theme look so it doesn't fight the Bootstrap /
-       scrollytelling layout that already lives on this page.
-    ======================================================================== */
-
-    /* --- Nav bar: logo + section links + search + social --------------- */
-    .navbar.cns-nav {
-      padding: 0 1rem;
-    }
-    .cns-nav-inner {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem 1.25rem;
-    }
-    .cns-nav .navbar-brand {
-      padding: 18px 0;
-      margin: 0;
-    }
-    .cns-menu {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0 1.5rem;
-      margin-left: auto;
-    }
-    .cns-menu>li { display: inline-flex; align-items: center; }
-    .cns-menu>li>a {
-      font-family: 'Poppins', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #fff;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: color .2s ease;
-    }
-    .cns-menu>li>a:hover { color: #649fd6; }
-    .cns-menu li.cns-social>a { font-size: 16px; }
-    .cns-menu li.cns-social:first-of-type { margin-left: 0.25rem; }
-
-    /* Search toggle + slide-in form, mirrors theme .quick_search */
-    .cns-search {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-    }
-    .cns-search-icon {
-      width: 18px;
-      height: 18px;
-      fill: #fff;
-      cursor: pointer;
-      display: block;
-    }
-    .cns-search.active .cns-search-icon { fill: #649fd6; }
-    .cns-search-toggle {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: block;
-    }
-    .cns-searchform {
-      position: absolute;
-      top: calc(100% + 12px);
-      right: -15px;
-      width: min(360px, 80vw);
-      display: flex;
-      background: #fff;
-      border: 5px solid #649fd6;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .2s ease;
-      z-index: 30;
-    }
-    .cns-searchform:after {
-      content: "";
-      position: absolute;
-      bottom: 100%;
-      right: 20px;
-      border-style: solid;
-      border-width: 0 0 10px 10px;
-      border-color: transparent transparent #649fd6 transparent;
-    }
-    .cns-search.active .cns-searchform { opacity: 1; visibility: visible; }
-    .cns-searchform .s {
-      border: 0;
-      flex: 1;
-      min-width: 0;
-      font-size: 15px;
-      color: #080808;
-      height: 44px;
-      padding: 10px 16px;
-      font-family: 'Poppins', sans-serif;
-    }
-    .cns-searchform input[type="submit"] {
-      border: 0;
-      cursor: pointer;
-      font: 600 13px 'Poppins', sans-serif;
-      color: #080808;
-      padding: 0 22px;
-      background: rgba(100,159,214,.12);
-    }
-    .cns-searchform input[type="submit"]:hover { background: rgba(100,159,214,.24); }
-
-    @media (min-width: 1025px) and (max-width: 1180px) {
-      .cns-menu { gap: 0 1rem; }
-      .cns-menu>li>a { font-size: 12px; }
-    }
-
-    /* --- Mobile nav: hamburger + slide-in drawer (theme #mobile-menu) -
-       Switches at 64em (~1024px), the same breakpoint cnsmaryland.org
-       uses. The drawer overlays content with a backdrop rather than
-       pushing it sideways, so the scrollytelling's sticky layout is
-       untouched. */
-    .cns-mobile-toggle { display: none; }
-
-    @media (max-width: 1024px) {
-      /* Main navbar + sticky bar both collapse to: hamburger | logo | search.
-         The .cns-subheader-scoped selectors below carry extra specificity so
-         they win over the base .cns-subheader-desktop/-mobile rules, which
-         sit later in the stylesheet. */
-      .cns-menu { display: none; }
-      .cns-subheader .cns-subheader-desktop { display: none; }
-      .cns-subheader .cns-progress { display: none; }
-
-      .cns-nav-inner,
-      .cns-subheader-mobile {
-        position: relative;
-        justify-content: center;
-      }
-      .cns-subheader .cns-subheader-mobile {
-        display: flex;
-        flex: 1;
-        align-items: center;
-      }
-      .cns-subheader-mobile .logolink {
-        display: inline-block;
-        line-height: 1;
-      }
-      .cns-subheader-mobile .logoimg {
-        max-height: 21px;
-        display: block;
-      }
-      .cns-mobile-toggle {
-        display: inline-flex;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 30px;
-        height: 30px;
-        padding: 0;
-        margin: 0;
-        background: none;
-        border: 0;
-        cursor: pointer;
-      }
-      .cns-mobile-toggle span {
-        position: absolute;
-        left: 5px;
-        width: 20px;
-        height: 2px;
-        background: #fff;
-        border-radius: 1px;
-      }
-      .cns-mobile-toggle span:nth-child(1) { top: 9px; }
-      .cns-mobile-toggle span:nth-child(2) { top: 14px; }
-      .cns-mobile-toggle span:nth-child(3) { top: 19px; }
-      .cns-nav-inner > .cns-search,
-      .cns-subheader-mobile .cns-search {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        margin: 0;
-      }
-      .cns-nav .navbar-brand { padding: 16px 0; }
-    }
-
-    .cns-menu-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .25);
-      z-index: 1099;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .35s cubic-bezier(.25,.46,.45,.94), visibility .35s;
-    }
-    body.cns-menu-open .cns-menu-backdrop { opacity: 1; visibility: visible; }
-
-    .cns-mobile-menu {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 280px;
-      max-width: 84vw;
-      background: #fff;
-      z-index: 1100;
-      padding: 20px 10px 20px 20px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      visibility: hidden;
-      transform: translateX(-100%);
-      transition: transform .35s cubic-bezier(.25,.46,.45,.94), visibility .35s;
-    }
-    body.cns-menu-open .cns-mobile-menu {
-      visibility: visible;
-      transform: translateX(0);
-    }
-    body.cns-menu-open { overflow: hidden; }
-    .cns-mobile-menu .mobile-menu {
-      list-style: none;
-      margin: 0;
-      padding: 0 10px 0 0;
-    }
-    .cns-mobile-menu .mobile-menu li { margin: 0; }
-    .cns-mobile-menu .mobile-menu li a {
-      display: block;
-      font-family: 'Poppins', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1;
-      color: #080808;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 19px 0 16px;
-      border-bottom: 1px solid #f0f0f0;
-      transition: color .2s ease;
-    }
-    .cns-mobile-menu .mobile-menu li a:hover { color: #649fd6; }
-    .cns-mobile-menu .social-links {
-      padding: 30px 15px 25px;
-      text-align: center;
-    }
-    .cns-mobile-menu .social-links a {
-      color: #080808;
-      margin: 0 7px;
-      font-size: 17px;
-      text-decoration: none;
-      transition: color .2s ease;
-    }
-    .cns-mobile-menu .social-links a:hover { color: #649fd6; }
-
-    /* --- Category eyebrow above the headline (theme .single_category_title) */
-    .story-container .single-category-title {
-      display: inline-block;
-      font-family: 'Poppins', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      line-height: 1;
-      color: #990000;
-      text-decoration: none;
-      max-width: 720px;
-      margin: 2rem auto 0;
-      width: 100%;
-    }
-    .story-container .single-category-title:hover { text-decoration: underline; }
-    /* eyebrow present → drop the headline's own top margin so they stack */
-    .single-category-title + .hed { margin-top: 0.4rem; }
-
-    /* --- Article tags footer (theme .article-tags) -------------------- */
-    .article-tags {
-      max-width: 720px;
-      margin: 2.5rem auto 35px;
-      padding: 0 1rem;
-      font-family: 'Poppins', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 2.4;
-    }
-    .article-tags .tags-title {
-      display: inline-block;
-      position: relative;
-      background: #000;
-      color: #fff;
-      height: 24px;
-      line-height: 24px;
-      padding: 0 5px 0 7px;
-      margin-right: 28px;
-      text-transform: uppercase;
-      vertical-align: middle;
-    }
-    .article-tags .tags-title:after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 100%;
-      width: 0;
-      height: 24px;
-      border-top: 12px solid transparent;
-      border-bottom: 12px solid transparent;
-      border-left: 10px solid #000;
-    }
-    .article-tags .tag-link {
-      display: inline-block;
-      border: 1px solid rgba(8,8,8,.4);
-      color: #080808;
-      font-size: 10px;
-      padding: 8px 10px 7px;
-      text-transform: uppercase;
-      margin: 0 3px 3px 0;
-      line-height: 1;
-      text-decoration: none;
-      transition: all .2s ease;
-    }
-    .article-tags .tag-link:hover {
-      background: #080808;
-      border-color: #080808;
-      color: #fff;
-    }
-
-    /* --- Author box (theme .post-author) ------------------------------ */
-    .post-author {
-      max-width: 720px;
-      margin: 30px auto;
-      padding: 30px 1rem 0;
-      border-top: 1px dotted #a8a8a8;
-      overflow: hidden;
-    }
-    .post-author .avatar-link {
-      float: left;
-      margin-right: 30px;
-    }
-    .post-author .avatar {
-      display: block;
-      width: 86px;
-      height: 86px;
-      object-fit: cover;
-      border-radius: 2px;
-    }
-    .post-author .author-content { padding-left: 116px; }
-    .post-author .author-content h5 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0 0 10px;
-    }
-    .post-author .author-content h5 a {
-      color: #080808;
-      text-decoration: none;
-    }
-    .post-author .author-content h5 a:hover { color: #649fd6; }
-    .post-author .author-content p {
-      font-family: 'Source Serif 4', Georgia, serif;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #5a5a5a;
-      margin: 0;
-    }
-    @media (max-width: 540px) {
-      .post-author .avatar-link { margin-right: 18px; }
-      .post-author .avatar { width: 64px; height: 64px; }
-      .post-author .author-content { padding-left: 82px; }
-    }
-
-    /* --- Related news (theme .related-posts) -------------------------- */
-    .related-posts {
-      max-width: 1200px;
-      margin: 3.5rem auto 0;
-      padding: 0 1rem;
-    }
-    .related-posts .related-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: #080808;
-      margin: 0 0 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #eaeaea;
-    }
-    .related-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-    }
-    .related-grid .post-gallery { margin: 0 0 15px; display: block; }
-    .related-grid .post-gallery img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      display: block;
-    }
-    .related-grid .post-category a {
-      font-family: 'Poppins', sans-serif;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #649fd6;
-      text-decoration: none;
-    }
-    .related-grid .entry-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      line-height: 1.3;
-      margin: 8px 0 0;
-    }
-    .related-grid .entry-title a {
-      color: #080808;
-      text-decoration: none;
-    }
-    .related-grid .entry-title a:hover { color: #649fd6; }
-    @media (max-width: 760px) {
-      .related-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 460px) {
-      .related-grid { grid-template-columns: 1fr; }
-    }
-
-    /* --- Sub-footer (theme #subfooter.dark) --------------------------- */
-    .site-subfooter {
-      background: #080808;
-      text-align: center;
-      padding: 25px 1rem;
-      margin-top: 3.5rem;
-      border-top: 1px solid rgba(255,255,255,.15);
-    }
-    .site-subfooter .footer-menu {
-      list-style: none;
-      margin: 0 0 10px;
-      padding: 0;
-    }
-    .site-subfooter .footer-menu li {
-      display: inline-block;
-      margin: 4px 8px;
-    }
-    .site-subfooter .footer-menu li a {
-      font-family: 'Poppins', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.8);
-      text-decoration: none;
-      transition: color .2s ease;
-    }
-    .site-subfooter .footer-menu li a:hover { color: #fff; }
-    .site-subfooter .footer-menu li.footer-social a { font-size: 14px; }
-    .site-subfooter p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255,255,255,.4);
-      margin: 0;
-      text-align: center;
-    }
-
-    /* --- Sticky sub-header (theme .subheader.fixed.dark) -------------- */
-    .cns-subheader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 30;
-      background: #080808;
-      border-bottom: 1px solid rgba(255,255,255,.1);
-      transform: translateY(-100%);
-      opacity: 1;
-      transition: transform .3s ease, opacity .35s ease;
-    }
-    .cns-subheader.is-stuck { transform: translateY(0); }
-    .cns-subheader.is-faded {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .cns-subheader-row {
-      position: relative;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    /* Desktop vs mobile variants of the sticky bar */
-    .cns-subheader-desktop {
-      display: flex;
-      flex: 1;
-      align-items: center;
-      justify-content: space-between;
-      min-width: 0;
-    }
-    .cns-subheader-mobile { display: none; }
-    .cns-subheader-logo {
-      display: flex;
-      align-items: center;
-      min-width: 0;
-    }
-    .cns-subheader-logo .logolink {
-      display: inline-block;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-    .cns-subheader-logo .logoimg {
-      max-height: 21px;
-      display: block;
-    }
-    .cns-subheader-logo .page-title {
-      position: relative;
-      display: inline-block;
-      font-family: 'Poppins', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      padding-left: 34px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 600px;
-    }
-    .cns-subheader-logo .page-title:before {
-      content: "";
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1px;
-      height: 16px;
-      background: rgba(255,255,255,.25);
-    }
-    .cns-share {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    .cns-share .social {
-      width: 38px;
-      height: 32px;
-      line-height: 32px;
-      text-align: center;
-      border-radius: 3px;
-      font-size: 13px;
-      margin-left: 7px;
-      color: #fff;
-      background: rgba(255,255,255,.2);
-      text-decoration: none;
-      transition: background .2s ease;
-    }
-    .cns-share .social.facebook:hover { background: #3b5998; }
-    .cns-share .social.x-twitter:hover { background: #00aced; }
-    .cns-share .social.linkedin:hover { background: #007bb6; }
-    .cns-progress {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -1px;
-      height: 2px;
-      background: #649fd6;
-      transform: scaleX(0);
-      transform-origin: 0 100%;
-      will-change: transform;
-    }
-    @media (max-width: 540px) {
-      .cns-subheader-logo .page-title {
-        padding-left: 26px;
-        font-size: 11px;
-        max-width: 56vw;
-      }
-      .cns-subheader-logo .page-title:before { left: 12px; }
-      .cns-share .social { width: 34px; font-size: 12px; }
-    }
-
-    /* --- Back-to-top (theme #scroll_totop) ---------------------------- */
-    #scroll_totop {
-      display: block;
-      width: 25px;
-      height: 25px;
-      line-height: 25px;
-      text-align: center;
-      border-radius: 2px;
-      background: rgba(0,0,0,.6);
-      color: #fff;
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 20;
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity .25s ease, visibility .25s ease;
-    }
-    #scroll_totop:hover { background: #649fd6; }
-    /* Shown only when scrolled down AND no full-bleed interactive section
-       is in view (set by JS). */
-    #scroll_totop.is-visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* --- Print: drop the chrome + non-printable interactives, keep the
-       narrative reading cleanly on paper. ------------------------------ */
-    @media print {
-      @page { margin: 1.8cm; }
-      .cns-nav,
-      .cns-subheader,
-      .cns-mobile-menu,
-      .cns-menu-backdrop,
-      #scroll_totop,
-      .cns-share,
-      .embed-slot,
-      .sbs-scrolly,
-      .related-posts,
-      .site-subfooter {
-        display: none !important;
-      }
-      html { scroll-behavior: auto; }
-      body { background: #fff; color: #000; }
-      .story-container,
-      .story-container .hed,
-      .story-container .subhead,
-      .story-container .byline,
-      .story-container .lead-image,
-      .story-container > p,
-      .story-section-head,
-      .article-tags,
-      .post-author {
-        max-width: 100% !important;
-      }
-      .story-container > p:not(.byline) a {
-        color: #000;
-        box-shadow: none;
-        border-bottom: 1px solid #000;
-      }
-      .story-container .lead-image figcaption {
-        position: static;
-        background: transparent;
-        color: #000;
-        padding: 0.35rem 0;
-      }
-    }
   </style>
 </head>
 
-<!-- ================================================================
-     DL NOTE 1- The style section above is primarily brought in from Adam Marton's template. It sets the font sizes/colors in accordance with the hierarchy template already established. It also takes care of media queries for responsive design. It all contains sbs root styles which will be covered in the next note (just as soon as claude explains it to me).
-     ================================================================ -->
 <body>
 
   <!-- ====================================================================
        CNS NAV BAR (matches the cns-html-template).
   ==================================================================== -->
-  <nav class="navbar navbar-dark bg-dark cns-nav">
-    <div class="cns-nav-inner">
-      <button type="button" class="cns-mobile-toggle" id="cnsMobileToggle" aria-label="Open menu" aria-controls="cns-mobile-menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div id="nav-logo">
       <a class="navbar-brand" href="https://cnsmaryland.org/">
         <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" id="logo" alt="Capital News Service Maryland">
       </a>
-      <ul class="cns-menu">
-        <li><a href="https://cnsmaryland.org/category/annapolis/">Annapolis</a></li>
-        <li><a href="https://cnsmaryland.org/category/washington/">D.C.</a></li>
-        <li><a href="https://cnsmaryland.org/category/cns-data-lab/">Data</a></li>
-        <li><a href="https://cnsmaryland.org/category/cns-tv/">Video</a></li>
-        <li><a href="https://cnsmaryland.org/the-howard-center-for-investigative-journalism/">Howard Center</a></li>
-        <li><a href="https://cnsmaryland.org/category/povich-sports/">Povich Center</a></li>
-        <li><a href="https://cnsmaryland.org/local-news-network/">Local</a></li>
-        <li class="cns-social"><a target="_blank" rel="noopener" href="https://www.facebook.com/MarylandCNS/" aria-label="CNS Maryland on Facebook"><i class="fa fa-facebook"></i></a></li>
-        <li class="cns-social"><a target="_blank" rel="noopener" href="http://x.com/CNSmd" aria-label="CNS Maryland on X"><i class="fa-brands fa-x-twitter"></i></a></li>
-        <li class="cns-social"><a target="_blank" rel="noopener" href="https://www.instagram.com/cnsmd/" aria-label="CNS Maryland on Instagram"><i class="fa fa-instagram"></i></a></li>
-      </ul>
-      <div class="cns-search">
-        <a href="#" class="cns-search-toggle" role="button" aria-label="Toggle search"></a>
-        <svg class="cns-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" aria-hidden="true">
-          <path d="M18.96,16.896l-4.973-4.926c1.02-1.255,1.633-2.846,1.633-4.578c0-4.035-3.312-7.317-7.385-7.317S0.849,3.358,0.849,7.393c0,4.033,3.313,7.316,7.386,7.316c1.66,0,3.188-0.552,4.422-1.471l4.998,4.95c0.181,0.179,0.416,0.268,0.652,0.268c0.235,0,0.472-0.089,0.652-0.268C19.32,17.832,19.32,17.253,18.96,16.896z M2.693,7.393c0-3.027,2.485-5.489,5.542-5.489c3.054,0,5.541,2.462,5.541,5.489c0,3.026-2.486,5.489-5.541,5.489C5.179,12.882,2.693,10.419,2.693,7.393z"/>
-        </svg>
-        <form method="get" class="cns-searchform" role="search" action="https://cnsmaryland.org/">
-          <input name="s" type="text" class="s" aria-label="Search cnsmaryland.org" placeholder="Search">
-          <input type="submit" value="Search">
-        </form>
-      </div>
     </div>
   </nav>
-
-  <!-- ====================================================================
-       MOBILE MENU — slide-in drawer + backdrop (matches CNS #mobile-menu).
-       Drawer overlays content (does NOT push it) so the scrollytelling's
-       sticky positioning stays intact.
-  ==================================================================== -->
-  <div class="cns-menu-backdrop" id="cnsMenuBackdrop"></div>
-  <nav id="cns-mobile-menu" class="cns-mobile-menu" aria-label="Site menu" aria-hidden="true">
-    <ul class="mobile-menu">
-      <li><a href="https://cnsmaryland.org/app-homepage/">Home</a></li>
-      <li><a href="https://cnsmaryland.org/category/annapolis/">Annapolis</a></li>
-      <li><a href="https://cnsmaryland.org/category/washington/">D.C.</a></li>
-      <li><a href="https://cnsmaryland.org/category/cns-data-lab/">Data</a></li>
-      <li><a href="https://cnsmaryland.org/category/cns-tv/">Video</a></li>
-      <li><a href="https://cnsmaryland.org/category/maryland/">Maryland</a></li>
-      <li><a href="https://cnsmaryland.org/the-howard-center-for-investigative-journalism/">Howard Center / Investigations</a></li>
-      <li><a href="https://cnsmaryland.org/category/povich-sports/">Povich Center / Sports</a></li>
-      <li><a href="https://cnsmaryland.org/local-news-network/">The Local News Network</a></li>
-      <li><a href="https://cnsmaryland.org/about-capital-news-service/">About CNS</a></li>
-    </ul>
-    <div class="social-links">
-      <a target="_blank" rel="noopener" href="https://www.facebook.com/MarylandCNS/" aria-label="CNS Maryland on Facebook"><i class="fa fa-facebook"></i></a>
-      <a target="_blank" rel="noopener" href="http://x.com/CNSmd" aria-label="CNS Maryland on X"><i class="fa-brands fa-x-twitter"></i></a>
-      <a target="_blank" rel="noopener" href="https://www.instagram.com/cnsmd/" aria-label="CNS Maryland on Instagram"><i class="fa fa-instagram"></i></a>
-    </div>
-  </nav>
-
-  <!-- ====================================================================
-       STICKY SUB-HEADER — bare-bones bar that slides in once the main nav
-       scrolls away (matches CNS .subheader.fixed). Fades out during the
-       scrollytelling so it never overlays the pinned SVG, fades back after.
-  ==================================================================== -->
-  <div class="cns-subheader" id="cnsSubheader" aria-hidden="true">
-    <div class="cns-subheader-row">
-
-      <!-- Mobile: hamburger | logo | search (matches .mobile-fixed-header) -->
-      <div class="cns-subheader-mobile">
-        <button type="button" class="cns-mobile-toggle" aria-label="Open menu" aria-controls="cns-mobile-menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <a href="https://cnsmaryland.org/" class="logolink">
-          <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" class="logoimg" alt="CNS Maryland">
-        </a>
-        <div class="cns-search">
-          <a href="#" class="cns-search-toggle" role="button" aria-label="Toggle search"></a>
-          <svg class="cns-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 19" aria-hidden="true">
-            <path d="M18.96,16.896l-4.973-4.926c1.02-1.255,1.633-2.846,1.633-4.578c0-4.035-3.312-7.317-7.385-7.317S0.849,3.358,0.849,7.393c0,4.033,3.313,7.316,7.386,7.316c1.66,0,3.188-0.552,4.422-1.471l4.998,4.95c0.181,0.179,0.416,0.268,0.652,0.268c0.235,0,0.472-0.089,0.652-0.268C19.32,17.832,19.32,17.253,18.96,16.896z M2.693,7.393c0-3.027,2.485-5.489,5.542-5.489c3.054,0,5.541,2.462,5.541,5.489c0,3.026-2.486,5.489-5.541,5.489C5.179,12.882,2.693,10.419,2.693,7.393z"/>
-          </svg>
-          <form method="get" class="cns-searchform" role="search" action="https://cnsmaryland.org/">
-            <input name="s" type="text" class="s" aria-label="Search cnsmaryland.org" placeholder="Search">
-            <input type="submit" value="Search">
-          </form>
-        </div>
-      </div>
-
-      <!-- Desktop: logo + article title | share buttons | progress bar -->
-      <div class="cns-subheader-desktop">
-        <div class="cns-subheader-logo">
-          <a href="https://cnsmaryland.org/" class="logolink">
-            <img src="https://cnsmaryland.org/wp-content/uploads/2016/08/site-header-logo.png" class="logoimg" alt="CNS Maryland">
-          </a>
-          <span class="page-title">Publicly Funded Candidates</span>
-        </div>
-        <div class="cns-share">
-          <a href="https://www.facebook.com/sharer.php?u=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html" class="facebook social" target="_blank" rel="noopener" aria-label="Share on Facebook"><i class="fa fab fa-facebook"></i></a>
-          <a href="https://x.com/intent/tweet?text=Publicly%20Funded%20Candidates&url=https%3A%2F%2Fcnsmaryland.org%2Finteractives%2Fspring2026%2Fpublic-funded-candidates%2Findex.html&via=CNSMd" class="x-twitter social" target="_blank" rel="noopener" aria-label="Share on X"><i class="fa fab fa-x-twitter"></i></a>
-          <a href="https://www.linkedin.com/cws/share?url=https://cnsmaryland.org/interactives/spring2026/public-funded-candidates/index.html" class="linkedin social" target="_blank" rel="noopener" aria-label="Share on LinkedIn"><i class="fa fab fa-linkedin"></i></a>
-        </div>
-      </div>
-
-      <span class="cns-progress" id="cnsProgress"></span>
-    </div>
-  </div>
 
 
   <!-- ====================================================================
@@ -1944,10 +1107,9 @@
        and scrollytelling components are dropped in via .embed-slot wrappers.
   ==================================================================== -->
   <div class="story-container">
-    <a href="https://cnsmaryland.org/category/maryland/" class="single-category-title" title="Maryland">Maryland</a>
     <p class="hed">Five most populous Maryland counties offer public financing in campaigns </p>
     <p class="subhead">Attempts to counter monied interests in Maryland elections make slow progress.</p>
-    <p class="byline">By <a href="https://cnsmaryland.org/author/dlanderm/" class="author url fn" rel="author" title="Posts by David Landerman">David Landerman</a>&nbsp;-&nbsp;<time class="byline-time" datetime="2026-05-18T08:00:00-04:00" itemprop="datePublished">May 18, 2026</time></p>
+    <p class="byline">By David Landerman</p>
 
     <figure class="lead-image">
       <img src="54535537893_a016b7d9d7_o.jpg" alt="">
@@ -1964,7 +1126,7 @@
   <!-- Flourish map drop-in. Same swap pattern as the chart embed below:
        replace the <div class="flourish-embed"> line (loader + noscript
        included) to point at a different visualization. -->
-  <div class="embed-slot flourish-map-fit no-backtotop">
+  <div class="embed-slot flourish-map-fit">
     <div class="flourish-embed flourish-map" data-src="visualisation/28778081"><script src="https://public.flourish.studio/resources/embed.js"></script><noscript><img src="https://public.flourish.studio/visualisation/28778081/thumbnail" width="100%" alt="Choropleth map of Maryland with every county shaded by population (toggleable to registered voters). The six jurisdictions that offer candidates the option to use public financing for campaigns — the five most populous counties and Baltimore City — are marked with a green dot and a bold outline." /></noscript></div>
   </div>
 
@@ -2023,14 +1185,7 @@
   <!-- ====================================================================
        INTERACTIVE WIDGET — slider + chart + equation + callouts.
   ==================================================================== -->
-  <!-- ================================================================
-       DL NOTE 3 some items have IDs in addition to classes, the IDs allow the js to target individual changing elements that differ in display when for instance the office is changed on the selector for the main infographic, or the slider value is changed.
-       ================================================================ -->
-  <div class="embed-slot no-backtotop">
-    <!-- ================================================================
-         DL Note 25
-         This is the accessibility section, using aria to make sure screen readers can intelligbly understand the infographic
-         ================================================================ -->
+  <div class="embed-slot">
     <div class="sbs-root" role="region" aria-label="Interactive calculator showing how Montgomery County's small-donor matching program multiplies a contribution. Pick a public office (County Executive, At-Large, or District), then drag the slider to set a donation between $1 and $500 and see the county's tiered match update in the equation below.">
       <div class="after-scrolly">
 
@@ -2108,10 +1263,6 @@
 
         <div class="as-grid">
           <div class="bar-chart-wrap">
-          <!-- ================================================================
-              DL NOTE 16 this is the stuff that always stays on the chart, the axes, the labels, its svg directly in the code. God help me if I tried to do this all by hand. This was actually all taken from an exported Adobe XD file, where I laid everything out exactly as I wanted it (one version for mobile one version for desktop) with groups that progressively reveal. Then after I realized I was making too much of a slide show I had claude turn it into an interactive. Honestly, the process of laying it all out in adobe xd first, (and not having it guess what the mobile version should look like) was labor intensive but a totally awesome way to let claude help you with the coding part of design but still do the manual designing by eye. Getting it to behave how you want is another issue but hey its a process anyways.
-              The charttiers g is where the scripts will render the dynamic graphics
-               ================================================================ -->
             <svg viewBox="0 0 740 485" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
               <text x="420" y="118" text-anchor="middle" font-size="14" fill="#434343"
                 font-family="'Source Serif 4', Georgia, serif" font-weight="400">Individual&apos;s total donation</text>
@@ -2263,7 +1414,7 @@
   <!-- ====================================================================
        SCROLLYTELLING — $100 vs 10x$10 nine-step reveal.
   ==================================================================== -->
-  <div class="sbs-scrolly no-backtotop">
+  <div class="sbs-scrolly">
     <div class="scrolly-track" id="sbsScrollyTrack">
       <div class="scrolly-stage">
         <div class="progress-bar" id="sbsProgressBar"></div>
@@ -2643,90 +1794,11 @@
 
 
   <!-- ====================================================================
-       ARTICLE TAGS (matches CNS .article-tags entry-footer).
+       FOOTER.
   ==================================================================== -->
-  <footer class="article-tags">
-    <span class="tags-title">Tags</span>
-    <a href="https://cnsmaryland.org/tag/campaign-finance/" class="tag-link">Campaign Finance</a>
-    <a href="https://cnsmaryland.org/tag/public-financing/" class="tag-link">Public Financing</a>
-    <a href="https://cnsmaryland.org/tag/montgomery-county/" class="tag-link">Montgomery County</a>
-    <a href="https://cnsmaryland.org/tag/elections/" class="tag-link">Elections</a>
-    <a href="https://cnsmaryland.org/tag/maryland/" class="tag-link">Maryland</a>
-  </footer>
-
-
-  <!-- ====================================================================
-       AUTHOR (matches CNS .post-author).
-  ==================================================================== -->
-  <div class="post-author">
-    <div class="avatar-link">
-      <img class="avatar" src="author-david-landerman.jpeg" alt="David Landerman" width="86" height="86" loading="lazy">
-    </div>
-    <div class="author-content">
-      <h5><a href="https://cnsmaryland.org/author/dlanderm/">David Landerman</a></h5>
-      <p>David Landerman is a fellow at the Howard Center for Investigative Journalism and a graduate student at the Philip Merrill College of Journalism.</p>
-    </div>
+  <div class="footer">
+    <p>Copyright 2026 Capital News Service</p>
   </div>
-
-
-  <!-- ====================================================================
-       RELATED NEWS (matches CNS .related-posts).
-  ==================================================================== -->
-  <aside class="related-posts">
-    <h4 class="related-title">Related News</h4>
-    <div class="related-grid">
-      <div class="post">
-        <figure class="post-gallery">
-          <a href="https://cnsmaryland.org/2026/05/18/the-price-of-access/" rel="bookmark" title="The Price of Access">
-            <img src="https://cnsmaryland.org/wp-content/uploads/2026/05/lewnes_2.jpg" alt="" loading="lazy">
-          </a>
-        </figure>
-        <div class="post-category"><a href="https://cnsmaryland.org/category/annapolis/" title="Annapolis">Annapolis</a></div>
-        <h6 class="entry-title"><a href="https://cnsmaryland.org/2026/05/18/the-price-of-access/" title="The Price of Access">The Price of Access</a></h6>
-      </div>
-      <div class="post">
-        <figure class="post-gallery">
-          <a href="https://cnsmaryland.org/2026/05/08/bills-proposed-by-maryland-democrats-are-72-more-likely-to-pass-through-both-chambers/" rel="bookmark" title="Bills proposed by Maryland Democrats are 72% more likely to pass through both chambers">
-            <img src="https://cnsmaryland.org/wp-content/uploads/2026/05/graphic-thumbnail-640x450.png" alt="" loading="lazy">
-          </a>
-        </figure>
-        <div class="post-category"><a href="https://cnsmaryland.org/category/cns-data-lab/" title="Data Stories">Data Stories</a></div>
-        <h6 class="entry-title"><a href="https://cnsmaryland.org/2026/05/08/bills-proposed-by-maryland-democrats-are-72-more-likely-to-pass-through-both-chambers/" title="Bills proposed by Maryland Democrats are 72% more likely to pass through both chambers">Bills proposed by Maryland Democrats are 72% more likely to pass through both chambers</a></h6>
-      </div>
-      <div class="post">
-        <figure class="post-gallery">
-          <a href="https://cnsmaryland.org/2026/05/06/its-not-neat-the-significance-of-marylands-complex-history/" rel="bookmark" title="‘It’s not neat’: The significance of Maryland’s complex history">
-            <img src="https://cnsmaryland.org/wp-content/uploads/2026/05/statehouse-768x512.jpg" alt="" loading="lazy">
-          </a>
-        </figure>
-        <div class="post-category"><a href="https://cnsmaryland.org/category/maryland/" title="Maryland">Maryland</a></div>
-        <h6 class="entry-title"><a href="https://cnsmaryland.org/2026/05/06/its-not-neat-the-significance-of-marylands-complex-history/" title="‘It’s not neat’: The significance of Maryland’s complex history">‘It’s not neat’: The significance of Maryland’s complex history</a></h6>
-      </div>
-    </div>
-  </aside>
-
-
-  <!-- ====================================================================
-       SUB-FOOTER (matches CNS #subfooter.dark).
-  ==================================================================== -->
-  <footer class="site-subfooter">
-    <ul class="footer-menu">
-      <li><a href="https://cnsmaryland.org/about-capital-news-service/">About CNS</a></li>
-      <li><a href="https://merrill.umd.edu/">Merrill College</a></li>
-      <li><a href="https://cnsmaryland.org/capital-news-service-wire/">Capital News Service Wire</a></li>
-      <li class="footer-social"><a target="_blank" rel="noopener" href="https://www.facebook.com/MarylandCNS/" aria-label="CNS Maryland on Facebook"><i class="fa fa-facebook"></i></a></li>
-      <li class="footer-social"><a target="_blank" rel="noopener" href="http://x.com/CNSmd" aria-label="CNS Maryland on X"><i class="fa-brands fa-x-twitter"></i></a></li>
-      <li class="footer-social"><a target="_blank" rel="noopener" href="https://www.youtube.com/user/CNSMaryland" aria-label="CNS Maryland on YouTube"><i class="fa fa-youtube"></i></a></li>
-      <li class="footer-social"><a target="_blank" rel="noopener" href="https://www.instagram.com/cnsmd/" aria-label="CNS Maryland on Instagram"><i class="fa fa-instagram"></i></a></li>
-      <li class="footer-social"><a target="_blank" rel="noopener" href="http://snapchat.com/add/cnsmaryland" aria-label="CNS Maryland on Snapchat"><i class="fa fa-snapchat-ghost"></i></a></li>
-    </ul>
-    <p>Copyright 2026. All RIGHTS RESERVED.</p>
-  </footer>
-
-  <!-- Back-to-top (matches CNS #scroll_totop). Hidden by JS while the
-       Flourish map, the interactive calculator and the scrollytelling
-       are in view, since those run full-bleed with their own layout. -->
-  <a id="scroll_totop" role="button" aria-label="Back to top"><i class="fa fa-angle-up"></i></a>
 
 
   <!-- ====================================================================
@@ -2735,16 +1807,9 @@
        run any content filters).
   ==================================================================== -->
   <script>
-    /* ================================================================
-       DL Note 4, each script has a function wrap around it so the variables inside each script dont clash with things outside the function, the variables are temporary, what makes them permanent on the page is their writing to elements by ID with stuff like getELementByID
-       ================================================================ */
     (function () {
       'use strict';
 
-      /* ================================================================
-         DL Note 5:
-         Hellooooo Json data. This code controls the things/variables on the page that change with each selection of an office. When you select the County Executive, the office_data switches to 'executive' and label in the text body changes to montgomery county executive, the multipliers in the tiers of the equation become t1 t2 and t3 as set forth in this object, and so on and so forth.
-         ================================================================ */
       const OFFICE_DATA = {
         'executive': {
           label: 'Montgomery County Executive',
@@ -2769,14 +1834,6 @@
         },
       };
 
-      /* ================================================================
-         DL Note 6
-         current office is given a default, but it is allowed to change with the let.
-         donation input is what goes in the donation input box
-         officebuttons brings in all the buttons as a list
-         input focused means the slider doesnt overwrite the input number
-         overmax warning is a feature I put in where the user puts in a text value over the 500 maximum
-         ================================================================ */
       let currentOffice = 'executive';
       const slider = document.getElementById('donationSlider');
       const donationInput = document.getElementById('donationInput');
@@ -2786,12 +1843,6 @@
       // slider→input mirror so we don't clobber what they're typing.
       let inputFocused = false;
 
-      /* ================================================================
-         DL Note 7 How offices change.
-         1. the button <button type="button" data-office="at-large">At-Large</button> declares a data-office
-         2. currentOffice=btn.getAttribute('data-office'); figures out which button is pushed, and for that button it takes its data-office and passes it through to currentOffice
-         3. Then later the currentOffice searches through the OFFICE_DATA (confusingly named jso) for the key thats the same name as the currentOffice selection by const office = OFFICE_DATA[currentOffice];
-         ================================================================ */
       officeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
           currentOffice = btn.getAttribute('data-office');
@@ -2799,10 +1850,6 @@
           renderAfterScrolly();
         });
       });
-      /* ================================================================
-        DL NOTE 9
-        The following three lines are an example of an event happening on a page, an input that the program is listening for, when it detects an input, in this case the slider changing location, it knows to re-render the page with new calculations/visuals, thats the renderafterscrolly function
-         ================================================================ */
       // Slider drag: any movement hides the over-max warning + re-renders.
       slider.addEventListener('input', () => {
         overMaxWarning.classList.remove('is-active');
@@ -2811,10 +1858,6 @@
 
       // Donation input — accepts arbitrary typing, sanitizes + commits
       // on Enter or blur.
-      /* ================================================================
-         DL NOTE 10
-         This is what controls the input box. If the user either hits enter or clicks out of the box after typing something the program renderst the remaining number. Focus means its in like input mode, no rendering until its out of it.
-         ================================================================ */
       donationInput.addEventListener('focus', () => {
         inputFocused = true;
         donationInput.select();
@@ -2830,10 +1873,6 @@
         }
       });
 
-      /* ================================================================
-         DL Note 11
-         This is what sanitizes the input, no random characters, rounding when necessary, warning when over the maximum donation per candidate
-         ================================================================ */
       function commitDonationInput() {
         const raw = (donationInput.value || '').replace(/[^0-9.\-]/g, '');
         let n = parseFloat(raw);
@@ -2858,10 +1897,6 @@
         donationInput.style.width = (len + 1.25) + 'ch';
       }
 
-      /* ================================================================
-        DL NOTE 12
-        This is the math of the "running equation." This math basically takes whatever the donation is, however it was input, and computes all the numbers in the equation and graphic below the slider. This is where the user gets to see how any donation they can think of will be matched. In the other part of the code the text/graphics are color coded so they know green is the donation, blue is the county matching funds, and purple is what the candidate gets. Because this happens on a tiered system and we're all scarred for life by insurance company deductible calculations, this code makes it easy. When donations activate tier 1, 2 3, etc they are shown.
-         ================================================================ */
       function tierBreakdown(donation, office) {
         const d = OFFICE_DATA[office];
         const t1Donor = Math.min(donation, 50);
@@ -2883,9 +1918,6 @@
         };
       }
 
-      /* ================================================================
-        DL Note 13, at several places in the infographic the code needs to talk about numbers in terms of words that change between offices, this is the code that does that. It also makes it so the equation table can look orderly. You see the widths of the numbers are different this makes all of them into little boxes that can be properly organized so you get alignment of rows/columns and things can be styled easier.
-         ================================================================ */
       function fmt$(n) { return '$' + n.toLocaleString(); }
       // Poppins ships no tabular figures, so font-variant-numeric is a
       // no-op and proportional digits make equal-length values render at
@@ -2906,10 +1938,6 @@
         sliderProgressEl.style.width = `calc(${frac} * (100% - 14px))`;
       }
 
-      /* ================================================================
-         DL NOTE 8
-         renderafterscrolly is the thing that basically recalculates the page when a user input changes something
-         ================================================================ */
       function renderAfterScrolly() {
         const office = OFFICE_DATA[currentOffice];
         const donation = parseInt(slider.value, 10) || 0;
@@ -2932,10 +1960,6 @@
         document.getElementById('bigDonationValue').textContent = fmt$(donation);
         document.getElementById('bigCandidateValue').textContent = fmt$(tb.totalTotal);
 
-        /* ================================================================
-           DL NOTE 14
-           This code basically prepares the show/hide the rows of the running equation based on which tier the donation is in. If a donation doesn't get to tier 3 why show it to the user as empty. The actual show/hide happens later with css in DL NOTE 15
-           ================================================================ */
         function setRow(rowId) {
           const row = document.getElementById(rowId);
           if (!row) return;
@@ -2971,10 +1995,6 @@
         }
         setRow('eqTier1'); setRow('eqTier2'); setRow('eqTier3'); setRow('eqTier4'); setRow('eqTotal');
 
-        /* ================================================================
-          DL Note 17
-          These are in a sense magic numbers, determined by whatever relative positioning I brought in from adobe xd, and adjusted during my debugging/design notes
-           ================================================================ */
         const tiersG = document.getElementById('chartTiers');
         tiersG.innerHTML = '';
 
@@ -2984,10 +2004,6 @@
         const SEG_HEIGHT = 30;
         const HEIGHT_PER_MULT = 40;
 
-        /* ================================================================
-          DL Note 18
-          Ya this is some js that I really am having a hard time understanding. It looks like its creating the elements of the chart. Apparently this is how shapes get made and its the thing that makes the rest of the shape making process more streamlined? This has got to be some computer science level coding stuff.
-           ================================================================ */
         function svgEl(tag, attrs) {
           const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
           Object.keys(attrs).forEach(k => el.setAttribute(k, attrs[k]));
@@ -3014,10 +2030,6 @@
           { donor: tb.t4.donor, match: 0, mult: 0, dollarStart: 150, dollarEnd: 500, isNotMatched: true },
         ];
 
-        /* ================================================================
-           DL NOTE 19
-           This is the actual shapes getting made, with if statements because depending on the level of the donation not every box is rendered
-           ================================================================ */
         tierConfigs.forEach(tier => {
           if (tier.donor <= 0) return;
           const segXStart = X_START + tier.dollarStart * X_DOLLAR;
@@ -3103,10 +2115,6 @@
     (function () {
       'use strict';
 
-      /* ================================================================
-        DL Note 21
-        These are the scrollytelling scenes, I made them in adobe xd. Basically I made the entire graphic, then I grouped the things I wanted to reveal sequentially. It was like a nesting structure. Box 1 and its contents reveal first, then I group that scene with the next stuff thats revealing for 1B, and so on and so forth. All of that gets coded into the svg that is exported from Adobe xd and fed into claude so it knows exactly what to reveal and when. NOW THE PROBLEM WITH THIS, can be you limit yourself to pretty rudimentary scrollytelling behavior. For instance I have no idea how to make something ascend or descend out of existence, just fade out. I did all the transitions via claude.
-         ================================================================ */
       const SCENE_IDS = ['Scene_1A', 'Scene_1B', 'Scene_1C', 'Scene_1D', 'Scene_1E', 'Scene_1F', 'Scene_1G', 'Scene_1H', 'Scene_1I'];
       const NUM_STEPS = SCENE_IDS.length;
 
@@ -3141,10 +2149,6 @@
         let completed = false;
         const stage = root.querySelector('.scrolly-stage');
 
-        /* ================================================================
-           DL NOTE 22
-           This is the heart of the scrollytelling behavior, it takes where you are and turns it into the location for the scroll and tells the system what to render
-           ================================================================ */
         function update() {
           if (completed) return;
           const trackRect = track.getBoundingClientRect();
@@ -3185,10 +2189,6 @@
           if (progressBar) progressBar.style.display = 'none';
         }
 
-        /* ================================================================
-           DL NOTE 23
-           This apparently makes it so it only rerenders on fixed intervals of the scroll, so each tiny increment doesnt cause everything to need to be recalculated.
-           ================================================================ */
         let ticking = false;
         function onScroll() {
           if (ticking || completed) return;
@@ -3264,181 +2264,6 @@
       setTimeout(fit, 500);
       setTimeout(fit, 1500);
       setTimeout(fit, 3000);
-    })();
-  </script>
-
-
-  <!-- ====================================================================
-       SITE CHROME — nav search toggle + back-to-top behavior.
-  ==================================================================== -->
-  <script>
-    (function () {
-      'use strict';
-
-      /* ================================================================
-         DL Note 24
-         This is what searches cns, works into the rest of the website
-         ================================================================ */
-      /* Nav search: each .cns-search (desktop nav + mobile sticky bar)
-         toggles its own slide-in form. Opening one closes the others;
-         an outside click closes all. */
-      var searches = document.querySelectorAll('.cns-search');
-      if (searches.length) {
-        searches.forEach(function (search) {
-          var openClose = function (e) {
-            e.preventDefault();
-            var willOpen = !search.classList.contains('active');
-            searches.forEach(function (s) { s.classList.remove('active'); });
-            if (willOpen) {
-              search.classList.add('active');
-              var input = search.querySelector('.s');
-              if (input) input.focus();
-            }
-          };
-          var toggle = search.querySelector('.cns-search-toggle');
-          var icon = search.querySelector('.cns-search-icon');
-          if (toggle) toggle.addEventListener('click', openClose);
-          if (icon) icon.addEventListener('click', openClose);
-        });
-        document.addEventListener('click', function (e) {
-          if (!e.target.closest('.cns-search')) {
-            searches.forEach(function (s) { s.classList.remove('active'); });
-          }
-        });
-      }
-
-      /* Back-to-top: appears after the first screenful, but is suppressed
-         whenever a .no-backtotop section (Flourish map, interactive
-         calculator, scrollytelling) overlaps the viewport — those run
-         full-bleed with their own layout, so the floating button would
-         collide with them. It reappears once you scroll past them. */
-      var btn = document.getElementById('scroll_totop');
-      if (btn) {
-        btn.addEventListener('click', function () {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        var blockers = Array.prototype.slice.call(
-          document.querySelectorAll('.no-backtotop')
-        );
-
-        var refresh = function () {
-          var vh = window.innerHeight;
-          var scrolledEnough = window.scrollY > vh * 0.6;
-          // Hidden while any full-bleed section overlaps the viewport at
-          // all: it disappears the moment such a section reaches the
-          // screen and returns once it has fully scrolled past.
-          var blocked = blockers.some(function (el) {
-            var r = el.getBoundingClientRect();
-            return r.top < vh && r.bottom > 0;
-          });
-          btn.classList.toggle('is-visible', scrolledEnough && !blocked);
-        };
-
-        window.addEventListener('scroll', refresh, { passive: true });
-        window.addEventListener('resize', refresh);
-        refresh();
-      }
-
-      /* Sticky sub-header: slides in once the main nav has scrolled out
-         of view (it "replaces" the full nav), carries a reading-progress
-         bar, and fades out while the scrollytelling owns the viewport so
-         it never overlays the pinned SVG — fading back in afterward. */
-      var sub = document.getElementById('cnsSubheader');
-      if (sub) {
-        var mainNav = document.querySelector('.cns-nav');
-        var progress = document.getElementById('cnsProgress');
-        var scrolly = document.querySelector('.sbs-scrolly');
-
-        var syncSub = function () {
-          var pastNav = mainNav
-            ? mainNav.getBoundingClientRect().bottom <= 0
-            : window.scrollY > 240;
-          sub.classList.toggle('is-stuck', pastNav);
-          sub.setAttribute('aria-hidden', pastNav ? 'false' : 'true');
-
-          if (scrolly) {
-            var r = scrolly.getBoundingClientRect();
-            var overlaps = r.top < window.innerHeight && r.bottom > 0;
-            sub.classList.toggle('is-faded', overlaps);
-          }
-
-          if (progress) {
-            var max = document.documentElement.scrollHeight - window.innerHeight;
-            var p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-            progress.style.transform = 'scaleX(' + p + ')';
-          }
-        };
-
-        window.addEventListener('scroll', syncSub, { passive: true });
-        window.addEventListener('resize', syncSub);
-        syncSub();
-      }
-
-      /* Mobile menu: hamburger opens a slide-in drawer with a dark
-         backdrop. Closes on backdrop click, link tap, Escape, or when
-         the viewport grows back to desktop width. */
-      var mToggles = document.querySelectorAll('.cns-mobile-toggle');
-      var mMenu = document.getElementById('cns-mobile-menu');
-      var mBackdrop = document.getElementById('cnsMenuBackdrop');
-      if (mToggles.length && mMenu) {
-        var setMenu = function (open) {
-          document.body.classList.toggle('cns-menu-open', open);
-          mToggles.forEach(function (t) {
-            t.setAttribute('aria-expanded', open ? 'true' : 'false');
-            t.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-          });
-          mMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
-        };
-        mToggles.forEach(function (t) {
-          t.addEventListener('click', function () {
-            setMenu(!document.body.classList.contains('cns-menu-open'));
-          });
-        });
-        if (mBackdrop) mBackdrop.addEventListener('click', function () { setMenu(false); });
-        mMenu.addEventListener('click', function (e) {
-          if (e.target.closest('a')) setMenu(false);
-        });
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape') setMenu(false);
-        });
-        window.addEventListener('resize', function () {
-          if (window.innerWidth > 1024) setMenu(false);
-        });
-      }
-
-      /* Byline relative time: recompute "X ago" on each load from the
-         <time datetime> attribute, mirroring WordPress human_time_diff()
-         on a static page. Edit the datetime attribute to the real publish
-         moment; the displayed text follows automatically. */
-      var bt = document.querySelector('.byline-time');
-      if (bt) {
-        var dtAttr = bt.getAttribute('datetime');
-        var then = dtAttr ? new Date(dtAttr) : null;
-        if (then && !isNaN(then.getTime())) {
-          var diff = Math.floor((Date.now() - then.getTime()) / 1000);
-          var fullDate = then.toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-          });
-          var rel;
-          if (diff < 60) {
-            rel = 'just now';
-          } else if (diff < 3600) {            // under 1 hour -> minutes
-            var m = Math.floor(diff / 60);
-            rel = m + (m > 1 ? ' minutes ago' : ' minute ago');
-          } else if (diff < 86400) {           // under 24 hours -> hours
-            var h = Math.floor(diff / 3600);
-            rel = h + (h > 1 ? ' hours ago' : ' hour ago');
-          } else if (diff < 2592000) {         // 24 hours to 30 days -> days
-            var d = Math.floor(diff / 86400);
-            rel = d + (d > 1 ? ' days ago' : ' day ago');
-          } else {                             // 30+ days -> publish date
-            rel = fullDate;
-          }
-          bt.textContent = rel;
-          bt.title = fullDate;
-        }
-      }
     })();
   </script>
 

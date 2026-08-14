@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>County selector panel — draft</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Poppins:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ====================================================================
+       COUNTY SELECTOR — scoped under .cps-root so it can be dropped into
+       the story as an .embed-slot component without colliding with the
+       page. Selector chrome is a 1:1 match of the infographic's
+       .office-selector (CNS red active state, Poppins, uppercase).
+    ==================================================================== */
+    .cps-root,
+    .cps-root *,
+    .cps-root *::before,
+    .cps-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .cps-root {
+      font-family: 'Source Serif 4', Georgia, serif;
+      color: #2a2a2a;
+      background: #fafafa;
+      line-height: 1.5;
+      font-size: 16px;
+      text-align: left;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .cps-root .cps-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 2rem;
+    }
+
+    .cps-root .cps-heading {
+      font: 600 28px/1.1 'Poppins', sans-serif;
+      color: #000;
+      text-align: center;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.25rem;
+    }
+
+    /* --- Selector: matches .sbs-root .office-selector ----------------- */
+    .cps-root .cps-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-top: 2px solid #1a1a1a;
+      border-bottom: 1px solid #c9c2b3;
+      margin: 0 auto 1.5rem;
+      background: transparent;
+      font: 700 14px/1 'Poppins', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .cps-root .cps-selector button {
+      flex: 1 1 auto;
+      min-width: 33.333%;
+      padding: 13px 8px;
+      border: 0;
+      border-right: 1px solid #c9c2b3;
+      border-bottom: 1px solid #c9c2b3;
+      background: transparent;
+      color: #4a4a4a;
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+      line-height: 1.2;
+      text-align: center;
+    }
+    .cps-root .cps-selector button:hover {
+      color: #1a1a1a;
+      background: rgba(26, 26, 26, 0.04);
+    }
+    .cps-root .cps-selector button.active {
+      background: #990000;
+      color: #fff;
+    }
+    @media (min-width: 700px) {
+      .cps-root .cps-selector button { min-width: 0; border-bottom: 0; }
+    }
+
+    /* --- County detail (mirrors the Flourish popup design) ------------ */
+    .cps-root .cps-county-name {
+      font: 700 1.35rem/1.15 'Poppins', sans-serif;
+      color: #2c2c2c;
+      letter-spacing: -0.3px;
+      margin-bottom: 14px;
+    }
+    .cps-root .cps-noprogram {
+      margin-bottom: 14px;
+      padding: 9px 12px;
+      background: #F8D7D7;
+      border-left: 3px solid #C53030;
+      border-radius: 0 6px 6px 0;
+      font: 600 0.8rem/1.4 'Poppins', sans-serif;
+      color: #991B1B;
+    }
+    .cps-root .cps-status {
+      margin: 16px 0;
+      padding: 12px 0;
+      border-top: 2px solid #2c2c2c;
+      border-bottom: 2px solid #2c2c2c;
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      color: #555;
+    }
+    .cps-root .cps-status strong {
+      color: #000;
+      font-style: normal;
+      font-weight: 800;
+    }
+    .cps-root .cps-card {
+      margin-bottom: 12px;
+      padding: 11px 13px;
+      border-radius: 0 6px 6px 0;
+    }
+    .cps-root .cps-card.prev { background: #D1E1EF; border-left: 3px solid #1979B9; }
+    .cps-root .cps-card.curr { background: #D2E4D3; border-left: 3px solid #2C8533; }
+    .cps-root .cps-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 9px;
+    }
+    .cps-root .cps-eyebrow {
+      font: 700 0.6rem/1 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+    }
+    .cps-root .cps-card.prev .cps-eyebrow,
+    .cps-root .cps-card.prev .cps-year { color: #1979B9; }
+    .cps-root .cps-card.curr .cps-eyebrow { color: #2C8533; }
+    .cps-root .cps-year {
+      font: 700 0.72rem/1 'Poppins', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .cps-root .cps-statrow { display: flex; }
+    .cps-root .cps-stat { flex: 1; }
+    .cps-root .cps-stat + .cps-stat { padding-left: 12px; }
+    .cps-root .cps-stat.has-rule { padding-right: 12px; }
+    .cps-root .cps-divider { width: 1px; background: rgba(25, 121, 185, 0.35); }
+    .cps-root .cps-big {
+      font: 700 1.45rem/1 'Poppins', sans-serif;
+      color: #2c2c2c;
+      font-variant-numeric: tabular-nums;
+    }
+    .cps-root .cps-sub {
+      font-size: 0.68rem;
+      color: #666;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+    .cps-root .cps-curr-inline { display: flex; align-items: baseline; gap: 8px; }
+    .cps-root .cps-curr-inline .cps-sub { margin-top: 0; }
+    .cps-root .cps-hr { height: 1px; background: #e2e8f0; margin-bottom: 12px; }
+    .cps-root .cps-pop-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .cps-root .cps-pop-num {
+      font: 700 1.3rem/0.95 'Poppins', sans-serif;
+      color: #2c2c2c;
+      letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .cps-root .cps-pop-label {
+      font: 600 0.6rem/1.3 'Poppins', sans-serif;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      padding-bottom: 2px;
+    }
+
+    /* --- "Others" sortable table ------------------------------------- */
+    .cps-root .cps-others-note {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 12px;
+    }
+    .cps-root table.cps-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+    .cps-root .cps-table th {
+      font: 700 0.62rem/1 'Poppins', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4a4a4a;
+      text-align: right;
+      padding: 10px 10px;
+      border-bottom: 2px solid #1a1a1a;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .cps-root .cps-table th:first-child { text-align: left; }
+    .cps-root .cps-table th .cps-arrow { opacity: 0.35; margin-left: 5px; font-size: 0.7em; }
+    .cps-root .cps-table th[aria-sort="ascending"] .cps-arrow,
+    .cps-root .cps-table th[aria-sort="descending"] .cps-arrow { opacity: 1; color: #990000; }
+    .cps-root .cps-table td {
+      padding: 9px 10px;
+      text-align: right;
+      font: 400 0.95rem/1.2 'Source Serif 4', Georgia, serif;
+      border-bottom: 1px solid #e6e2d8;
+    }
+    .cps-root .cps-table td:first-child {
+      text-align: left;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #2c2c2c;
+    }
+    .cps-root .cps-table tr:hover td { background: rgba(153, 0, 0, 0.04); }
+
+    .cps-root .cps-todo {
+      margin-top: 1.25rem;
+      padding: 10px 12px;
+      background: #fff8e1;
+      border: 1px dashed #c9a227;
+      border-radius: 4px;
+      font: 600 0.72rem/1.5 'Poppins', sans-serif;
+      color: #7a5b00;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cps-root">
+    <div class="cps-inner">
+
+      <!-- Edit this label to whatever the editor wants -->
+      <h2 class="cps-heading">Public financing across Maryland</h2>
+
+      <div class="cps-selector" id="cpsSelector" role="tablist" aria-label="Jurisdiction"></div>
+
+      <div id="cpsView" aria-live="polite"></div>
+
+      <p class="cps-todo">
+        DRAFT — every number below comes from the JS <code>DATA</code> block at the
+        bottom of this file. Names are a scaffold to verify against, and all
+        numeric / status fields are <code>null</code> placeholders. Paste the real
+        values straight from the same Flourish dataset that feeds the map
+        (column names are kept identical to the popup tokens). Nothing here is
+        invented.
+      </p>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ================================================================
+         DATA — FILL FROM THE FLOURISH DATASET (same one feeding the map).
+         Keys mirror the popup's {{tokens}} 1:1 so you can copy values
+         directly. Numbers stay null until you populate them; the UI
+         renders "—" for any null so gaps are obvious. County NAMES are a
+         scaffold — verify the public-financing set + the full county
+         list against your dataset.
+         ================================================================ */
+
+      // The 6 jurisdictions with a public financing program (selector tabs).
+      var COUNTY_DATA = {
+        'Montgomery': {
+          County: 'Montgomery County',
+          NoProgram: false,
+          HasProgram: true,
+          ProgramStatusBefore: '',         // e.g. "Program has been"
+          ProgramStatusBold: '',           // e.g. "active since 2018"
+          ProgramStatusAfter: '',
+          HasPrevious: true,
+          'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true,
+          'Current election candidates': null,
+          Population: null,
+          'Registered Voters': null
+        },
+        'Howard': {
+          County: 'Howard County', NoProgram: false, HasProgram: true,
+          ProgramStatusBefore: '', ProgramStatusBold: '', ProgramStatusAfter: '',
+          HasPrevious: true, 'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true, 'Current election candidates': null,
+          Population: null, 'Registered Voters': null
+        },
+        'Prince George’s': {
+          County: 'Prince George’s County', NoProgram: false, HasProgram: true,
+          ProgramStatusBefore: '', ProgramStatusBold: '', ProgramStatusAfter: '',
+          HasPrevious: false, 'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true, 'Current election candidates': null,
+          Population: null, 'Registered Voters': null
+        },
+        'Anne Arundel': {
+          County: 'Anne Arundel County', NoProgram: false, HasProgram: true,
+          ProgramStatusBefore: '', ProgramStatusBold: '', ProgramStatusAfter: '',
+          HasPrevious: false, 'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true, 'Current election candidates': null,
+          Population: null, 'Registered Voters': null
+        },
+        'Baltimore County': {
+          County: 'Baltimore County', NoProgram: false, HasProgram: true,
+          ProgramStatusBefore: '', ProgramStatusBold: '', ProgramStatusAfter: '',
+          HasPrevious: false, 'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true, 'Current election candidates': null,
+          Population: null, 'Registered Voters': null
+        },
+        'Baltimore City': {
+          County: 'Baltimore City', NoProgram: false, HasProgram: true,
+          ProgramStatusBefore: '', ProgramStatusBold: '', ProgramStatusAfter: '',
+          HasPrevious: true, 'Last Election Year': null,
+          'Number of Publicly funded candidates (last election)': null,
+          'Current publicly funded office holders': null,
+          HasCurrent: true, 'Current election candidates': null,
+          Population: null, 'Registered Voters': null
+        }
+      };
+
+      // Everyone else: population + registered voters only (sortable list).
+      // Scaffold of the remaining Maryland jurisdictions — verify the list
+      // and fill Population / Registered Voters from the dataset.
+      var OTHERS = [
+        'Allegany', 'Calvert', 'Caroline', 'Carroll', 'Cecil', 'Charles',
+        'Dorchester', 'Frederick', 'Garrett', 'Harford', 'Kent', 'Queen Anne’s',
+        'St. Mary’s', 'Somerset', 'Talbot', 'Washington', 'Wicomico', 'Worcester'
+      ].map(function (n) {
+        return { County: n + ' County', Population: null, 'Registered Voters': null };
+      });
+
+      /* ================================================================
+         RENDERING
+         ================================================================ */
+      var SELECTOR = document.getElementById('cpsSelector');
+      var VIEW = document.getElementById('cpsView');
+
+      function fmt(v) {
+        return (v === null || v === undefined || v === '')
+          ? '—'
+          : (typeof v === 'number' ? v.toLocaleString('en-US') : String(v));
+      }
+
+      function countyHTML(d) {
+        var h = '';
+        h += '<div class="cps-county-name">' + fmt(d.County) + '</div>';
+
+        if (d.NoProgram) {
+          h += '<div class="cps-noprogram">No public campaign financing program</div>';
+        }
+
+        if (d.HasProgram && (d.ProgramStatusBefore || d.ProgramStatusBold || d.ProgramStatusAfter)) {
+          h += '<div class="cps-status">' + d.ProgramStatusBefore +
+               ' <strong>' + d.ProgramStatusBold + '</strong> ' +
+               d.ProgramStatusAfter + '</div>';
+        }
+
+        if (d.HasPrevious) {
+          h += '<div class="cps-card prev">' +
+                 '<div class="cps-card-head">' +
+                   '<div class="cps-eyebrow">Previous Election</div>' +
+                   '<div class="cps-year">' + fmt(d['Last Election Year']) + '</div>' +
+                 '</div>' +
+                 '<div class="cps-statrow">' +
+                   '<div class="cps-stat has-rule">' +
+                     '<div class="cps-big">' + fmt(d['Number of Publicly funded candidates (last election)']) + '</div>' +
+                     '<div class="cps-sub">candidates ran</div>' +
+                   '</div>' +
+                   '<div class="cps-divider"></div>' +
+                   '<div class="cps-stat">' +
+                     '<div class="cps-big">' + fmt(d['Current publicly funded office holders']) + '</div>' +
+                     '<div class="cps-sub">elected to office</div>' +
+                   '</div>' +
+                 '</div>' +
+               '</div>';
+        }
+
+        if (d.HasCurrent) {
+          h += '<div class="cps-card curr">' +
+                 '<div class="cps-eyebrow" style="margin-bottom:6px;">Current Election</div>' +
+                 '<div class="cps-curr-inline">' +
+                   '<div class="cps-big">' + fmt(d['Current election candidates']) + '</div>' +
+                   '<div class="cps-sub">candidates running</div>' +
+                 '</div>' +
+               '</div>';
+        }
+
+        if (d.HasProgram) h += '<div class="cps-hr"></div>';
+
+        h += '<div class="cps-pop-row">' +
+               '<div class="cps-pop-num">' + fmt(d.Population) + '</div>' +
+               '<div class="cps-pop-label">residents</div>' +
+             '</div>' +
+             '<div class="cps-pop-row">' +
+               '<div class="cps-pop-num">' + fmt(d['Registered Voters']) + '</div>' +
+               '<div class="cps-pop-label">registered voters</div>' +
+             '</div>';
+        return h;
+      }
+
+      var sortState = { key: 'Population', dir: -1 }; // default: population desc
+
+      function othersHTML() {
+        var rows = OTHERS.slice().sort(function (a, b) {
+          var x = a[sortState.key], y = b[sortState.key];
+          if (sortState.key === 'County') {
+            return x.localeCompare(y) * sortState.dir;
+          }
+          // nulls always sort to the bottom regardless of direction
+          if (x === null) return 1;
+          if (y === null) return -1;
+          return (x - y) * sortState.dir;
+        });
+
+        function arrow(k) {
+          if (sortState.key !== k) return '<span class="cps-arrow">↕</span>';
+          return '<span class="cps-arrow">' + (sortState.dir === 1 ? '↑' : '↓') + '</span>';
+        }
+        function aria(k) {
+          if (sortState.key !== k) return '';
+          return ' aria-sort="' + (sortState.dir === 1 ? 'ascending' : 'descending') + '"';
+        }
+
+        var h = '<p class="cps-others-note">Maryland jurisdictions without a public ' +
+                'financing program. Tap a column to sort.</p>' +
+                '<table class="cps-table"><thead><tr>' +
+                  '<th data-key="County"' + aria('County') + '>County' + arrow('County') + '</th>' +
+                  '<th data-key="Population"' + aria('Population') + '>Population' + arrow('Population') + '</th>' +
+                  '<th data-key="Registered Voters"' + aria('Registered Voters') + '>Registered voters' + arrow('Registered Voters') + '</th>' +
+                '</tr></thead><tbody>';
+        rows.forEach(function (r) {
+          h += '<tr><td>' + fmt(r.County) + '</td><td>' + fmt(r.Population) +
+               '</td><td>' + fmt(r['Registered Voters']) + '</td></tr>';
+        });
+        h += '</tbody></table>';
+        return h;
+      }
+
+      function render(key) {
+        [].forEach.call(SELECTOR.children, function (b) {
+          b.classList.toggle('active', b.dataset.key === key);
+          b.setAttribute('aria-selected', b.dataset.key === key ? 'true' : 'false');
+        });
+        if (key === '__others__') {
+          VIEW.innerHTML = othersHTML();
+          var ths = VIEW.querySelectorAll('th[data-key]');
+          [].forEach.call(ths, function (th) {
+            th.addEventListener('click', function () {
+              var k = th.dataset.key;
+              if (sortState.key === k) sortState.dir *= -1;
+              else { sortState.key = k; sortState.dir = (k === 'County') ? 1 : -1; }
+              render('__others__');
+            });
+          });
+        } else {
+          VIEW.innerHTML = '<div style="max-width:30rem;">' +
+                           countyHTML(COUNTY_DATA[key]) + '</div>';
+        }
+      }
+
+      // Build the selector tabs.
+      Object.keys(COUNTY_DATA).forEach(function (k) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.dataset.key = k;
+        b.setAttribute('role', 'tab');
+        b.textContent = k;
+        b.addEventListener('click', function () { render(k); });
+        SELECTOR.appendChild(b);
+      });
+      var ob = document.createElement('button');
+      ob.type = 'button';
+      ob.dataset.key = '__others__';
+      ob.setAttribute('role', 'tab');
+      ob.textContent = 'Others';
+      ob.addEventListener('click', function () { render('__others__'); });
+      SELECTOR.appendChild(ob);
+
+      render(Object.keys(COUNTY_DATA)[0]); // open on the first county
+    })();
+  </script>
+</body>
+
+</html>

@@ -415,7 +415,12 @@
           lessons: [20, 21, 22, 23]
         },
         {
-          name: 'G · Extra credit',
+          name: 'G · Accessibility',
+          note: 'Numbered last, but it is plain HTML — do it any time after Lesson 3. Added at David’s request.',
+          lessons: [25]
+        },
+        {
+          name: 'H · Extra credit',
           note: 'Optional. Only if the rest is done and you are curious.',
           lessons: [24]
         }
@@ -424,58 +429,102 @@
       var out = document.getElementById('out');
       var openState = {};   // remembers which cards you had expanded across refreshes
 
+      // David's workflow: he OVERWRITES each "LESSON n" block with his own
+      // "DL NOTE n" comment, so his professor can Cmd-F "DL NOTE" and see only
+      // what David wrote. So a lesson is done precisely when its LESSON block
+      // has been replaced by a DL NOTE block. Titles live here, not in the file,
+      // because his rewrite legitimately throws the title away.
+      var TITLES = {
+        1: 'The shape of this file',
+        2: 'Scoping: why every rule starts with .sbs-root',
+        3: "The widget's HTML skeleton (ids are handles)",
+        4: "The wrapper: (function () { ... })() and 'use strict'",
+        5: 'Data as a lookup table: OFFICE_DATA',
+        6: 'State and handles',
+        7: 'Your first event: the office buttons',
+        8: 'One render function: the big idea of this widget',
+        9: "The slider: an 'input' event",
+        10: 'Two-way sync: the typed box and the inputFocused flag',
+        11: 'Never trust typed input',
+        12: 'The actual math: tierBreakdown()',
+        13: 'Turning numbers into text people can read',
+        14: 'Showing and hiding rows with a class',
+        15: 'The CSS half of show/hide',
+        16: "SVG by hand: the chart's fixed furniture",
+        17: 'Wipe and redraw + the coordinate system',
+        18: 'Building elements from scratch',
+        19: 'The tier loop and its escape hatches',
+        20: 'The sticky trick — the whole scrollytelling illusion',
+        21: 'Steps as data: tagging the scenes',
+        22: 'Scroll position → progress → step number',
+        23: 'Doing less work: dirty checks and rAF',
+        24: 'EXTRA CREDIT · Site chrome (nav, menu, back-to-top)',
+        25: 'Who is this page for? The accessibility layer'
+      };
+
+      // Strip comment decoration from a block of lines without eating real
+      // content — a leading "<" must survive so "<script>" stays intact.
+      function tidy(s) {
+        return s.split('\n')
+          .map(function (l) { return l.trim(); })
+          .filter(function (l) { return l.length > 0 && !/^[=*\/<!-]+$/.test(l); })
+          .join('\n');
+      }
+
+      function blockAfter(text, index) {
+        var tail = text.slice(index);
+        var endHtml = tail.indexOf('-->');
+        var endJs = tail.indexOf('*/');
+        var end = Math.min(
+          endHtml === -1 ? Infinity : endHtml,
+          endJs === -1 ? Infinity : endJs
+        );
+        return tail.slice(0, end === Infinity ? 2000 : end);
+      }
+
+      function lineOf(text, index) {
+        return text.slice(0, index).split('\n').length;
+      }
+
       function parseLessons(text) {
-        var lessons = [];
-        // Each block: "LESSON <n> · <title>" ... "MY ANSWER: <answer>" ... "-->" or "*/"
-        var re = /LESSON\s+(\d+)\s+·\s+([^\n]*)/g;
+        var byNum = {};
+
+        // 1. Lessons David has written up: "DL NOTE 7 — ..." (any dash/colon).
+        var reDone = /DL\s*NOTE\s*(\d+)\s*[-–—:.]?\s*/gi;
         var m;
-        while ((m = re.exec(text)) !== null) {
-          var num = parseInt(m[1], 10);
-          var title = m[2].trim();
-          var line = text.slice(0, m.index).split('\n').length;
-
-          // Find the end of this comment block, then the answer inside it.
-          var tail = text.slice(m.index);
-          var endHtml = tail.indexOf('-->');
-          var endJs = tail.indexOf('*/');
-          var end = Math.min(
-            endHtml === -1 ? Infinity : endHtml,
-            endJs === -1 ? Infinity : endJs
-          );
-          if (end === Infinity) end = 2000;
-          var block = tail.slice(0, end);
-
-          var aIdx = block.indexOf('MY ANSWER:');
-          var questions = (aIdx === -1 ? block : block.slice(0, aIdx));
-          var answerRaw = aIdx === -1 ? '' : block.slice(aIdx + 'MY ANSWER:'.length);
-
-          // Clean the questions text for display. Only decoration is stripped —
-          // never a leading "<", or "<script>" in a question loses its bracket.
-          questions = questions
-            .replace(/^[^\n]*\n/, '')                 // drop the "LESSON n · title" line
-            .split('\n')
-            .map(function (l) { return l.trim(); })
-            .filter(function (l) { return l.length > 0 && !/^[=*\/<!-]+$/.test(l); })
-            .join('\n');
-
-          // Clean the answer: strip the underscore blank and the closing rule.
-          var answer = answerRaw
-            .replace(/_{4,}/g, '')
-            .split('\n')
-            .map(function (l) { return l.trim(); })
-            .filter(function (l) { return !/^[=*\/<!-]+$/.test(l); })
-            .join('\n')
-            .trim();
-
-          var status = answer.length >= 15 ? 'done' : (answer.length > 0 ? 'wip' : 'todo');
-
-          lessons.push({
-            num: num, title: title, line: line,
-            questions: questions, answer: answer, status: status
-          });
+        while ((m = reDone.exec(text)) !== null) {
+          var n = parseInt(m[1], 10);
+          var note = tidy(blockAfter(text, m.index).slice(m[0].length));
+          byNum[n] = {
+            num: n, title: TITLES[n] || 'Lesson ' + n,
+            line: lineOf(text, m.index),
+            questions: '', answer: note,
+            status: note.length >= 15 ? 'done' : 'wip'
+          };
         }
-        lessons.sort(function (a, b) { return a.num - b.num; });
-        return lessons;
+
+        // 2. Lessons still carrying the original prompt block.
+        var reTodo = /LESSON\s+(\d+)\s+·\s+([^\n]*)/g;
+        while ((m = reTodo.exec(text)) !== null) {
+          var num = parseInt(m[1], 10);
+          if (byNum[num]) continue;              // already written up — DL NOTE wins
+          var block = blockAfter(text, m.index);
+          var aIdx = block.indexOf('MY ANSWER:');
+          var answer = aIdx === -1 ? '' :
+            tidy(block.slice(aIdx + 'MY ANSWER:'.length).replace(/_{4,}/g, ''));
+          byNum[num] = {
+            num: num, title: (m[2] || '').trim() || TITLES[num] || 'Lesson ' + num,
+            line: lineOf(text, m.index),
+            questions: tidy(block.replace(/^[^\n]*\n/, '')
+              .slice(0, aIdx === -1 ? undefined : aIdx)),
+            answer: answer,
+            status: answer.length >= 15 ? 'done' : (answer.length > 0 ? 'wip' : 'todo')
+          };
+        }
+
+        return Object.keys(byNum)
+          .map(function (k) { return byNum[k]; })
+          .sort(function (a, b) { return a.num - b.num; });
       }
 
       function esc(s) {
@@ -510,14 +559,17 @@
               '<span class="status">' + label + '</span>' +
               '</div>' +
               '<div class="body">' +
-              '<span class="lbl">What your comment has to answer</span>' +
-              '<pre>' + esc(l.questions) + '</pre>' +
-              '<span class="lbl">What you have written so far</span>' +
+              (l.questions
+                ? '<span class="lbl">What your comment has to answer</span>' +
+                  '<pre>' + esc(l.questions) + '</pre>'
+                : '') +
+              '<span class="lbl">' + (l.questions ? 'What you have written so far' : 'Your DL NOTE') + '</span>' +
               (l.answer
                 ? '<div class="answer">' + esc(l.answer) + '</div>'
                 : '<div class="answer empty">(still blank — replace the underscores in the file)</div>') +
               '<div class="findme">Find it: open <code>DATAVIZFINAL MARKUP.html</code> and search for ' +
-              '<code>LESSON ' + n + '</code> &nbsp;·&nbsp; currently around line ' + l.line + '</div>' +
+              '<code>' + (l.questions ? 'LESSON ' : 'DL NOTE ') + n + '</code>' +
+              ' &nbsp;·&nbsp; currently around line ' + l.line + '</div>' +
               '</div></div>';
           });
         });

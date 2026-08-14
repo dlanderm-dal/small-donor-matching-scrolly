@@ -1,0 +1,19 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Source+Serif+4:wght@400&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Source Serif 4',Georgia,serif;margin:0;padding:24px;background:#fff;display:flex;gap:26px}
+.panel{flex:1;border:1px solid #ddd;border-radius:6px;padding:16px}
+.panel h4{font-family:'Poppins',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#990000;margin:0 0 12px}
+ul{list-style:none;margin:0;padding:0}
+/* PANEL 2 + 3: the li rule from line 926 */
+.b li,.c li{font:400 16px/1.4 'Source Serif 4',Georgia,serif;color:#1a1a1a;padding:8px 0;border-bottom:1px solid #c9c2b3;display:flex;gap:8px}
+/* PANEL 3 only: the ::before rule from line 936 */
+.c li::before{content:"—";color:#de5826;font-weight:700;flex:0 0 auto}
+</style></head><body>
+<div class="panel a"><h4>1 · HTML alone, no CSS</h4><ul>
+<li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor unions</li><li>LLCs</li></ul></div>
+<div class="panel b"><h4>2 · + the li rule (line 926)</h4><ul>
+<li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor unions</li><li>LLCs</li></ul></div>
+<div class="panel c"><h4>3 · + the ::before rule (line 936)</h4><ul>
+<li>Political Action Committees (PACs)</li><li>Corporations</li><li>Labor unions</li><li>LLCs</li></ul></div>
+</body></html>

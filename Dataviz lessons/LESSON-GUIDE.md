@@ -167,7 +167,17 @@ Where: ~line 3261.
 Goal: name the two separate mechanisms preventing wasted work, and say what each prevents.
 Where: ~line 3312.
 
-### Tier G · Extra credit
+### Tier G · Accessibility
+
+**25 · Who is this page for? The accessibility layer** — *Trace the path*
+Numbered last only because it was added later; it's plain HTML, so do it any time after
+Lesson 3. Goal: explain the two separate jobs — *describing* the widget to someone who can't
+see it (`role`, `aria-label`, `aria-hidden`, `sr-only`) and *announcing* that numbers changed
+after the page was already read aloud (`aria-live`, `aria-atomic`). The second is the one worth
+understanding: a screen reader reads a page once, and your slider rewrites the page afterward.
+Where: the widget's opening div, ~line 2052.
+
+### Tier H · Extra credit
 
 **24 · Site chrome** — *Teach it back*
 Optional. Pick one behavior (search, drawer, progress bar, back-to-top) and explain it end to
