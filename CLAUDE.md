@@ -11,14 +11,14 @@ Two things live in this folder:
 - Double-click **`Dataviz lessons/Open Lesson Tracker.command`** — starts a local server
   and opens the red→green progress map.
 - Story: <http://localhost:8773/index.html> · Annotated copy:
-  <http://localhost:8773/DATAVIZFINAL%20MARKUP.html> · Tracker:
+  <http://localhost:8773/DATAVIZFINAL-MARKUP.html> · Tracker:
   <http://localhost:8773/Dataviz%20lessons/LESSON-MAP.html>
 - Stop the server by closing the Terminal window it opened.
 
 ## Key files
 - `index.html` — the published story. **Do not touch** for lessons work.
 - `posted_story.html`, `story.html`, `LEGACYindex.html` — older/parallel copies of the same story.
-- `DATAVIZFINAL MARKUP.html` — the annotation target. Byte-identical to `index.html` except
+- `DATAVIZFINAL-MARKUP.html` — the annotation target. Byte-identical to `index.html` except
   for 24 `LESSON n` comment blocks. This is the file David writes his comments into.
 - `Dataviz lessons/LESSON-GUIDE.md` — the 24 lessons, in complexity order, questions only.
 - `Dataviz lessons/LESSON-MAP.html` — live progress map; parses the markup file, no manual upkeep.
@@ -46,7 +46,7 @@ Two things live in this folder:
 
 ## ▶︎ YOU ARE HERE  (read at session start, rewritten at session end)
 - **Goal right now:** David works through 25 lessons, **overwriting** each `LESSON n` block in
-  `DATAVIZFINAL MARKUP.html` with his own `DL NOTE n` comment. His note to his professor at
+  `DATAVIZFINAL-MARKUP.html` with his own `DL NOTE n` comment. His note to his professor at
   line 3 explains that only "DL NOTE" comments are his submission. Don't fight this convention.
 - **Done + verified:** DL NOTES 1–3 written (3 of 25). Lesson 25 (accessibility) added at his
   request. Page re-verified after every edit: $180 → $830 Executive / $680 At-Large, 20 chart

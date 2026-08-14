@@ -54,7 +54,7 @@ what he got wrong, what's worth circling back to.
 
 ### 2026-08-11 · Setup (no lessons done yet)
 - **Wrote:** nothing yet — all 24 blanks are empty and red.
-- **Built this session:** 24 `LESSON n` placeholders inserted into `DATAVIZFINAL MARKUP.html`;
+- **Built this session:** 24 `LESSON n` placeholders inserted into `DATAVIZFINAL-MARKUP.html`;
   lesson guide, live tracker page, and `.command` launcher created; the professor's
   `learning-opportunities` skill vendored into `.claude/skills/` so its rules apply automatically.
 - **Verified:** annotated page runs with no console errors; slider math correct ($180 → $830

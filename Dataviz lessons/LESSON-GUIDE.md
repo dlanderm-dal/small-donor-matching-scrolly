@@ -16,7 +16,7 @@ AI-written code feels like understanding it and isn't.
 ## How to run a lesson (about 15 minutes)
 
 1. **Open the tracker.** Double-click `Open Lesson Tracker.command`. It opens the red→green map.
-2. **Find the lesson in the code.** Open `DATAVIZFINAL MARKUP.html` and search for `LESSON 7`
+2. **Find the lesson in the code.** Open `DATAVIZFINAL-MARKUP.html` and search for `LESSON 7`
    (or whichever). The tracker also shows you the current line number.
 3. **Read the questions, then look at the code around them.** Don't read the questions and
    immediately ask Claude. Read the code first, even if it's fog.
@@ -192,6 +192,6 @@ published story (`index.html`) is untouched and also in git history, so nothing 
 damage what's live.
 
 Quick sanity check that the page still works: load
-`http://localhost:8773/DATAVIZFINAL%20MARKUP.html`, drag the slider to **$180**. County
+`http://localhost:8773/DATAVIZFINAL-MARKUP.html`, drag the slider to **$180**. County
 Executive should read **$830**; At-Large should read **$680**. If the numbers don't move at all,
 you probably broke a comment — a stray `*/` or `-->` in the middle of a code block will do it.

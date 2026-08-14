@@ -349,7 +349,7 @@
 
     <header class="page">
       <h1>Dataviz Lessons — Progress Map</h1>
-      <p class="sub">Live status of the 24 lesson comments inside <strong>DATAVIZFINAL MARKUP.html</strong>.
+      <p class="sub">Live status of the 24 lesson comments inside <strong>DATAVIZFINAL-MARKUP.html</strong>.
         Red = not written yet. Green = you explained it in your own words. Nothing here is hand-maintained; this page
         reads the actual file.</p>
     </header>
@@ -380,7 +380,7 @@
       'use strict';
 
       // The annotated file lives one folder up from this one.
-      var SOURCE = '../DATAVIZFINAL MARKUP.html';
+      var SOURCE = '../DATAVIZFINAL-MARKUP.html';
 
       // Tier grouping: which lessons belong together, and why this order.
       var TIERS = [
@@ -490,10 +490,14 @@
         var byNum = {};
 
         // 1. Lessons David has written up: "DL NOTE 7 — ..." (any dash/colon).
-        var reDone = /DL\s*NOTE\s*(\d+)\s*[-–—:.]?\s*/gi;
+        // Anchored to the start of a line, so a cross-reference inside another
+        // note ("...see DL NOTE 15") isn't mistaken for note 15's own block.
+        // First match wins for the same reason.
+        var reDone = /^[ \t]*DL[ \t]*NOTE[ \t]*(\d+)[ \t]*[-–—:.]?[ \t]*/gim;
         var m;
         while ((m = reDone.exec(text)) !== null) {
           var n = parseInt(m[1], 10);
+          if (byNum[n]) continue;
           var note = tidy(blockAfter(text, m.index).slice(m[0].length));
           byNum[n] = {
             num: n, title: TITLES[n] || 'Lesson ' + n,
@@ -567,7 +571,7 @@
               (l.answer
                 ? '<div class="answer">' + esc(l.answer) + '</div>'
                 : '<div class="answer empty">(still blank — replace the underscores in the file)</div>') +
-              '<div class="findme">Find it: open <code>DATAVIZFINAL MARKUP.html</code> and search for ' +
+              '<div class="findme">Find it: open <code>DATAVIZFINAL-MARKUP.html</code> and search for ' +
               '<code>' + (l.questions ? 'LESSON ' : 'DL NOTE ') + n + '</code>' +
               ' &nbsp;·&nbsp; currently around line ' + l.line + '</div>' +
               '</div></div>';
@@ -594,7 +598,7 @@
 
       function showError(err) {
         out.innerHTML = '<div class="error"><h3>Can&rsquo;t read the markup file</h3>' +
-          '<p>This page has to <em>read</em> <code>DATAVIZFINAL MARKUP.html</code> to know what you have written, ' +
+          '<p>This page has to <em>read</em> <code>DATAVIZFINAL-MARKUP.html</code> to know what you have written, ' +
           'and browsers refuse to do that when a page is opened straight from the Finder.</p>' +
           '<p><strong>Fix:</strong> close this tab and double-click <code>Open Lesson Tracker.command</code> ' +
           'in the “Dataviz lessons” folder instead. It opens the same page at ' +

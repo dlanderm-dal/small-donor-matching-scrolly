@@ -1,6 +1,6 @@
 #!/bin/bash
 # Opens the Dataviz lessons progress map.
-# The tracker has to READ "DATAVIZFINAL MARKUP.html" to see what you've written,
+# The tracker has to READ "DATAVIZFINAL-MARKUP.html" to see what you've written,
 # and browsers block that when a page is opened straight from Finder — so this
 # starts a tiny local web server first.
 #
@@ -15,7 +15,7 @@ echo ""
 echo "  Dataviz lessons"
 echo "  ---------------"
 echo "  Progress map:   $MAP"
-echo "  Annotated file: http://localhost:$PORT/DATAVIZFINAL%20MARKUP.html"
+echo "  Annotated file: http://localhost:$PORT/DATAVIZFINAL-MARKUP.html"
 echo ""
 echo "  Leave this window open while you work. Close it to stop."
 echo ""
